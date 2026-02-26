@@ -6,28 +6,96 @@
 
 ---
 
-### Day 1 – Project Planning & Framework Selection
+# Day 2 – Backend Setup & Service Layer Implementation
 
-- Chose **React** for the frontend due to component reusability and fast development.
-- Decided on **WireGuard** for VPN backend management for its simplicity and performance.
-- Selected **JWT** for secure authentication between frontend and backend.
-- Planned to containerize the application using **Docker** for consistent development and deployment.
-- Designed high-level project architecture: frontend, backend API, VPN service management, and authentication flow.
-- Created initial project structure for frontend and backend, including placeholder folders and files.
+## Summary
 
----
+Implemented Express backend structure and integrated SQLite with service-based architecture.
 
-### Day 2 – Backend Development & SQLite Service Layer
+## Implemented Components
 
-- Configures Express, mounts `/clients` routes, applies JSON parsing and error-handling middleware, and starts the server.
-- Created **middleware/error.middleware.js** – global error handler that catches and formats errors from controllers and services.
-- Created `database/db.js` to connect to SQLite and initialize `vpn.db` with the `clients` table.
-- Implemented **`client.service.js`** with asynchronous CRUD functions (`createClient`, `getAllClients`, `deleteClient`) using Promises, enabling future use of `async/await` in controllers.
-- Implemented **routes/client.routes.js** that maps HTTP requests (`GET`, `POST`, `DELETE`) to controller functions for client management.
-- Confirmed SQLite integration works and service functions return expected results during local testing.
-- Added professional inline comments to explain Promises and database operations for portfolio clarity.
-- **Debugging Note:** Initial testing on `localhost:5000` failed because **macOS reserves port 5000 for the system Control Center**, blocking the server from binding. Updated server to use **port 5500** and verified endpoints work using `curl` and browser.
-- Learned best practices for **layered architecture**: separating services, database, and server logic.
+- Configured Express server:
+  - Mounted `/clients` routes
+  - Applied `express.json()` middleware
+  - Added global error-handling middleware
+  - Started server on configurable port
+
+- Created database layer:
+  - Implemented `database/db.js`
+  - Connected to SQLite
+  - Initialized `vpn.db`
+  - Created `clients` table
+
+- Implemented service layer:
+  - Created `client.service.js`
+  - Added asynchronous CRUD functions:
+    - `createClient`
+    - `getAllClients`
+    - `deleteClient`
+  - Used Promises to support async/await in controllers
+
+- Implemented routing layer:
+  - Created `routes/client.routes.js`
+  - Mapped HTTP methods (GET, POST, DELETE) to controller functions
+
+- Implemented global error handler:
+  - `middleware/error.middleware.js`
+  - Centralized error formatting and response handling
+
+## Issues Encountered
+
+- Port 5000 conflict on macOS
+  - Cause: macOS reserves port 5000 for Control Center
+  - Fix: Updated server to use port 5500
+
+## Key Learnings
+
+- Proper middleware ordering in Express
+- Separation of concerns using layered architecture
+- Structuring backend projects for scalability
+- Connecting SQLite with Node.js using service abstraction
+
+## Result
+
+- Backend architecture fully structured.
+- SQLite integration functional.
+- CRUD service layer ready for endpoint testing.
+
+# Day 3 – API Testing (Express + SQLite)
+
+## Summary
+
+Focused on testing and validating backend CRUD functionality using Postman.
+
+## Completed Testing
+
+- POST /clients
+  - Sent JSON body: { "name": "device1" }
+  - Successfully created new client
+  - Verified returned ID and stored values
+- GET /clients
+  - Returned correct list of clients
+  - Confirmed data persisted in vpn.db
+- DELETE /clients/:id
+  - Successfully deleted client by ID
+  - Verified deletion using subsequent GET request
+
+## Issues Encountered
+
+- SQLITE_CONSTRAINT: NOT NULL constraint failed: clients.name
+  - Cause: Passed string instead of object to createClient()
+  - Fix: Updated controller to pass object:
+    createClient({ name: req.body.name })
+
+- Database path inconsistency
+  - Cause: Relative path created vpn.db in unexpected location
+  - Fix: Used absolute path with \_\_dirname
+
+## Result
+
+- Backend CRUD flow fully functional
+- Express → Controller → Service → SQLite integration verified
+- Ready to proceed to next feature implementation
 
 ---
 

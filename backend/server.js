@@ -18,6 +18,10 @@ app.use(express.json());
 
 // Mount routes at /clients
 app.use("/clients", clientRoutes);
+/*
+Request flow:
+HTTP Request → /clients (router) → client.controller → client.service → SQLite db
+*/
 
 app.use(
   cors({

@@ -1,6 +1,7 @@
 -- Table to store VPN clients
 CREATE TABLE IF NOT EXISTS clients (
     id INTEGER PRIMARY KEY AUTOINCREMENT,  -- Unique ID for each client
+
     name TEXT NOT NULL UNIQUE,              -- Device name; must be unique
 
     -- WireGuard public key

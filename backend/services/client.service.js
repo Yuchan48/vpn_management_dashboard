@@ -19,9 +19,7 @@ function createClient({
 }) {
   // We return a new Promise because the database operations are asynchronous. This allows us to use async/await or .then/.catch when calling these functions from our routes.
   return new Promise((resolve, reject) => {
-    `
-      INSERT INTO clients (name, public_key, private_key, ip_address)
-      VALUES (?, ?, ?, ?)`;
+    const query = `INSERT INTO clients (name, public_key, private_key, ip_address) VALUES (?, ?, ?, ?)`;
     db.run(query, [name, public_key, private_key, ip_address], function (err) {
       if (err) {
         // reject means there was an error during the operation, and we can return the error message

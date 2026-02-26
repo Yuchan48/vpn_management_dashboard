@@ -6,6 +6,40 @@
 
 ---
 
+# Day 1 – Project Planning & Architecture Design
+
+## Summary
+
+Defined project scope, selected technology stack, and designed initial system architecture.
+
+## Decisions Made
+
+- Selected React for frontend development to leverage component-based architecture.
+- Chose WireGuard as the VPN engine due to simplicity, performance, and modern cryptography.
+- Selected JWT for secure authentication between frontend and backend.
+- Decided to use Docker for containerized development and deployment.
+- Chose SQLite for lightweight local database during initial development.
+
+## Architecture Planning
+
+- Designed high-level system structure:
+  - Frontend (React)
+  - Backend API (Express)
+  - VPN management layer (WireGuard integration)
+  - Authentication flow (JWT-based)
+- Defined layered backend structure:
+  - Routes
+  - Controllers
+  - Services
+  - Database layer
+- Created initial folder structure for frontend and backend projects.
+
+## Result
+
+- Clear technical direction established.
+- Project structure initialized.
+- Development environment ready for backend implementation.
+
 # Day 2 – Backend Setup & Service Layer Implementation
 
 ## Summary

@@ -18,21 +18,37 @@ This project is a **self-hosted VPN management platform** that allows users to s
 ## Tech Choice Rationale
 
 - **Frontend:** React
-  Chosen for its component-based architecture, fast UI updates, and suitability for dynamic dashboards. SEO is not a concern since this is a private app, so client-side rendering is sufficient.
+  Chosen for its component-based architecture and efficient virtual DOM, which allows responsive, dynamic dashboards for managing VPN peers and monitoring connections. Unlike Next.js, server-side rendering and SEO are unnecessary for this private app, so client-side rendering keeps the architecture simple, lightweight, and easier to maintain.
+  - Simplifies routing and state management
+  - Reduces deployment complexity compared to hybrid SSR frameworks
+  - Provides full control over UI and interactions
 
 - **Backend:** Express.js
-  Chosen for simplicity, flexibility, and the ability to easily define RESTful APIs for user authentication, VPN management, and data handling.
-
-This combination provides a clean separation between frontend and backend, making the project maintainable and scalable.
+  Selected for its minimalism and flexibility in building RESTful APIs. While frameworks like NestJS offer additional abstractions and Fastify provides performance optimizations, Express gives transparent routing and middleware patterns that are ideal for authentication, VPN peer provisioning, and configuration management.
+  - Lightweight and unopinionated
+  - Clear route definitions and middleware flow
+  - Easier to read and maintain for a project of this scale
 
 - **VPN:** WireGuard
-  Modern, fast, and secure VPN protocol. Lightweight and easy to automate using server-side scripts.
+  Modern, fast, and secure VPN protocol. Runs in the Linux kernel for high performance and low latency, uses a small (~4,000 lines) and auditable codebase, and employs modern cryptography by default. Compared to OpenVPN, it is easier to automate peer provisioning via backend scripts, aligning with this project’s goal of a lightweight, maintainable VPN infrastructure.
+  - Minimal codebase reduces complexity and potential bugs
+  - Key-based configuration simplifies automation
+  - Modern cryptography (Curve25519, ChaCha20, Poly1305) reduces misconfiguration risk
 
 - **Authentication:** JWT
-  Stateless and widely used for secure API authentication.
+  Stateless and widely used for secure API authentication. Eliminates server-side session storage, scales easily across multiple instances, and integrates cleanly with REST APIs.
+  - Supports horizontal scaling without session synchronization
+  - Simplifies token-based authorization flow
 
 - **Containerization:** Docker
-  Ensures the app runs consistently across development and production environments. Simplifies deployment to cloud servers.
+  Ensures consistent runtime environments across development and production. Simplifies dependency management, streamlines cloud deployment, and supports future scalability through orchestration tools.
+  - Eliminates “works on my machine” issues
+  - Simplifies versioning and dependency control
+  - Prepares the project for scalable deployment pipelines
+
+### Architectural Philosophy:
+
+This stack emphasizes simplicity, clarity, and maintainability. Each layer has a focused responsibility: React handles the UI, Express manages business logic and APIs, WireGuard secures network traffic, JWT provides stateless authentication, and Docker ensures environment consistency. Technology choices were made intentionally, balancing performance, automation, and scalability while avoiding unnecessary complexity or overengineering.
 
 ---
 

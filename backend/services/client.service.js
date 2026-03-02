@@ -10,23 +10,28 @@ deleteClient(id)
 */
 
 const db = require("../database/db");
+const { generateKeyPair } = require("../utils/wireguard");
+// const { getNextAvailableIp } = require("../utils/ipAllocator");
 
-function createClient({
-  name,
-  public_key = null,
-  private_key = null,
-  ip_address = null,
-}) {
-  // We return a new Promise because the database operations are asynchronous. This allows us to use async/await or .then/.catch when calling these functions from our routes.
+function createClient({ name }) {
+  // Generate WireGuard key pair for the new client
+  const { publicKey, privateKey } = generateKeyPair();
+
   return new Promise((resolve, reject) => {
     const query = `INSERT INTO clients (name, public_key, private_key, ip_address) VALUES (?, ?, ?, ?)`;
-    db.run(query, [name, public_key, private_key, ip_address], function (err) {
+    db.run(query, [name, publicKey, privateKey, null], function (err) {
       if (err) {
         // reject means there was an error during the operation, and we can return the error message
         reject(err);
       } else {
-        // resolve means the operation was successful, and we can return the new client's ID, name, public key, private key, and IP address. this.lastID is a special property provided by sqlite3 that contains the ID of the last inserted row, which in this case is the new client we just added to the database.
-        resolve({ id: this.lastID, name, public_key, private_key, ip_address }); // this.lastID contains the ID of the newly inserted client
+        // when operation was successful
+        resolve({
+          id: this.lastID,
+          name,
+          public_key: publicKey,
+          private_key: privateKey,
+          ip_address: null,
+        }); // this.lastID contains the ID of the newly inserted client
       }
     });
   });

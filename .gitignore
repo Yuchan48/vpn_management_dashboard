@@ -35,6 +35,8 @@ backend/.env
 backend/dist/
 backend/build/
 
+backend/database/vpn.db
+
 backend/note.text
 
 # WireGuard keys & configs (very important)

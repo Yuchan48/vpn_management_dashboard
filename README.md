@@ -34,6 +34,14 @@ This project is a **self-hosted VPN management platform** that allows users to s
   - Minimal codebase reduces complexity and potential bugs
   - Key-based configuration simplifies automation
   - Modern cryptography (Curve25519, ChaCha20, Poly1305) reduces misconfiguration risk
+  - **Key Generation (Dev vs Production):**
+  - During development (macOS/local testing):
+    - Private and public keys are generated in-memory using Node.js placeholders
+    - Public key is derived from the private key (mock derivation)
+    - Allows safe testing of API, database, and frontend without requiring WireGuard CLI
+  - During deployment (Linux server):
+    - Real WireGuard keys are generated using the system `wg` CLI or proper Curve25519 derivation
+    - Keys are stored securely in SQLite and used to configure VPN peers
 
 - **Authentication:** JWT
   Stateless and widely used for secure API authentication. Eliminates server-side session storage, scales easily across multiple instances, and integrates cleanly with REST APIs.

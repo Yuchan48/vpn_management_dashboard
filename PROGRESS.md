@@ -131,6 +131,51 @@ Focused on testing and validating backend CRUD functionality using Postman.
 - Express → Controller → Service → SQLite integration verified
 - Ready to proceed to next feature implementation
 
+# Day 4 – WireGuard Key Generation Strategy
+
+## Summary
+
+Implemented development-safe strategy for WireGuard key generation, balancing macOS testing with future Linux deployment.
+
+## Development Implementation
+
+- Created `utils/wireguard.js` with `generateKeyPair()` function
+- Private key: generated as random 32-byte value in Node.js
+- Public key: derived from private key using placeholder (first 32 bytes) for testing purposes
+- Integration:
+  - Updated `createClient()` in `client.service.js` to automatically generate keys for new clients
+  - Tested POST /clients endpoint using Postman/curl
+  - Example response:
+    ```json
+    {
+      "id": 1,
+      "name": "device1",
+      "public_key": "4yWGRknVIYobdZUv4wOETaVH/oiQzbyq",
+      "private_key": "4yWGRknVIYobdZUv4wOETaVH/oiQzbyqo77PKCYmN3Y=",
+      "ip_address": null
+    }
+    ```
+
+## Deployment Considerations
+
+- On Linux server:
+  - Real WireGuard keys will be generated using CLI commands (`wg genkey | wg pubkey`) or Curve25519 derivation in Node.js
+  - Keys will be stored securely in SQLite and used to configure VPN peers
+- Placeholder approach allows safe testing of API, database, and frontend **without requiring WireGuard CLI or system network changes**
+
+## Issues Encountered
+
+- Concern about public key derivation:
+  - Public key depends on private key; initial placeholder method (`slice(0,32)`) is only for dev/testing
+  - Real derivation will use proper cryptography during deployment
+
+## Result
+
+- Backend can now generate VPN client keys safely in development
+- POST /clients endpoint tested successfully and returns key values
+- API, database, and service integration fully functional
+- Ready to integrate IP allocation and complete the full client creation workflow
+
 ---
 
 ## Future Improvements

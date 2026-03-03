@@ -180,7 +180,7 @@ Implemented development-safe strategy for WireGuard key generation, balancing ma
 
 ## Summary
 
-Implemented automated IP allocation for each new VPN client to ensure unique addresses within the subnet.
+Implemented automated IP allocation for each new VPN client to ensure unique addresses within the subnet and verified multi-client handling.
 
 ## Development Implementation
 
@@ -196,6 +196,10 @@ Implemented automated IP allocation for each new VPN client to ensure unique add
 - Tested POST /clients in Postman and curl
   - Each new client receives a unique IP
   - `.conf` file downloads correctly with the assigned IP
+- Verified multi-client workflow:
+  - Created multiple clients sequentially → each got a unique IP
+  - Deleted a client → IP was freed
+  - Created a new client → assigned **smallest available IP**, confirming IP re-use works
 
 ## Issues Encountered
 
@@ -204,11 +208,12 @@ Implemented automated IP allocation for each new VPN client to ensure unique add
 
 ## Result
 
-- Client creation workflow now fully integrates:
-  - Public key generation
-  - Unique IP allocation
-  - `.conf` file generation
-- Ready to proceed to **config file enhancements or authentication integration**
+- Client creation workflow fully integrates:
+  - Public key generation (in-memory for security)
+  - Unique IP allocation with re-use of freed IPs
+  - `.conf` file generation for each client
+- Backend ready to handle multiple clients reliably
+- Next step: config file enhancements, frontend dashboard, or authentication integration
 
 ---
 

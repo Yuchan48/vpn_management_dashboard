@@ -176,6 +176,40 @@ Implemented development-safe strategy for WireGuard key generation, balancing ma
 - API, database, and service integration fully functional
 - Ready to integrate IP allocation and complete the full client creation workflow
 
+# Day 5 – Unique IP Allocation for VPN Clients
+
+## Summary
+
+Implemented automated IP allocation for each new VPN client to ensure unique addresses within the subnet.
+
+## Development Implementation
+
+- Created `utils/ipAllocator.js` with `getNextAvailableIp(clients)` function
+  - Scans existing client IPs
+  - Returns the next available IP in `10.0.0.X` subnet
+  - Starts from `.2` (server reserved as `.1`)
+- Updated `createClient` workflow in `client.controller.js`
+  - Calls `getAllClients()` to get current clients
+  - Uses `getNextAvailableIp()` to assign the next free IP
+  - Passes the IP to the service function along with `name` and generated public key
+- `.conf` generation now includes the assigned IP in `[Interface] Address` field
+- Tested POST /clients in Postman and curl
+  - Each new client receives a unique IP
+  - `.conf` file downloads correctly with the assigned IP
+
+## Issues Encountered
+
+- None critical; function handles IP exhaustion by throwing an error if subnet is full
+- Verified IPs are correctly incremented and no duplicates occur
+
+## Result
+
+- Client creation workflow now fully integrates:
+  - Public key generation
+  - Unique IP allocation
+  - `.conf` file generation
+- Ready to proceed to **config file enhancements or authentication integration**
+
 ---
 
 ## Future Improvements

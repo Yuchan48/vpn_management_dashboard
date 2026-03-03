@@ -1,30 +1,57 @@
 /*
-Validate input
-Call service
-Send JSON response
+The controller functions are responsible for handling incoming HTTP requests, validating the input, calling the appropriate service functions to perform the business logic, and sending back JSON responses to the client.
 */
 
 const clientService = require("../services/client.service");
+const { generateClientConfig } = require("../utils/configGenerator");
+const { getNextAvailableIp } = require("../utils/ipAllocator");
 
-/*
-The controller functions are responsible for handling incoming HTTP requests, validating the input, calling the appropriate service functions to perform the business logic, and sending back JSON responses to the client. Each function is designed to handle a specific route and HTTP method, such as creating a new client, retrieving all clients, or deleting a client by ID. Error handling is also included to ensure that any issues during the process are properly managed and communicated back to the client.
-*/
+const { generateKeyPair } = require("../utils/wireguard");
 
 exports.createClient = async (req, res, next) => {
   try {
-    // Validate that the request body contains a 'name' property, which is required to create a new client. If the validation fails, we return a 400 Bad Request response with an error message.
+    // Validate that the request body contains a 'name' property, which is required to create a new client.
     if (!req.body || !req.body.name) {
       return res.status(400).json({ error: "Client name is required" });
     }
 
-    console.log("REQ.BODY:", req.body); // <-- Debug
+    // console.log("REQ.BODY:", req.body); // <-- Debug
 
-    // Pass the client's name from the request body to the service function. The service will handle generating keys and assigning an IP address.
-    const client = await clientService.createClient({ name: req.body.name });
-    res.status(201).json(client);
+    // Generate wireguard key pair (in memory)
+    let { publicKey, privateKey } = await generateKeyPair();
+
+    // Trimming whitespace to prevent any formatting issues in the generated .conf file.
+    privateKey = privateKey.trim();
+    publicKey = publicKey.trim();
+
+    // Get the next available IP address for the new client
+    const clients = await clientService.getAllClients();
+    const ipAddress = getNextAvailableIp(clients);
+
+    // Create a new client object
+    const client = await clientService.createClient({
+      name: req.body.name,
+      publicKey,
+      ipAddress,
+    });
+
+    // Generate a .conf file content for the newly created client.
+    const configContent = generateClientConfig(client, privateKey);
+
+    // The filename is dynamically generated based on the client's ID for better organization.
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=client_${client.id}.conf`,
+    );
+
+    // Set the content type to indicate that the response is a file download.
+    res.setHeader("Content-Type", "text/plain");
+
+    // Send the generated .conf file as the response body, allowing the client to download it immediately after creation.
+    res.send(configContent);
   } catch (error) {
+    console.error("Error creating client:", error);
     next(error);
-    // res.status(500).json({ error: err.message });
   }
 };
 

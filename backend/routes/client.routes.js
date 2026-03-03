@@ -9,6 +9,11 @@ const clientController = require("../controllers/client.controller");
 
 router.get("/", clientController.getAllClients);
 
+/*
+This route is only for development, as in production, we want to generate the .conf file immediately after creating the client, and send it to the client without storing the private key in the database.
+router.get("/:id/config", clientController.getClientConfig);
+*/
+
 router.post("/", clientController.createClient);
 
 router.delete("/:id", clientController.deleteClient);

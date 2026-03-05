@@ -215,6 +215,43 @@ Implemented automated IP allocation for each new VPN client to ensure unique add
 - Backend ready to handle multiple clients reliably
 - Next step: config file enhancements, frontend dashboard, or authentication integration
 
+# Day 6 – Authentication & Security
+
+## Summary
+
+Implemented JWT-based authentication for the backend, including secure password storage and mitigation against timing attacks.
+
+## Development Implementation
+
+- Added `users` table to SQLite to store admin credentials securely.
+- Created `scripts/createAdmin.js` to seed initial admin user with hashed password.
+- Installed and used `bcrypt` for password hashing and comparison.
+- Implemented `auth.repository.js` and `user.repository.js`:
+  - `findUserByUsername(username)` returns a user row from the database as a Promise.
+- Added `auth.service.js`:
+  - Business logic for login moved here from controller
+  - Handles validation, password comparison, timing attack mitigation, and JWT token generation.
+  - JWT payload includes `{ sub: user.id }` for scalability and consistent identification.
+- Updated `auth.controller.js`:
+  - Calls `loginUser()` from service
+  - Returns JWT token as JSON response.
+- Mitigated timing attacks by comparing password with a dummy hash even if user does not exist.
+
+## Issues Encountered
+
+- Callback hell avoided by using Promise-based repository functions and `async/await`.
+- Ensured that bcrypt password comparison is always performed to prevent leaking username existence via timing.
+
+## Result
+
+- Backend now supports secure login with JWT authentication.
+- Passwords are hashed in the database, and timing attacks are mitigated.
+- Code refactored for clear separation of concerns:
+  - Repository handles DB queries
+  - Service handles business logic
+  - Controller handles HTTP request/response
+- Ready to implement **authentication middleware** to protect sensitive endpoints and client creation workflow.
+
 ---
 
 ## Future Improvements

@@ -1,19 +1,9 @@
-/*
-Function: generateClientConfig(client)
-- Input: client object with keys + IP
-- Output: string containing .conf content
-
-Controller endpoint: GET /clients/:id/config
-- Fetch client from DB
-- Call generateClientConfig()
-- Return file as download
-*/
-
+// Generate the content of the WireGuard configuration file (.conf) for the client.
 function generateClientConfig(client, privateKey) {
   return `
 [Interface]
 PrivateKey = ${privateKey}
-Address = ${client.ip_address}/24
+Address = ${client.ip_address}/${process.env.VPN_SUBNET_MASK}
 DNS = ${process.env.DNS_SERVER}
 
 [Peer]

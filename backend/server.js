@@ -40,13 +40,3 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
-/*
-include error handling
-*/
-
-/* app.get("/clients", (req, res) => {});
-
-app.post("/clients", (req, res) => {});
-
-app.delete("/clients/:id", (req, res) => {}); */

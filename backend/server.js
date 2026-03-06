@@ -12,12 +12,18 @@ const app = express();
 const port = process.env.PORT || 5500;
 
 const errorHandler = require("./middleware/error.middleware");
+const authenticateToken = require("./middleware/auth.middleware");
+
 const clientRoutes = require("./routes/client.routes");
+const authRoutes = require("./routes/auth.routes");
 
 app.use(express.json());
 
 // Mount routes at /clients
-app.use("/clients", clientRoutes);
+app.use("/clients", authenticateToken, clientRoutes);
+// Mount auth routes at /auth
+app.use("/api/auth", authRoutes);
+
 /*
 Request flow:
 HTTP Request → /clients (router) → client.controller → client.service → SQLite db

@@ -11,7 +11,7 @@ async function syncWireGuardPeers() {
     for (const client of clients) {
       try {
         await addPeer(client.public_key, client.ip_address);
-        console.log(`Added peer: ${client.ip_address}`);
+        console.log(`Added peer for client ${client.id} (${client.ip_address})`);
       } catch (wgError) {
         console.error(
           `Error adding peer for client ${client.id} to WireGuard:`,

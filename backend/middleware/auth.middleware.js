@@ -31,7 +31,9 @@ function authenticateToken(req, res, next) {
 
     // console.log("Decoded token: ", user); // debugging purpose
 
-    req.userId = user.sub; // Attach the decoded user information to the request object for use in route handlers
+    // Attach user info to the request object for use in route handlers
+    req.userId = user.sub;
+    req.userRole = user.role;
 
     // Proceed to the route handler
     next();

@@ -25,10 +25,14 @@ async function loginUser(username, password) {
   }
 
   // Generate JWT token
-  const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || "1h",
-    issuer: "personal-vpn-backend",
-  });
+  const token = jwt.sign(
+    { sub: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || "1h",
+      issuer: "personal-vpn-backend",
+    },
+  );
 
   return { token, user };
 }

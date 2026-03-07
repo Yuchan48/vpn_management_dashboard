@@ -13,6 +13,7 @@ const port = process.env.PORT || 5500;
 
 const errorHandler = require("./middleware/error.middleware");
 const authenticateToken = require("./middleware/auth.middleware");
+const requireAdmin = require("./middleware/requireAdmin");
 
 const clientRoutes = require("./routes/client.routes");
 const authRoutes = require("./routes/auth.routes");
@@ -20,7 +21,7 @@ const authRoutes = require("./routes/auth.routes");
 app.use(express.json());
 
 // Mount routes at /clients
-app.use("/clients", authenticateToken, clientRoutes);
+app.use("/clients", authenticateToken, requireAdmin, clientRoutes);
 // Mount auth routes at /auth
 app.use("/api/auth", authRoutes);
 

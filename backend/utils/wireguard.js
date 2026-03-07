@@ -12,6 +12,7 @@ Return:
 /*
 this is for development only. In production, you should use WireGuard's official tools to generate keys securely.
 */
+/*
 const crypto = require("crypto");
 
 function generatePrivateKey() {
@@ -32,11 +33,12 @@ function generateKeyPair() {
 module.exports = {
   generateKeyPair,
 };
+*/
 
 /*
 This is for production. You need to make sure that the wirecard tools are installed on your server and use them to generate keys securely. You can use the child_process module to call the wg genkey and wg pubkey commands.
 */
-/*
+
 const { execSync } = require("child_process");
 
 function generateKeyPair() {
@@ -44,7 +46,7 @@ function generateKeyPair() {
   const privateKey = execSync("wg genkey", { encoding: "utf-8" }).trim();
 
   // wg pubkey generates the corresponding public key from the private key
-  const publicKey = execSync(`echo "${privateKey}" | wg pubkey`, {
+  const publicKey = execSync("wg pubkey", {
     encoding: "utf-8",
   }).trim();
   return { publicKey, privateKey };
@@ -53,4 +55,3 @@ function generateKeyPair() {
 module.exports = {
   generateKeyPair,
 };
- */

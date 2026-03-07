@@ -8,6 +8,8 @@ const { getNextAvailableIp } = require("../utils/ipAllocator");
 
 const { generateKeyPair } = require("../utils/wireguard");
 
+const { addPeer, removePeer } = require("../services/wireguard.service");
+
 exports.createClient = async (req, res, next) => {
   try {
     // Validate that the request body contains a 'name' property, which is required to create a new client.
@@ -34,6 +36,18 @@ exports.createClient = async (req, res, next) => {
       publicKey,
       ipAddress,
     });
+
+    // Add the new client as a peer to the WireGuard interface
+    try {
+      await addPeer(publicKey, ipAddress);
+    } catch (wgError) {
+      console.error("Error adding peer to WireGuard:", wgError);
+      // If adding the peer fails, we should clean up by deleting the client from the database to maintain consistency.
+      await clientService.deleteClient(client.id);
+      return res
+        .status(500)
+        .json({ error: "Failed to add peer to WireGuard interface" });
+    }
 
     // Generate a .conf file content for the newly created client.
     const configContent = generateClientConfig(client, privateKey);
@@ -67,8 +81,21 @@ exports.getAllClients = async (req, res, next) => {
 
 exports.deleteClient = async (req, res, next) => {
   try {
-    // Extract the client ID from the request parameters and pass it to the service function to delete the client from the database. If successful, we send a 204 No Content response to indicate that the deletion was successful without returning any content.
+    const client = await clientService.getClientById(req.params.id);
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    // Remove the client as a peer from the WireGuard interface
+    try {
+      await removePeer(client.public_key);
+    } catch (wgError) {
+      console.error("Error removing peer from WireGuard:", wgError);
+    }
+
+    // delete the client from the database.
     await clientService.deleteClient(req.params.id);
+
     res.status(204).send();
   } catch (error) {
     next(error);

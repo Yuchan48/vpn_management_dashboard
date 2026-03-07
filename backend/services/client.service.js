@@ -1,12 +1,4 @@
-/*
-Insert client into DB
-Query clients
-Delete client
-*/
-
 const db = require("../database/db");
-// const { generateKeyPair } = require("../utils/wireguard");
-// const { getNextAvailableIp } = require("../utils/ipAllocator");
 
 // Create a client in the database.
 async function createClient({ name, publicKey, ipAddress }) {

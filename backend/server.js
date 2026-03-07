@@ -15,6 +15,8 @@ const errorHandler = require("./middleware/error.middleware");
 const authenticateToken = require("./middleware/auth.middleware");
 const requireAdmin = require("./middleware/requireAdmin");
 
+const { syncWireGuardPeers } = require("./services/wireguardSync.service");
+
 const clientRoutes = require("./routes/client.routes");
 const authRoutes = require("./routes/auth.routes");
 
@@ -44,6 +46,7 @@ app.get("/status", (req, res) => {
 // Error handling middleware. This should be after all routes to catch any errors that occur in the route handlers.
 app.use(errorHandler);
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Server is running on http://localhost:${port}`);
+  await syncWireGuardPeers();
 });

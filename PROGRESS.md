@@ -252,6 +252,47 @@ Implemented JWT-based authentication for the backend, including secure password 
   - Controller handles HTTP request/response
 - Ready to implement **authentication middleware** to protect sensitive endpoints and client creation workflow.
 
+# Day 7 – WireGuard Runtime Integration & Startup Sync
+
+## Summary
+
+Integrated real WireGuard peer management into the backend and implemented a startup synchronization mechanism to ensure VPN clients stored in the database are restored to the WireGuard interface when the server starts.
+
+## Development Implementation
+
+- Replaced mock key generation with real WireGuard CLI commands:
+  - `wg genkey` generates the private key
+  - `wg pubkey` derives the public key
+- Updated `utils/wireguard.js` to generate real WireGuard key pairs using the system `wg` command.
+- Created `wireguard.service.js`:
+  - `addPeer(publicKey, ipAddress)` adds a peer to the `wg0` interface.
+  - `removePeer(publicKey)` removes a peer from the interface.
+  - Used `execFileSync` instead of `execSync` to avoid shell injection vulnerabilities.
+- Integrated WireGuard peer management into the client lifecycle:
+  - When a client is created, the peer is immediately added to the WireGuard interface.
+  - When a client is deleted, the peer is removed from the interface.
+- Added error handling to maintain consistency:
+  - If adding a peer fails during client creation, the client record is removed from the database to prevent orphaned entries.
+- Created `wireguardSync.service.js`:
+  - Implements `syncWireGuardPeers()` to restore all database clients as peers in WireGuard.
+  - Iterates through stored clients and re-adds them to the running WireGuard configuration.
+- Integrated startup synchronization into `server.js`:
+  - `syncWireGuardPeers()` runs when the server starts to rebuild the WireGuard runtime state.
+
+## Issues Encountered
+
+- Avoided using `Array.forEach()` with async operations because it does not await Promises properly.
+- Replaced it with `for...of` loops to ensure sequential peer synchronization.
+- Ensured that errors from WireGuard CLI commands are caught and logged to prevent server crashes.
+
+## Result
+
+- Backend now manages WireGuard peers directly via the system `wg` interface.
+- Clients created through the API are automatically activated on the VPN server.
+- Implemented startup synchronization to rebuild the WireGuard runtime configuration from the database after server restarts.
+- Improved reliability and security of peer management by using safe process execution and structured error handling.
+- Ready to implement **`GET /clients/:id/config`** to allow clients to re-download their configuration files.
+
 ---
 
 ## Future Improvements

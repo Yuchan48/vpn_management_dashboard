@@ -8,9 +8,17 @@ const { getNextAvailableIp } = require("../utils/ipAllocator");
 
 const { generateKeyPair } = require("../utils/wireguard");
 
-const { addPeer, removePeer } = require("../services/wireguard.service");
+const {
+  addPeer,
+  removePeer,
+  getWireGuardPeers,
+} = require("../services/wireguard.service");
 
-exports.createClient = async (req, res, next) => {
+const { mapClientToStatus } = require("../utils/clientStatus");
+
+const {syncWireGuardPeers} = require("../services/wireguardSync.service");
+
+async function createClient(req, res, next) {
   try {
     // Validate that the request body contains a 'name' property, which is required to create a new client.
     if (!req.body || !req.body.name) {
@@ -67,9 +75,9 @@ exports.createClient = async (req, res, next) => {
     console.error("Error creating client:", error);
     next(error);
   }
-};
+}
 
-exports.getAllClients = async (req, res, next) => {
+async function getAllClients(req, res, next) {
   try {
     // Call the service function to retrieve all clients from the database. The service will return an array of client objects, which we then send back as a JSON response.
     const clients = await clientService.getAllClients();
@@ -77,9 +85,9 @@ exports.getAllClients = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-exports.deleteClient = async (req, res, next) => {
+async function deleteClient(req, res, next) {
   try {
     const client = await clientService.getClientById(req.params.id);
     if (!client) {
@@ -100,10 +108,10 @@ exports.deleteClient = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Generates a new .conf file for the client with the updated configuration.
-exports.getClientConfig = async (req, res, next) => {
+async function getClientConfig(req, res, next) {
   try {
     const client = await clientService.getClientById(req.params.id);
     if (!client) {
@@ -151,4 +159,49 @@ exports.getClientConfig = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+}
+
+// Return a single client status with its connection status
+async function getClientStatus(req, res, next) {
+  try {
+    const clientId = req.params.id;
+    const client = await clientService.getClientById(clientId);
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    // Get the list of peers from the WireGuard interface to check if the client is currently connected.
+    const peers = await getWireGuardPeers();
+
+    const clientStatus = mapClientToStatus(client, peers);
+
+    res.status(200).json(clientStatus);
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Return all clients with status
+async function getAllClientsStatus(req, res, next) {
+  try {
+    const clients = await clientService.getAllClients();
+    const peers = await getWireGuardPeers();
+
+    const clientsStatus = clients.map((client) =>
+      mapClientToStatus(client, peers)
+    );
+
+    res.status(200).json(clientsStatus);
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = {
+  createClient,
+  getAllClients,
+  deleteClient,
+  getClientConfig,
+  getClientStatus,
+  getAllClientsStatus,
 };

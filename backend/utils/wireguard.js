@@ -39,14 +39,17 @@ module.exports = {
 This is for production. You need to make sure that the wirecard tools are installed on your server and use them to generate keys securely. You can use the child_process module to call the wg genkey and wg pubkey commands.
 */
 
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 
 function generateKeyPair() {
   // wg genkey generates a private key
-  const privateKey = execSync("wg genkey", { encoding: "utf-8" }).trim();
+  const privateKey = execFileSync("wg", ["genkey"], {
+    encoding: "utf-8",
+  }).trim();
 
   // wg pubkey generates the corresponding public key from the private key
-  const publicKey = execSync("wg pubkey", {
+  const publicKey = execFileSync("wg", ["pubkey"], {
+    input: privateKey,
     encoding: "utf-8",
   }).trim();
   return { publicKey, privateKey };

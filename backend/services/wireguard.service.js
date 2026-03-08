@@ -1,12 +1,23 @@
 // use an array argument with execFileSync to avoid shell injection vulnerabilities instead of using execSync with a string command.
 const { execFileSync } = require("child_process");
+const { get } = require("http");
+
+require("dotenv").config();
 
 // add a peer to the WireGuard configuration
 function addPeer(publicKey, allowedIPs) {
   // wg set command to add a peer with the specified public key and allowed IPs
   execFileSync(
-    "wg",
-    ["set", "wg0", "peer", publicKey, "allowed-ips", `${allowedIPs}/32`],
+    "sudo",
+    [
+      "wg",
+      "set",
+      process.env.WG_INTERFACE,
+      "peer",
+      publicKey,
+      "allowed-ips",
+      `${allowedIPs}/32`,
+    ],
     {
       encoding: "utf-8",
     },
@@ -16,12 +27,43 @@ function addPeer(publicKey, allowedIPs) {
 // remove a peer from the WireGuard configuration
 function removePeer(publicKey) {
   // wg set command to remove a peer with the specified public key
-  execFileSync("wg", ["set", "wg0", "peer", publicKey, "remove"], {
+  execFileSync(
+    "sudo",
+    ["wg", "set", process.env.WG_INTERFACE, "peer", publicKey, "remove"],
+    {
+      encoding: "utf-8",
+    },
+  );
+}
+
+async function getWireGuardPeers() {
+  const wgInterface = process.env.WG_INTERFACE || "wg0";
+  // wg show command to get the current WireGuard configuration in JSON format
+  const output = execFileSync("sudo", ["wg", "show", wgInterface, "dump"], {
     encoding: "utf-8",
   });
+
+  // parse the output and extract peer information
+  const lines = output.trim().split("\n");
+  const peers = [];
+
+  // Split the output into lines. Skip the first line(the interface header)
+  for (let i = 1; i < lines.length; i++) {
+    const [publicKey, endpoint, allowedIPs, latestHandshake, ...rest] =
+      lines[i].split("\t");
+    peers.push({
+      publicKey,
+      endpoint,
+      allowedIPs,
+      latestHandshake: parseInt(latestHandshake, 10),
+    });
+  }
+
+  return peers;
 }
 
 module.exports = {
   addPeer,
   removePeer,
+  getWireGuardPeers,
 };

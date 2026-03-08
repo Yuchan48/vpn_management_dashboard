@@ -15,6 +15,10 @@ router.delete("/:id", clientController.deleteClient);
 
 router.get("/:id/config", clientController.getClientConfig);
 
+router.get("/:id/status", clientController.getClientStatus);
+
+router.get("/status", clientController.getAllClientsStatus);
+
 module.exports = router;
 
 /*

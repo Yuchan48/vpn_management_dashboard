@@ -8,11 +8,7 @@ const { getNextAvailableIp } = require("../utils/ipAllocator");
 
 const { generateKeyPair } = require("../utils/wireguard");
 
-const {
-  addPeer,
-  removePeer,
-  getWireGuardPeers,
-} = require("../services/wireguard.service");
+const wireguardService = require("../services/wireguard.service");
 
 const { mapClientToStatus } = require("../utils/clientStatus");
 
@@ -47,7 +43,7 @@ async function createClient(req, res, next) {
 
     // Add the new client as a peer to the WireGuard interface
     try {
-      await addPeer(publicKey, ipAddress);
+      await wireguardService.addPeer(publicKey, ipAddress);
 
       // Sync all peers in case anything got out of sync
       await syncWireGuardPeers();
@@ -99,7 +95,7 @@ async function deleteClient(req, res, next) {
 
     // Remove the client as a peer from the WireGuard interface
     try {
-      await removePeer(client.public_key);
+      await wireguardService.removePeer(client.public_key);
     } catch (wgError) {
       console.error("Error removing peer from WireGuard:", wgError);
     }
@@ -131,7 +127,7 @@ async function getClientConfig(req, res, next) {
 
     // Remove the old peer configuration from the WireGuard interface using the client's existing public key before updating it with the new key pair.
     try {
-      await removePeer(client.public_key); // Remove the old peer configuration
+      await wireguardService.removePeer(client.public_key); // Remove the old peer configuration
     } catch (wgError) {
       console.error("Error removing old peer from WireGuard:", wgError);
       return res
@@ -144,7 +140,7 @@ async function getClientConfig(req, res, next) {
 
     // Add the new peer configuration with the updated public key to the WireGuard interface.
     try {
-      await addPeer(publicKey, client.ip_address); // Add the new peer configuration with the updated public key
+      await wireguardService.addPeer(publicKey, client.ip_address); // Add the new peer configuration with the updated public key
     } catch (wgError) {
       console.error("Error adding new peer to WireGuard:", wgError);
       return res
@@ -177,7 +173,7 @@ async function getClientStatus(req, res, next) {
     }
 
     // Get the list of peers from the WireGuard interface to check if the client is currently connected.
-    const peers = await getWireGuardPeers();
+    const peers = await wireguardService.getWireGuardPeers();
 
     const clientStatus = mapClientToStatus(client, peers);
 
@@ -191,7 +187,7 @@ async function getClientStatus(req, res, next) {
 async function getAllClientsStatus(req, res, next) {
   try {
     const clients = await clientService.getAllClients();
-    const peers = await getWireGuardPeers();
+    const peers = await wireguardService.getWireGuardPeers();
 
     const clientsStatus = clients.map((client) =>
       mapClientToStatus(client, peers),

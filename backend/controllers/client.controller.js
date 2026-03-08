@@ -101,3 +101,54 @@ exports.deleteClient = async (req, res, next) => {
     next(error);
   }
 };
+
+// Generates a new .conf file for the client with the updated configuration.
+exports.getClientConfig = async (req, res, next) => {
+  try {
+    const client = await clientService.getClientById(req.params.id);
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    // generate a new WireGuard key pair for the client.
+    let { publicKey, privateKey } = await generateKeyPair();
+    publicKey = publicKey.trim();
+    privateKey = privateKey.trim();
+
+    // Remove the old peer configuration from the WireGuard interface using the client's existing public key before updating it with the new key pair.
+    try {
+      await removePeer(client.public_key); // Remove the old peer configuration
+    } catch (wgError) {
+      console.error("Error removing old peer from WireGuard:", wgError);
+      return res
+        .status(500)
+        .json({ error: "Failed to remove old peer from WireGuard interface" });
+    }
+
+    // Update the client's public key in the database to reflect the new key pair.
+    await clientService.updateClientPublicKey(client.id, publicKey);
+
+    // Add the new peer configuration with the updated public key to the WireGuard interface.
+    try {
+      await addPeer(publicKey, client.ip_address); // Add the new peer configuration with the updated public key
+    } catch (wgError) {
+      console.error("Error adding new peer to WireGuard:", wgError);
+      return res
+        .status(500)
+        .json({ error: "Failed to add new peer to WireGuard interface" });
+    }
+
+    client.public_key = publicKey; // Update the client object with the new public key for generating the config.
+
+    // Generate a new .conf file content for the client with the updated public key and send it as a response, allowing the client to download the updated configuration.
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=client_${client.id}.conf`,
+    );
+    res.setHeader("Content-Type", "text/plain");
+
+    res.send(generateClientConfig(client, privateKey));
+  } catch (error) {
+    next(error);
+  }
+};

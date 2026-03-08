@@ -70,9 +70,25 @@ function deleteClient(id) {
   });
 }
 
+function updateClientPublicKey(id, newPublicKey) {
+  return new Promise((resolve, reject) => {
+    const query = "UPDATE clients SET public_key = ? WHERE id = ?";
+    db.run(query, [newPublicKey, id], function (err) {
+      if (err) {
+        reject(err);
+      } else if (this.changes === 0) {
+        reject(new Error("Client not found"));
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 module.exports = {
   createClient,
   getClientById,
   getAllClients,
   deleteClient,
+  updateClientPublicKey,
 };

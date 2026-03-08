@@ -16,7 +16,7 @@ const {
 
 const { mapClientToStatus } = require("../utils/clientStatus");
 
-const {syncWireGuardPeers} = require("../services/wireguardSync.service");
+const { syncWireGuardPeers } = require("../services/wireguardSync.service");
 
 async function createClient(req, res, next) {
   try {
@@ -48,6 +48,9 @@ async function createClient(req, res, next) {
     // Add the new client as a peer to the WireGuard interface
     try {
       await addPeer(publicKey, ipAddress);
+
+      // Sync all peers in case anything got out of sync
+      await syncWireGuardPeers();
     } catch (wgError) {
       console.error("Error adding peer to WireGuard:", wgError);
       // If adding the peer fails, we should clean up by deleting the client from the database to maintain consistency.
@@ -103,6 +106,9 @@ async function deleteClient(req, res, next) {
 
     // delete the client from the database.
     await clientService.deleteClient(req.params.id);
+
+    // Sync WireGuard peers after deletion
+    await syncWireGuardPeers();
 
     res.status(204).send();
   } catch (error) {
@@ -188,7 +194,7 @@ async function getAllClientsStatus(req, res, next) {
     const peers = await getWireGuardPeers();
 
     const clientsStatus = clients.map((client) =>
-      mapClientToStatus(client, peers)
+      mapClientToStatus(client, peers),
     );
 
     res.status(200).json(clientsStatus);

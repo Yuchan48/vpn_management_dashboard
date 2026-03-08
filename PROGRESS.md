@@ -293,6 +293,63 @@ Integrated real WireGuard peer management into the backend and implemented a sta
 - Improved reliability and security of peer management by using safe process execution and structured error handling.
 - Ready to implement **`GET /clients/:id/config`** to allow clients to re-download their configuration files.
 
+# Day 8 – WireGuard Peer Management & Client Status
+
+## Summary
+
+Implemented WireGuard peer management features, including client creation with dynamic configuration, deletion, and real-time status monitoring. Added automatic peer synchronization to maintain consistency between the database and the WireGuard interface.
+
+## Development Implementation
+
+- **WireGuard Peer Sync**
+  - Created `services/wireguardSync.service.js` with `syncWireGuardPeers()` to synchronize peers on server startup.
+  - Refactored `addPeer()` and `removePeer()` in `wireguard.service.js` to use `sudo` and dynamic interface from `process.env.WG_INTERFACE`.
+  - Ensured peers are correctly added/removed on client creation and deletion.
+
+- **Client Configuration Endpoint**
+  - Implemented `GET /clients/:id/config` in `client.controller.js`.
+  - Generates new WireGuard key pair in memory.
+  - Updates client public key in the database and WireGuard interface.
+  - Returns a downloadable `.conf` file with the updated configuration.
+
+- **Client Status Endpoints**
+  - `GET /clients/:id/status` – returns individual client’s connection status.
+  - `GET /clients/status` – returns all clients with connection status.
+  - Determined online/offline status using:
+    - WireGuard `latestHandshake` timestamp
+    - Endpoint state (`off` or active)
+  - Shared logic for calculating status to avoid code duplication.
+
+- **Controller & Service Enhancements**
+  - Added `clientService.updateClientPublicKey()` for key rotation.
+  - Ensured all client operations are reflected in both database and WireGuard interface.
+  - Centralized error handling and consistent HTTP responses.
+
+- **Key Migration**
+  - Migrated existing client keys using `scripts/migrateKeys.js`.
+  - Verified new keys work with WireGuard peers.
+  - Private keys never persisted in the database; only stored in memory temporarily for `.conf` download.
+
+- **Testing & Validation**
+  - Successfully tested all endpoints using Postman:
+    - Create, delete, retrieve config, list clients, get individual and all client statuses.
+  - Verified that WireGuard peer sync works on server startup, after client creation, and after deletion.
+  - Ensured proper permission handling and `sudo` usage for WireGuard commands on macOS (`utun` interface).
+
+## Issues Encountered
+
+- Initial permission errors when modifying WireGuard interface (`Permission denied`) on macOS.
+- Confusion between `wg0` and `utun` interface names; solved using `WG_INTERFACE` environment variable.
+- Parsing `wg show` output required careful handling of handshake timestamps and endpoint status.
+- Needed to refactor controller functions to unify module exports style (`module.exports`) and avoid redundant code.
+
+## Result
+
+- Backend fully supports dynamic WireGuard peer management.
+- Clients can be created, deleted, and monitored in real-time.
+- WireGuard configuration stays consistent with the database.
+- Ready for frontend integration to provide a full admin interface for client management.
+
 ---
 
 ## Future Improvements

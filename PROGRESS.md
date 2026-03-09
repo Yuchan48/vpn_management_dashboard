@@ -348,7 +348,37 @@ Implemented WireGuard peer management features, including client creation with d
 - Backend fully supports dynamic WireGuard peer management.
 - Clients can be created, deleted, and monitored in real-time.
 - WireGuard configuration stays consistent with the database.
-- Ready for frontend integration to provide a full admin interface for client management.
+
+# Day 9 – Unit Testing Services
+
+## Summary
+
+Added minimal unit tests for core backend services to ensure reliability and maintainability. Focused on testing `client.service.js` and `wireguard.service.js` without making actual system calls to WireGuard.
+
+## Development Implementation
+
+- **Client Service Tests**
+  - Created `__tests__/client.service.test.js` using Jest.
+  - Tested CRUD operations: `createClient`, `deleteClient`, `getClientById`, `getAllClients`, `updateClientPublicKey`.
+  - Used Jest mocks to isolate database operations.
+  - Verified proper handling of missing parameters and expected errors.
+
+- **WireGuard Service Tests**
+  - Created `__tests__/wireguard.service.test.js`.
+  - Mocked `addPeer`, `removePeer`, and `getWireGuardPeers` to avoid executing `wg` commands.
+  - Tested successful peer addition/removal and proper error handling.
+  - Ensured `getWireGuardPeers()` correctly parses peer data and handles empty states.
+
+- **Testing Strategy**
+  - Focused on **bare minimum coverage** to verify functionality without relying on real WireGuard or modifying the database.
+  - Allowed faster development and prevented accidental changes to live data.
+  - Ensured mocks and `jest.clearAllMocks()` prevent state leakage between tests.
+
+## Result
+
+- Core services now have automated tests for basic functionality.
+- Unit tests provide confidence for future backend changes.
+- Tests run quickly and safely without requiring elevated permissions or real WireGuard interfaces.
 
 ---
 

@@ -1,51 +1,9 @@
-/*
-- Configure middleware
-- Mount routes
-- Start the server
-*/
-
-const express = require("express");
-
-require("dotenv").config();
-const cors = require("cors");
-const app = express();
+const app = require("./app");
 const port = process.env.PORT || 5500;
-
-const errorHandler = require("./middleware/error.middleware");
-const authenticateToken = require("./middleware/auth.middleware");
-const requireAdmin = require("./middleware/requireAdmin");
 
 const { syncWireGuardPeers } = require("./services/wireguardSync.service");
 
-const clientRoutes = require("./routes/client.routes");
-const authRoutes = require("./routes/auth.routes");
-
-app.use(express.json());
-
-// Mount routes at /clients
-app.use("/clients", authenticateToken, requireAdmin, clientRoutes);
-// Mount auth routes at /auth
-app.use("/api/auth", authRoutes);
-
-/*
-Request flow:
-HTTP Request → /clients (router) → client.controller → client.service → SQLite db
-*/
-
-app.use(
-  cors({
-    origin: process.env.REACT_APP_FRONTEND_URL,
-    credentials: true,
-  }),
-);
-
-app.get("/status", (req, res) => {
-  res.json({ status: "Running", timestamp: new Date().toISOString() });
-});
-
-// Error handling middleware. This should be after all routes to catch any errors that occur in the route handlers.
-app.use(errorHandler);
-
+// Start the server and sync WireGuard peers on startup
 app.listen(port, async () => {
   console.log(`Server is running on http://localhost:${port}`);
   await syncWireGuardPeers();

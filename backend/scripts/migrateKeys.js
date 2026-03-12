@@ -19,7 +19,6 @@ async function migrateKeys() {
       await clientService.updateClientPublicKey(
         client.id,
         publicKey,
-        privateKey,
       );
 
       console.log(`Client ${client.id} - ${client.name}`);

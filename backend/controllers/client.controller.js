@@ -39,6 +39,7 @@ async function createClient(req, res, next) {
       name: req.body.name,
       publicKey,
       ipAddress,
+      userId: req.user.id,
     });
 
     // Add the new client as a peer to the WireGuard interface
@@ -50,7 +51,10 @@ async function createClient(req, res, next) {
     } catch (wgError) {
       console.error("Error adding peer to WireGuard:", wgError);
       // If adding the peer fails, we should clean up by deleting the client from the database to maintain consistency.
-      await clientService.deleteClient(client.id);
+      await clientService.deleteClient({
+        clientId: client.id,
+        user: req.user,
+      });
       return res
         .status(500)
         .json({ error: "Failed to add peer to WireGuard interface" });
@@ -86,12 +90,22 @@ async function getAllClients(req, res, next) {
   }
 }
 
+// get clients of the authenticated user
+async function getUserClients(req, res, next) {
+  try {
+    const clients = await clientService.getClientsByUserId(req.user.id);
+    res.json(clients);
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function deleteClient(req, res, next) {
   try {
-    const client = await clientService.getClientById(req.params.id);
-    if (!client) {
-      return res.status(404).json({ error: "Client not found" });
-    }
+    const client = await clientService.getClientById({
+      clientId: req.params.id,
+      user: req.user,
+    });
 
     // Remove the client as a peer from the WireGuard interface
     try {
@@ -101,7 +115,10 @@ async function deleteClient(req, res, next) {
     }
 
     // delete the client from the database.
-    await clientService.deleteClient(req.params.id);
+    await clientService.deleteClient({
+      clientId: req.params.id,
+      user: req.user,
+    });
 
     // Sync WireGuard peers after deletion
     await syncWireGuardPeers();
@@ -115,10 +132,10 @@ async function deleteClient(req, res, next) {
 // Generates a new .conf file for the client with the updated configuration.
 async function getClientConfig(req, res, next) {
   try {
-    const client = await clientService.getClientById(req.params.id);
-    if (!client) {
-      return res.status(404).json({ error: "Client not found" });
-    }
+    const client = await clientService.getClientById({
+      clientId: req.params.id,
+      user: req.user,
+    });
 
     // generate a new WireGuard key pair for the client.
     let { publicKey, privateKey } = await generateKeyPair();
@@ -167,10 +184,10 @@ async function getClientConfig(req, res, next) {
 async function getClientStatus(req, res, next) {
   try {
     const clientId = req.params.id;
-    const client = await clientService.getClientById(clientId);
-    if (!client) {
-      return res.status(404).json({ error: "Client not found" });
-    }
+    const client = await clientService.getClientById({
+      clientId,
+      user: req.user,
+    });
 
     // Get the list of peers from the WireGuard interface to check if the client is currently connected.
     const peers = await wireguardService.getWireGuardPeers();
@@ -187,6 +204,7 @@ async function getClientStatus(req, res, next) {
 async function getAllClientsStatus(req, res, next) {
   try {
     const clients = await clientService.getAllClients();
+
     const peers = await wireguardService.getWireGuardPeers();
 
     const clientsStatus = clients.map((client) =>
@@ -202,6 +220,7 @@ async function getAllClientsStatus(req, res, next) {
 module.exports = {
   createClient,
   getAllClients,
+  getUserClients,
   deleteClient,
   getClientConfig,
   getClientStatus,

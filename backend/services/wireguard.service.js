@@ -2,8 +2,6 @@
 const { execFileSync } = require("child_process");
 const { get } = require("http");
 
-require("dotenv").config();
-
 // add a peer to the WireGuard configuration
 function addPeer(publicKey, allowedIPs) {
   // wg set command to add a peer with the specified public key and allowed IPs

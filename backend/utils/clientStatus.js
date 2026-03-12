@@ -27,6 +27,7 @@ function mapClientToStatus(client, peers) {
     allowedIPs: client.ip_address + "/32",
     endpoint: peer ? peer.endpoint : "not configured",
     status: isOnline,
+    userId: client.user_id,
   };
 }
 

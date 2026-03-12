@@ -12,8 +12,8 @@ async function createAdmin() {
 
   db.run(
     // Use a parameterized query to prevent SQL injection
-    `INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)`,
-    [username, hashedPassword, "admin"],
+    `INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, ?)`,
+    [1, username, hashedPassword, "admin"],
     (error) => {
       if (error) {
         // Check if the error is due to a UNIQUE constraint violation (i.e., user already exists)

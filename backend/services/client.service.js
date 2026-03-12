@@ -1,11 +1,11 @@
 const db = require("../database/db");
 
 // Create a client in the database.
-async function createClient({ name, publicKey, ipAddress }) {
+async function createClient({ name, publicKey, ipAddress, userId }) {
   return new Promise((resolve, reject) => {
-    const query = `INSERT INTO clients (name, public_key, ip_address) VALUES (?, ?, ?)`;
+    const query = `INSERT INTO clients (name, public_key, ip_address, user_id) VALUES (?, ?, ?, ?)`;
 
-    db.run(query, [name, publicKey, ipAddress], function (err) {
+    db.run(query, [name, publicKey, ipAddress, userId], function (err) {
       if (err) {
         reject(err);
       } else {
@@ -15,6 +15,7 @@ async function createClient({ name, publicKey, ipAddress }) {
           name,
           public_key: publicKey,
           ip_address: ipAddress,
+          user_id: userId,
         });
       }
     });
@@ -22,11 +23,15 @@ async function createClient({ name, publicKey, ipAddress }) {
 }
 
 // Get a client by ID from the database.
-async function getClientById(id) {
+async function getClientById({ clientId, user }) {
   return new Promise((resolve, reject) => {
-    const query = "SELECT * FROM clients WHERE id = ?";
+    const query =
+      user.role === "admin"
+        ? "SELECT * FROM clients WHERE id = ?"
+        : "SELECT * FROM clients WHERE id = ? AND user_id = ?";
 
-    db.get(query, [id], (err, row) => {
+    const params = user.role === "admin" ? [clientId] : [clientId, user.id];
+    db.get(query, params, (err, row) => {
       // The id parameter is passed as an array to prevent SQL injection. As SQLite treats [id] as data, and not SQL code.
       if (err) {
         reject(err);
@@ -52,12 +57,29 @@ async function getAllClients() {
     });
   });
 }
+// Returns an array of all client objects associated with a specific user ID from the database.
+async function getClientsByUserId(userId) {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT * FROM clients WHERE user_id = ? ORDER BY id";
+    db.all(query, [userId], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows); // rows is an array of client objects associated with the given user ID
+      }
+    });
+  });
+}
 
 // Delete a client by ID from the database.
-function deleteClient(id) {
+function deleteClient({ clientId, user }) {
   return new Promise((resolve, reject) => {
-    const query = "DELETE FROM clients WHERE id = ?";
-    db.run(query, [id], function (err) {
+    const query =
+      user.role === "admin"
+        ? "DELETE FROM clients WHERE id = ?"
+        : "DELETE FROM clients WHERE id = ? AND user_id = ?";
+    const params = user.role === "admin" ? [clientId] : [clientId, user.id];
+    db.run(query, params, function (err) {
       if (err) {
         reject(err);
       } else if (this.changes === 0) {
@@ -89,6 +111,7 @@ module.exports = {
   createClient,
   getClientById,
   getAllClients,
+  getClientsByUserId,
   deleteClient,
   updateClientPublicKey,
 };

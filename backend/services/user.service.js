@@ -123,6 +123,20 @@ async function getAllUsers() {
   });
 }
 
+// Get current user info by ID
+async function getUserById(userId) {
+  return new Promise((resolve, reject) => {
+    db.get(
+      "SELECT id, username, role, created_at FROM users WHERE id = ?",
+      [userId],
+      (err, row) => {
+        if (err) return reject(err);
+        resolve(row);
+      },
+    );
+  });
+}
+
 async function deleteUser(requestingUser, targetUserId) {
   // Prevent deletion of the initial admin user (id 1)
   if (targetUserId === 1) {
@@ -163,9 +177,55 @@ async function deleteUser(requestingUser, targetUserId) {
   });
 }
 
+async function changePassword(user, currentPassword, newPassword) {
+  return new Promise((resolve, reject) => {
+    db.get(
+      "SELECT password_hash FROM users WHERE id = ?",
+      [user.id],
+      async (err, row) => {
+        if (err) {
+          return reject(err);
+        } else if (!row) {
+          return reject(new Error("User not found."));
+        } else {
+          const passwordMatch = await bcrypt.compare(
+            currentPassword,
+            row.password_hash,
+          );
+          if (!passwordMatch) {
+            return reject(new Error("Current password is incorrect."));
+          } else {
+            const newHashedPassword = await bcrypt.hash(newPassword, 10);
+            db.run(
+              "UPDATE users SET password_hash = ? WHERE id = ?",
+              [newHashedPassword, user.id],
+              function (err) {
+                if (err) {
+                  return reject(err);
+                } else if (this.changes === 0) {
+                  return reject(
+                    new Error("User not found or password not updated."),
+                  );
+                } else {
+                  console.log(
+                    `Password for user with ID ${user.id} updated successfully`,
+                  );
+                  resolve();
+                }
+              },
+            );
+          }
+        }
+      },
+    );
+  });
+}
+
 module.exports = {
   createUser,
   createAdmin,
   getAllUsers,
+  getUserById,
   deleteUser,
+  changePassword,
 };

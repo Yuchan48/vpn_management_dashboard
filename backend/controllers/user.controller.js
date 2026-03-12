@@ -1,4 +1,8 @@
 const userService = require("../services/user.service.js");
+const {
+  validateUsername,
+  validatePassword,
+} = require("../utils/inputValidators.js");
 
 async function createUser(req, res, next) {
   try {
@@ -10,6 +14,9 @@ async function createUser(req, res, next) {
         .json({ error: "Username and password are required" });
     }
 
+    validateUsername(username);
+    validatePassword(password);
+
     const user = await userService.createUser(username, password);
     res.status(201).json(user);
   } catch (error) {
@@ -20,6 +27,9 @@ async function createUser(req, res, next) {
 async function createAdmin(req, res, next) {
   try {
     const { username, password } = req.body;
+
+    validateUsername(username);
+    validatePassword(password);
 
     if (!username || !password) {
       return res
@@ -57,9 +67,43 @@ async function deleteUser(req, res, next) {
   }
 }
 
+// Change own password. User must provide current password for verification, and new password.
+async function changePassword(req, res, next) {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ error: "Both current password and new password are required" });
+    }
+
+    validatePassword(newPassword);
+
+    await userService.changePassword(req.user, currentPassword, newPassword);
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getCurrentUser(req, res, next) {
+  try {
+    const user = await userService.getUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   createUser,
   createAdmin,
   getAllUsers,
   deleteUser,
+  changePassword,
+  getCurrentUser,
 };

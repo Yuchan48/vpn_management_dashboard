@@ -18,4 +18,11 @@ router.get("/", requireAdmin, userController.getAllUsers);
 // Delete a user by ID
 router.delete("/:id", requireAdmin, userController.deleteUser);
 
+/* User routes */
+// Change own password
+router.patch("/me/password", userController.changePassword);
+
+// Get current user info
+router.get("/me", userController.getCurrentUser);
+
 module.exports = router;

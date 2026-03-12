@@ -1,24 +1,4 @@
-/*
-IP Address Allocation Logic to assign unique VPN IPs for each client.
-
-Example VPN subnet:
-10.0.0.0/24
-
-Server might be:
-10.0.0.1
-
-Clients:
-10.0.0.2
-10.0.0.3
-10.0.0.4
-...
-
-It should:
-- Find highest assigned IP
-- Return next one
-
-*/
-
+// return the next available IP address in the subnet based on the clients
 function getNextAvailableIp(clients) {
   const baseIp = "10.0.0.";
 

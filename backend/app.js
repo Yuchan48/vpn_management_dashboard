@@ -6,12 +6,10 @@ const app = express();
 
 const errorHandler = require("./middleware/error.middleware");
 const authenticateToken = require("./middleware/auth.middleware");
-const requireAdmin = require("./middleware/requireAdmin");
-
-const { syncWireGuardPeers } = require("./services/wireguardSync.service");
 
 const clientRoutes = require("./routes/client.routes");
 const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes");
 
 // Configure middleware
 app.use(express.json());
@@ -24,9 +22,11 @@ app.use(
 );
 
 // Mount routes at /clients
-app.use("/clients", authenticateToken, requireAdmin, clientRoutes);
+app.use("/clients", authenticateToken, clientRoutes);
 // Mount auth routes at /auth
 app.use("/api/auth", authRoutes);
+
+app.use("/users", authenticateToken, userRoutes);
 
 // Status endpoint for client status checks
 app.get("/status", (req, res) => {

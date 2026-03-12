@@ -23,21 +23,28 @@ function authenticateToken(req, res, next) {
   }
 
   // Verify the token
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      console.log("JWT ERROR:", err.message);
-      return res.status(401).json({ error: "Invalid token" });
-    }
+  jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    { issuer: "personal-vpn-backend" },
+    (err, user) => {
+      if (err) {
+        console.log("JWT ERROR:", err.message);
+        return res.status(401).json({ error: "Invalid token" });
+      }
 
-    // console.log("Decoded token: ", user); // debugging purpose
+      // console.log("Decoded token: ", user); // debugging purpose
 
-    // Attach user info to the request object for use in route handlers
-    req.userId = user.sub;
-    req.userRole = user.role;
+      // Attach user info to the request object for use in route handlers
+      req.user = {
+        id: user.sub,
+        role: user.role,
+      };
 
-    // Proceed to the route handler
-    next();
-  });
+      // Proceed to the route handler
+      next();
+    },
+  );
 }
 
 module.exports = authenticateToken;

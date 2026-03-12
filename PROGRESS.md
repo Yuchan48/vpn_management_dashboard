@@ -380,6 +380,104 @@ Added minimal unit tests for core backend services to ensure reliability and mai
 - Unit tests provide confidence for future backend changes.
 - Tests run quickly and safely without requiring elevated permissions or real WireGuard interfaces.
 
+# Day 10 – Role-Based Access & User Ownership
+
+## Summary
+
+Implemented role-based access and user ownership for VPN clients. Regular users can only manage their own clients, while admins retain full access. Added user management endpoints, improved authentication with JWT, and ensured client operations integrate correctly with WireGuard peer management.
+
+## Development Implementation
+
+- **Client Ownership**
+  - Linked each client to a `user_id`.
+  - Added `getClientsByUserId(userId)` service to retrieve clients by owner.
+  - Implemented `GET /clients/me` endpoint to return authenticated user’s clients.
+  - Updated client creation and deletion to enforce ownership rules.
+  - Added database index for faster lookups:
+    `CREATE INDEX IF NOT EXISTS idx_clients_user_id ON clients(user_id)`.
+
+- **User & Admin Management**
+  - Moved `createUser` logic into `user.service.js` and `user.controller.js`.
+  - Added endpoints:
+    - `POST /users/user` – create regular users (IDs 2–16, max 15 users).
+    - `POST /users/admin` – create admin users (IDs ≥17).
+  - Passwords hashed using bcrypt.
+
+- **Authentication**
+  - Implemented JWT authentication middleware.
+  - `loginUser` validates credentials and returns token containing user `id` and `role`.
+  - Middleware attaches authenticated user info to `req.user`.
+  - Added dummy bcrypt comparison to prevent timing attacks.
+
+- **WireGuard Integration**
+  - Updated client creation to assign ownership and add peer to WireGuard.
+  - `.conf` files continue to be generated dynamically with keys stored only in memory.
+  - Existing peer sync logic maintained consistency between database and WireGuard interface.
+
+- **Validation & Testing**
+  - Verified `/clients/me` returns only the user’s clients.
+  - Confirmed admins can access all clients and statuses.
+  - Tested client creation, deletion, config download, and status endpoints with ownership enforcement.
+
+## Issues Encountered
+
+- Needed to refactor service logic to enforce ownership without affecting admin access.
+- JWT payload required both `id` and `role` for role-based authorization.
+- Adjustments were needed to ensure WireGuard peer synchronization worked with user-owned clients.
+
+## Result
+
+- Backend now supports multi-user VPN management with role-based access.
+- Users manage their own clients, while admins have full system visibility.
+- Authentication, client management, and WireGuard integration work consistently with ownership enforcement.
+
+# Day 11 – User Profile, Password Management & Validation
+
+## Summary
+
+Added input validation, user profile retrieval, and secure password change. Improved database reliability with cascade deletes, added indexes, and validated environment variables. Enhances backend security, stability, and frontend usability.
+
+## Development Implementation
+
+- **Input Validation**
+  - `utils/inputValidators.js` centralizes validation.
+  - `validateUsername()` – min 3 chars, letters, numbers, `_`, `-`.
+  - `validatePassword()` – min 8 chars.
+  - Used in `createUser`, `createAdmin`, and `changePassword`.
+
+- **Change Password**
+  - Endpoint: `PATCH /users/me/password`.
+  - Validates current password, hashes new password with bcrypt.
+  - Returns success message on update.
+
+- **Current User Endpoint**
+  - `GET /users/me` returns `id`, `username`, `role`, `created_at`.
+  - Enables frontend profile display and role-based UI.
+
+- **Environment Variable Validation**
+  - `utils/envValidator.js` checks required vars on startup: `JWT_SECRET`, `SERVER_PUBLIC_KEY`, `SERVER_ENDPOINT`, `DNS_SERVER`, `VPN_SUBNET_MASK`.
+  - Server exits if any are missing.
+
+- **Database Improvements**
+  - Added index on `clients.public_key` for performance.
+  - Cascade deletes fixed with `PRAGMA foreign_keys = ON`.
+
+- **Testing**
+  - Verified `/users/me` and `/users/me/password`.
+  - Confirmed authentication, validation, and cascade deletes work correctly.
+
+## Issues Encountered
+
+- Enabling cascade deletes required SQLite foreign key enforcement.
+- Password change logic needed careful validation.
+- Missing environment variables caused startup failures without validation.
+
+## Result
+
+- Backend supports user profile retrieval and secure password updates.
+- Input validation and environment checks improve stability.
+- System is ready for frontend integration with profile, password, and role-based features.
+
 ---
 
 ## Future Improvements

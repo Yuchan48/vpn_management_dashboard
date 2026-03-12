@@ -21,6 +21,13 @@ const db = new sqlite3.Database(dbPath, (err) => {
   } else {
     console.log("Connected to the SQLite database.");
 
+    // Enable foreign key constraints
+    db.run("PRAGMA foreign_keys = ON", (err) => {
+      if (err) {
+        console.error("Failed to enable foreign keys:", err.message);
+      }
+    });
+
     // Read SQL schema from file
     const schema = fs.readFileSync(schemaPath, "utf-8");
 

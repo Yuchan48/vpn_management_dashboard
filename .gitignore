@@ -53,6 +53,12 @@ frontend/build/
 frontend/.env
 frontend/roadmap.txt
 
+frontend/frontend/*
+
+/frontend/dist/
+/frontend/.env.local
+/frontend/.env.*.local
+
 # ===============================
 # Scripts Folder
 # ===============================

@@ -9,6 +9,7 @@ const ChangePassword = () => {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
@@ -35,6 +36,7 @@ const ChangePassword = () => {
                   type={showCurrent ? "text" : "password"}
                   required
                   autoComplete="current-password"
+                  disabled={isLoading}
                   className="block w-full border-1 border-gray-500 rounded-md bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
@@ -67,6 +69,7 @@ const ChangePassword = () => {
                   type={showNew ? "text" : "password"}
                   required
                   autoComplete="new-password"
+                  disabled={isLoading}
                   className="block w-full border-1 border-gray-500 rounded-md bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -99,6 +102,7 @@ const ChangePassword = () => {
                   type={showConfirm ? "text" : "password"}
                   required
                   autoComplete="new-password"
+                  disabled={isLoading}
                   className="block w-full border-1 border-gray-500 rounded-md bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -120,7 +124,10 @@ const ChangePassword = () => {
             <div className="mt-6">
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-700 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                disabled={isLoading}
+                className="flex w-full justify-center rounded-md bg-indigo-700 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500
+                disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400
+                "
               >
                 Change Password
               </button>
@@ -128,7 +135,7 @@ const ChangePassword = () => {
           </form>
           <a
             href="/login"
-            className="block mt-4 text-center text-sm/6 font-semibold text-indigo-700 hover:text-indigo-500"
+            className={`block mt-4 text-center text-base/6 font-semibold ${isLoading ? "text-gray-400 pointer-events-none cursor-not-allowed" : "text-indigo-700 hover:text-indigo-500"}`}
           >
             Back to Login
           </a>

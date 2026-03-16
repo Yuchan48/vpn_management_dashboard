@@ -1,47 +1,74 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import EyeIcon from "../components/icons/EyeIcon";
 import EyeOffIcon from "../components/icons/EyeOffIcon";
+
+import { validateUsername, validatePassword } from "../utils/inputValidators";
+import { login } from "../services/authService";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     // prevents the page reloading on form submission
     event.preventDefault();
+
+    // validate username and password
+    if (!username || !password) {
+      setError("Please enter both username and password.");
+      return;
+    }
+
+    const usernameError = validateUsername(username);
+    const passwordError = validatePassword(password);
+
+    if (usernameError || passwordError) {
+      setError(usernameError || passwordError);
+      return;
+    }
+
     try {
       setIsLoading(true);
 
-      // Simulate an API call for login. Replace this with your actual login logic.
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      console.log("Login submitted:", { username, password });
+      // Call the login API
+      const data = await login(username, password);
+
+      // Navigate to the dashboard and pass the token in state
+      navigate("/dashboard", { state: { token: data.token } });
+    } catch (err) {
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="bg-gray-300 px-10 py-20 rounded-lg shadow-lg">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mx-auto w-[280px] text-center">
           <h2 className="text-center text-2xl/9 font-bold tracking-tight text-gray-800">
             Sign in to your account
           </h2>
+          {/* Error message */}
+          <div className="w-full text-center text-sm text-red-600 overflow-hidden">
+            {error || "\u00A0"}
+          </div>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
           <form
             action="#"
             method="POST"
             className="space-y-3 text-gray-900"
             onSubmit={handleSubmit}
           >
+            {/* Username input */}
             <div>
               <label htmlFor="email" className="block text-sm/6 font-medium ">
                 Username
@@ -53,12 +80,15 @@ const LoginPage = () => {
                   type="text"
                   required
                   disabled={isLoading}
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
                   autoComplete="username"
                   className="block w-full rounded-md border-1 border-gray-500 bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10  focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                 />
               </div>
             </div>
 
+            {/* Password input */}
             <div>
               <div className="flex items-center justify-between">
                 <label
@@ -78,7 +108,7 @@ const LoginPage = () => {
                   autoComplete="current-password"
                   className="block w-full rounded-md border-1 border-gray-500 bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   value={password}
-                  onChange={handlePasswordChange}
+                  onChange={(event) => setPassword(event.target.value)}
                 />
                 <button
                   type="button"
@@ -93,7 +123,7 @@ const LoginPage = () => {
                 </button>
               </div>
             </div>
-
+            {/* Submit Button */}
             <div className="mt-6">
               <button
                 type="submit"
@@ -106,7 +136,7 @@ const LoginPage = () => {
               </button>
             </div>
           </form>
-
+          {/* Go to the change password screen */}
           <a
             href="/change-password"
             className={`block mt-4 text-center text-base/6 font-semibold ${isLoading ? "text-gray-400 pointer-events-none cursor-not-allowed" : "text-indigo-700 hover:text-indigo-500"}`}

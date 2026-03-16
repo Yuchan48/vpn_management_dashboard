@@ -478,6 +478,51 @@ Added input validation, user profile retrieval, and secure password change. Impr
 - Input validation and environment checks improve stability.
 - System is ready for frontend integration with profile, password, and role-based features.
 
+# Day 12 – Frontend Login Page Implementation
+
+## Summary
+
+Implemented LoginPage in Vite + React with TailwindCSS. Integrated backend authentication, token storage, form validation, loading states, error display, and protected dashboard route. Frontend is ready for Change Password and client management.
+
+## Development Implementation
+
+- **Project Setup**
+  - Migrated from CRA to Vite; Tailwind configured via `@import "tailwindcss";`.
+  - `.env` variable `VITE_API_BASE_URL` for backend.
+  - Folder structure:
+    ```
+    src/
+      components/icons/ → EyeIcon, EyeOffIcon
+      pages/            → LoginPage, Dashboard, ChangePassword
+      routes/           → ProtectedRoute
+      services/         → authService.js
+      utils/            → auth.js, inputValidators.js
+    ```
+
+- **LoginPage.jsx**
+  - Controlled inputs for username/password; toggle show/hide password.
+  - Frontend validation via `inputValidators.js`.
+  - Loading state disables inputs/buttons; error messages shown inline in fixed-height div.
+  - Calls `authService.js` login API; stores token with `setToken`.
+  - Navigates to `/dashboard` using React Router `useNavigate()`.
+
+- **Auth & Utilities**
+  - `authService.js` handles login POST `/api/auth/login` and token storage.
+  - `utils/auth.js` provides `getToken`, `setToken`, `removeToken`, `isAuthenticated`.
+  - `ProtectedRoute.jsx` redirects unauthenticated users to `/login`.
+
+- **Challenges & Fixes**
+  - Tailwind not compiling → fixed `index.css` import and cleared cache.
+  - Eye icon not displaying → fixed JSX/className.
+  - Layout shift on error → fixed-height div with non-breaking space.
+  - `window.location.href` replaced by `useNavigate()`.
+
+## Result
+
+- Login page fully functional: validation, API, token storage, loading/error states.
+- Protected dashboard route works.
+- Ready for Change Password page and dashboard client management.
+
 ---
 
 ## Future Improvements

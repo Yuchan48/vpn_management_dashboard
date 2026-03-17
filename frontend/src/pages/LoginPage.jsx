@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import EyeIcon from "../components/icons/EyeIcon";
 import EyeOffIcon from "../components/icons/EyeOffIcon";
 
@@ -7,17 +7,31 @@ import { validateUsername, validatePassword } from "../utils/inputValidators";
 import { login } from "../services/authService";
 
 const LoginPage = () => {
+  // input values
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  // show/hide password
   const [show, setShow] = useState(false);
+
+  // loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // display message passed via navigate() from other pages
+    if (location.state?.message) {
+      setError(location.state.message);
+    }
+  }, [location.state]);
 
   const handleSubmit = async (event) => {
     // prevents the page reloading on form submission
     event.preventDefault();
+    setError("");
 
     // validate username and password
     if (!username || !password) {
@@ -81,7 +95,10 @@ const LoginPage = () => {
                   required
                   disabled={isLoading}
                   value={username}
-                  onChange={(event) => setUsername(event.target.value)}
+                  onChange={(event) => {
+                    setUsername(event.target.value);
+                    setError("");
+                  }}
                   autoComplete="username"
                   className="block w-full rounded-md border-1 border-gray-500 bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10  focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                 />
@@ -108,7 +125,10 @@ const LoginPage = () => {
                   autoComplete="current-password"
                   className="block w-full rounded-md border-1 border-gray-500 bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                    setError("");
+                  }}
                 />
                 <button
                   type="button"
@@ -136,13 +156,6 @@ const LoginPage = () => {
               </button>
             </div>
           </form>
-          {/* Go to the change password screen */}
-          <a
-            href="/change-password"
-            className={`block mt-4 text-center text-base/6 font-semibold ${isLoading ? "text-gray-400 pointer-events-none cursor-not-allowed" : "text-indigo-700 hover:text-indigo-500"}`}
-          >
-            Change Password
-          </a>
         </div>
       </div>
     </div>

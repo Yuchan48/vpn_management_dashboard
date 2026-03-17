@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 // import UI components
 import EyeIcon from "../components/icons/EyeIcon";
 import EyeOffIcon from "../components/icons/EyeOffIcon";
+import Spinner from "../components/icons/Spinner";
 
 // import functions
 import { changePassword } from "../services/userService";
@@ -195,10 +196,17 @@ const ChangePassword = () => {
                 disabled={isLoading}
                 onClick={handleSubmit}
                 className="flex w-full justify-center rounded-md bg-indigo-700 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500
-                disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400
+                disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-400
                 "
               >
-                Change Password
+                {isLoading ? (
+                  <>
+                    <Spinner className="h-5 w-5 mr-3 text-white self-center" />
+                    <span className="align-middle">Processing...</span>
+                  </>
+                ) : (
+                  "Change Password"
+                )}
               </button>
             </div>
           </form>

@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
+// import UI components
 import EyeIcon from "../components/icons/EyeIcon";
 import EyeOffIcon from "../components/icons/EyeOffIcon";
+import Spinner from "../components/icons/Spinner";
 
+// import functions
 import { validateUsername, validatePassword } from "../utils/inputValidators";
 import { login } from "../services/authService";
 
@@ -149,10 +153,17 @@ const LoginPage = () => {
                 type="submit"
                 disabled={isLoading}
                 className="flex w-full justify-center rounded-md bg-indigo-700 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500
-                disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400
+                disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-400
                 "
               >
-                Sign in
+                {isLoading ? (
+                  <>
+                    <Spinner className="h-5 w-5 mr-3 text-white self-center" />
+                    <span className="align-middle">Processing...</span>
+                  </>
+                ) : (
+                  "Sign in"
+                )}
               </button>
             </div>
           </form>

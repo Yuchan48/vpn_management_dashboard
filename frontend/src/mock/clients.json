@@ -1,0 +1,68 @@
+{
+  "userView": [
+    {
+      "id": 101,
+      "name": "alice-vpn-1",
+      "public_key": "ABC123XYZ",
+      "ip_address": "10.10.0.2",
+      "user_id": 2,
+      "status": "online"
+    },
+    {
+      "id": 102,
+      "name": "alice-vpn-2",
+      "public_key": "DEF456UVW",
+      "ip_address": "10.10.0.3",
+      "user_id": 2,
+      "status": "offline"
+    }
+  ],
+
+  "adminView": [
+    {
+      "id": 101,
+      "name": "alice-vpn-1",
+      "public_key": "ABC123XYZ",
+      "ip_address": "10.10.0.2",
+      "user_id": 2,
+      "username": "alice",
+      "status": "online"
+    },
+    {
+      "id": 102,
+      "name": "charlie-vpn-2",
+      "public_key": "DEF456UVW",
+      "ip_address": "10.10.0.3",
+      "user_id": 2,
+      "username": "charlie",
+      "status": "online"
+    },
+    {
+      "id": 103,
+      "name": "bob-vpn-1",
+      "public_key": "GHI789RST",
+      "ip_address": "10.10.0.4",
+      "user_id": 3,
+      "username": "bob",
+      "status": "offline"
+    },
+    {
+      "id": 104,
+      "name": "charlie-vpn-1",
+      "public_key": "JKL012MNO",
+      "ip_address": "10.10.0.5",
+      "user_id": 4,
+      "username": "charlie",
+      "status": "online"
+    },
+    {
+      "id": 105,
+      "name": "alice-vpn-2",
+      "public_key": "ABC123XYZ",
+      "ip_address": "10.10.0.6",
+      "user_id": 2,
+      "username": "alice",
+      "status": "online"
+    }
+  ]
+}

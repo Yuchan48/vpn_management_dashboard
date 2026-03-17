@@ -67,107 +67,85 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="bg-gray-300 px-10 py-20 rounded-lg shadow-lg">
-        <div className="mx-auto w-[280px] text-center">
-          <h2 className="text-center text-2xl/9 font-bold tracking-tight text-gray-800">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-700 px-5 sm:px-4">
+      <div className="w-full max-w-sm bg-gray-300 rounded-lg shadow-lg px-6 py-10 sm:px-10 sm:py-14">
+        {/* Title + Error */}
+        <div className="w-full text-center mb-6">
+          <h2 className="text-2xl font-bold tracking-tight text-gray-800">
             Sign in to your account
           </h2>
-          {/* Error message */}
-          <div className="w-full text-center text-sm text-red-600 overflow-hidden">
+
+          <div className="h-5 mt-2 text-sm text-red-600">
             {error || "\u00A0"}
           </div>
         </div>
 
-        <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            action="#"
-            method="POST"
-            className="space-y-3 text-gray-900"
-            onSubmit={handleSubmit}
-          >
-            {/* Username input */}
-            <div>
-              <label htmlFor="email" className="block text-sm/6 font-medium ">
-                Username
-              </label>
-              <div className="mt-1">
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  disabled={isLoading}
-                  value={username}
-                  onChange={(event) => {
-                    setUsername(event.target.value);
-                    setError("");
-                  }}
-                  autoComplete="username"
-                  className="block w-full rounded-md border-1 border-gray-500 bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10  focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                />
-              </div>
-            </div>
+        {/* Form */}
+        <form className="space-y-4 text-gray-900" onSubmit={handleSubmit}>
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-medium">Username</label>
+            <input
+              type="text"
+              required
+              disabled={isLoading}
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setError("");
+              }}
+              autoComplete="username"
+              className="mt-1 block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
 
-            {/* Password input */}
-            <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium "
-                >
-                  Password
-                </label>
-              </div>
-              <div className="mt-1 relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={show ? "text" : "password"}
-                  required
-                  disabled={isLoading}
-                  autoComplete="current-password"
-                  className="block w-full rounded-md border-1 border-gray-500 bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                  value={password}
-                  onChange={(event) => {
-                    setPassword(event.target.value);
-                    setError("");
-                  }}
-                />
-                <button
-                  type="button"
-                  className="icon_button absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => setShow(!show)}
-                >
-                  {show ? (
-                    <EyeOffIcon className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-500" />
-                  )}
-                </button>
-              </div>
-            </div>
-            {/* Submit Button */}
-            <div className="mt-6">
-              <button
-                type="submit"
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium">Password</label>
+            <div className="mt-1 relative">
+              <input
+                type={show ? "text" : "password"}
+                required
                 disabled={isLoading}
-                className="flex w-full justify-center rounded-md bg-indigo-700 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500
-                disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-400
-                "
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
+                autoComplete="current-password"
+                className="block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+
+              <button
+                type="button"
+                className="absolute inset-y-0 right-2 flex items-center"
+                onClick={() => setShow(!show)}
               >
-                {isLoading ? (
-                  <>
-                    <Spinner className="h-5 w-5 mr-3 text-white self-center" />
-                    <span className="align-middle">Processing...</span>
-                  </>
+                {show ? (
+                  <EyeOffIcon className="h-5 w-5 text-gray-500" />
                 ) : (
-                  "Sign in"
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
                 )}
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center rounded-md bg-indigo-600 mt-6 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <>
+                <Spinner className="h-5 w-5 mr-2 text-white" />
+                Processing...
+              </>
+            ) : (
+              "Sign in"
+            )}
+          </button>
+        </form>
       </div>
     </div>
   );

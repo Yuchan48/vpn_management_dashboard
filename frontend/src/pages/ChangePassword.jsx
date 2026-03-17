@@ -66,158 +66,145 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="bg-gray-300 px-10 py-15 rounded-lg shadow-lg">
-        <div className="mx-auto w-[280px] text-center">
-          <h2 className="text-center text-2xl/9 font-bold tracking-tight text-gray-800">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-700 px-5 sm:px-4">
+      <div className="w-full max-w-sm bg-gray-300 rounded-lg shadow-lg px-6 py-10 sm:px-10 sm:py-14">
+        {/* Title + Error */}
+        <div className="w-full text-center mb-6">
+          <h2 className="text-2xl font-bold tracking-tight text-gray-800">
             Change Your Password
           </h2>
-          {/* Error message */}
-          <div className="w-full text-center text-sm text-red-600 overflow-hidden">
+
+          <div className="h-5 mt-2 text-sm text-red-600">
             {error || "\u00A0"}
           </div>
         </div>
 
-        <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-3 text-gray-900">
-            {/* Current Password */}
-            <div>
-              <label
-                htmlFor="current-password"
-                className="block text-sm/6 font-medium "
-              >
-                Current Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="current-password"
-                  name="current-password"
-                  type={showCurrent ? "text" : "password"}
-                  required
-                  autoComplete="current-password"
-                  disabled={isLoading}
-                  className="block w-full border-1 border-gray-500 rounded-md bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                  value={currentPassword}
-                  onChange={(event) => {
-                    setCurrentPassword(event.target.value);
-                    setError("");
-                  }}
-                />
-                <button
-                  type="button"
-                  className="icon_button absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => setShowCurrent(!showCurrent)}
-                >
-                  {showCurrent ? (
-                    <EyeOffIcon className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-500" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* New Password */}
-            <div>
-              <label
-                htmlFor="new-password"
-                className="block text-sm/6 font-medium"
-              >
-                New Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="new-password"
-                  name="new-password"
-                  type={showNew ? "text" : "password"}
-                  required
-                  autoComplete="new-password"
-                  disabled={isLoading}
-                  className="block w-full border-1 border-gray-500 rounded-md bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                  value={newPassword}
-                  onChange={(event) => {
-                    setNewPassword(event.target.value);
-                    setError("");
-                  }}
-                />
-                <button
-                  type="button"
-                  className="icon_button absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => setShowNew(!showNew)}
-                >
-                  {showNew ? (
-                    <EyeOffIcon className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-500" />
-                  )}
-                </button>
-              </div>
-            </div>
-            {/* Confirm New Password */}
-            <div>
-              <label
-                htmlFor="confirm-password"
-                className="block text-sm/6 font-medium"
-              >
-                Confirm New Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="confirm-password"
-                  name="confirm-password"
-                  type={showConfirm ? "text" : "password"}
-                  required
-                  autoComplete="new-password"
-                  disabled={isLoading}
-                  className="block w-full border-1 border-gray-500 rounded-md bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                  value={confirmPassword}
-                  onChange={(event) => {
-                    setConfirmPassword(event.target.value);
-                    setError("");
-                  }}
-                />
-                <button
-                  type="button"
-                  className="icon_button absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => setShowConfirm(!showConfirm)}
-                >
-                  {showConfirm ? (
-                    <EyeOffIcon className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-500" />
-                  )}
-                </button>
-              </div>
-            </div>
-            {/* Submit Button */}
-            <div className="mt-6">
-              <button
-                type="submit"
+        {/* Form */}
+        <form className="space-y-4 text-gray-900" onSubmit={handleSubmit}>
+          {/* Current Password */}
+          <div>
+            <label className="block text-sm font-medium">
+              Current Password
+            </label>
+            <div className="mt-1 relative">
+              <input
+                type={showCurrent ? "text" : "password"}
+                required
                 disabled={isLoading}
-                onClick={handleSubmit}
-                className="flex w-full justify-center rounded-md bg-indigo-700 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500
-                disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-400
-                "
+                value={currentPassword}
+                onChange={(e) => {
+                  setCurrentPassword(e.target.value);
+                  setError("");
+                }}
+                autoComplete="current-password"
+                className="block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-2 flex items-center"
+                onClick={() => setShowCurrent(!showCurrent)}
               >
-                {isLoading ? (
-                  <>
-                    <Spinner className="h-5 w-5 mr-3 text-white self-center" />
-                    <span className="align-middle">Processing...</span>
-                  </>
+                {showCurrent ? (
+                  <EyeOffIcon className="h-5 w-5 text-gray-500" />
                 ) : (
-                  "Change Password"
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
                 )}
               </button>
             </div>
-          </form>
-          {/* Link to Dashboard */}
-          <a
-            href="/dashboard"
-            className={`block mt-4 text-center text-base/6 font-semibold ${isLoading ? "text-gray-400 pointer-events-none cursor-not-allowed" : "text-indigo-700 hover:text-indigo-500"}`}
+          </div>
+
+          {/* New Password */}
+          <div>
+            <label className="block text-sm font-medium">New Password</label>
+            <div className="mt-1 relative">
+              <input
+                type={showNew ? "text" : "password"}
+                required
+                disabled={isLoading}
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  setError("");
+                }}
+                autoComplete="new-password"
+                className="block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-2 flex items-center"
+                onClick={() => setShowNew(!showNew)}
+              >
+                {showNew ? (
+                  <EyeOffIcon className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label className="block text-sm font-medium">
+              Confirm New Password
+            </label>
+            <div className="mt-1 relative">
+              <input
+                type={showConfirm ? "text" : "password"}
+                required
+                disabled={isLoading}
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  setError("");
+                }}
+                autoComplete="new-password"
+                className="block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-2 flex items-center"
+                onClick={() => setShowConfirm(!showConfirm)}
+              >
+                {showConfirm ? (
+                  <EyeOffIcon className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
-            Back to Dashboard
-          </a>
-        </div>
+            {isLoading ? (
+              <>
+                <Spinner className="h-5 w-5 mr-2 text-white" />
+                Processing...
+              </>
+            ) : (
+              "Change Password"
+            )}
+          </button>
+        </form>
+
+        {/* Back to Dashboard */}
+        <button
+          type="button"
+          disabled={isLoading}
+          onClick={() => navigate("/dashboard")}
+          className={`mt-6 w-full text-center text-sm font-semibold ${
+            isLoading
+              ? "text-gray-400 cursor-not-allowed"
+              : "text-indigo-700 hover:text-indigo-500"
+          }`}
+        >
+          Back to Dashboard
+        </button>
       </div>
     </div>
   );

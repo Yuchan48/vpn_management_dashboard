@@ -10,14 +10,13 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 
 const App = () => {
   return (
-    <Router>
-      <div className="App h-screen flex items-center justify-center bg-gray-700">
+    <div className="App min-h-screen w-full flex items-center justify-center">
+      <Router>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/change-password" element={<ChangePassword />} />
 
           {/* Protected route. Only accessible if authenticated. */}
-          <Route
+          {/*  <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
@@ -25,9 +24,23 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/change-password"
+            element={
+              <ProtectedRoute>
+                <ChangePassword />
+              </ProtectedRoute>
+            }
+          /> */}
+
+          {/* Just for development, remove the token authentication */}
+          <Route path="/dashboard" element={<Dashboard />} />
+
+          <Route path="/change-password" element={<ChangePassword />} />
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </div>
   );
 };
 

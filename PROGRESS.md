@@ -523,6 +523,45 @@ Implemented LoginPage in Vite + React with TailwindCSS. Integrated backend authe
 - Protected dashboard route works.
 - Ready for Change Password page and dashboard client management.
 
+# Day 13 – Dashboard & UI Improvements
+
+## Summary
+
+Implemented responsive Dashboard layout and UI enhancements. Integrated Change Password page with consistent styling and loading spinners. Added mock data for UI testing and role-based rendering for Users vs Admins.
+
+## Development Implementation
+
+- **Responsive Layout**
+  - Dashboard `bg-gray-100`, `min-h-screen w-full`, responsive padding: mobile `px-4`, sm `px-6`, md+ `px-10`.
+  - Cards/tables centered with `max-w-5xl mx-auto`.
+
+- **Login & Change Password Pages**
+  - Responsive forms with password toggles, inline error messages, and submit button spinner (`Processing...`) when `isLoading`.
+  - On password change: token removed, navigate to `/login` with message.
+
+- **Dashboard Skeleton**
+  - `<CurrentUserInfo />`, `<ChangePasswordButton />`.
+  - `<ClientsTable />` – admin sees owner column; users see own clients.
+  - `<UsersTable />` – admin-only.
+  - Tables support loading, error states, and use mock data.
+  - Role-based rendering handled with conditional JSX.
+  - Periodic client status refresh planned via `useEffect` + `setInterval`.
+
+- **Mock Data & API**
+  - `users.json`, `clients.json`, `currentUser.json`.
+  - `mockService.js` simulates API calls for testing layout and tables.
+
+- **Design Decisions**
+  - Clean, simple layout with responsive padding.
+  - Buttons and inputs use Tailwind hover, focus, and disabled states.
+
+## Next Steps
+
+- Separate components into individual files.
+- Implement periodic client status refresh.
+- Refine role-based permissions.
+- Improve table grouping, sorting, and visual polish.
+
 ---
 
 ## Future Improvements

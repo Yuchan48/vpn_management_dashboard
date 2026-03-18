@@ -2,15 +2,17 @@ const express = require("express");
 const router = express.Router();
 
 const requireAdmin = require("../middleware/requireAdmin");
+const requireRootAdmin = require("../middleware/requireRootAdmin");
 
 const userController = require("../controllers/user.controller");
+
+/* Root admin only routes */
+// Create admin users
+router.post("/admin", requireRootAdmin, userController.createAdmin);
 
 /* Admin only routes */
 // Create users
 router.post("/user", requireAdmin, userController.createUser);
-
-// Create admin users
-router.post("/admin", requireAdmin, userController.createAdmin);
 
 // Get all users
 router.get("/", requireAdmin, userController.getAllUsers);

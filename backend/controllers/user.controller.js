@@ -28,14 +28,14 @@ async function createAdmin(req, res, next) {
   try {
     const { username, password } = req.body;
 
-    validateUsername(username);
-    validatePassword(password);
-
     if (!username || !password) {
       return res
         .status(400)
         .json({ error: "Username and password are required" });
     }
+
+    validateUsername(username);
+    validatePassword(password);
 
     const admin = await userService.createAdmin(username, password);
     res.status(201).json(admin);

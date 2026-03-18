@@ -562,6 +562,56 @@ Implemented responsive Dashboard layout and UI enhancements. Integrated Change P
 - Refine role-based permissions.
 - Improve table grouping, sorting, and visual polish.
 
+# Day 14 – Dashboard Refactor & Root Admin Middleware
+
+## Summary
+
+Refactored Dashboard into components, added user/client creation modals, improved styling, and enforced root-admin restriction on backend.
+
+## Development Implementation
+
+- **Dashboard Components**
+  - `<CurrentUserInfo />` – displays username, role, creation date.
+  - `<ChangePasswordButton />` – navigates to `/change-password`.
+  - `<LogoutButton />` – clears token and logs out.
+  - `<UsersTable />` – admin-only; shows users with delete button.
+  - `<ClientsTable />` – shows clients (grouped by user for admin, own clients for users); includes status badges.
+
+- **Create Modals**
+  - **CreateUserModal** in `UsersTable`:
+    - Local state managed inside component.
+    - Form with validation.
+    - Table updates automatically on success.
+  - **CreateClientModal** in `ClientsTable`:
+    - Local state managed inside component.
+    - Form with validation.
+    - New clients appended on success.
+  - Modals maintain responsive layout, loading spinner, and error handling.
+
+- **Styling**
+  - Login/Change Password pages: min-h-screen, centered, responsive padding, bg-gray-700/100.
+  - Buttons show spinner + "Processing..." when `isLoading`.
+  - Tables: white cards, rounded corners, shadow, overflow-x-auto for mobile.
+
+- **Backend Root Admin Restriction**
+  - `requireRootAdmin.js` middleware:
+    ```js
+    if (!req.user || req.user.role !== "admin")
+      return res.status(401).json({ error: "Unauthorized" });
+    if (req.user.id !== 1)
+      return res
+        .status(403)
+        .json({ error: "Forbidden: Only root admin can perform this action" });
+    next();
+    ```
+  - Applied to createAdmin route; controller now only handles validation and service call.
+
+## Next Steps
+
+- Replace mock service calls with real backend API requests.
+- Implement create/delete endpoints with JWT auth.
+- Add periodic client status refresh, table sorting, and success/error feedback.
+
 ---
 
 ## Future Improvements

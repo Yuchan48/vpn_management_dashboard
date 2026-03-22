@@ -661,6 +661,51 @@ Integrated frontend with backend APIs, refactored client status fetching, unifie
 - Add table sorting and visual polish.
 - Integrate full create/delete API calls with modals and success/error messages.
 
+# Day 16 – Dashboard Enhancements & Data Consistency
+
+## Summary
+
+Refined client creation flow with `.conf` download, improved data consistency via backend JOINs, and enhanced modals, tables, and error handling.
+
+## Development Implementation
+
+- **Client Creation**
+  - Backend returns `.conf` file.
+  - Frontend downloads via Blob (`downloadFile` helper).
+  - Refetch clients after creation; modal closes on success.
+
+- **Data Consistency**
+  - Backend:
+    - Added `username` to clients via JOIN.
+    - Sorted by `username ASC, client.id ASC`.
+  - Frontend:
+    - Refetch users/clients after create/delete.
+
+- **UI Improvements**
+  - Clients grouped by `username` (admin).
+  - Row-level loading for delete actions.
+  - Prevented conflicting actions during operations.
+
+- **Error Handling**
+  - Mapped backend errors to user-friendly messages.
+  - Displayed with styled error state in UI.
+
+- **Modals**
+  - Fully local state, inline validation, and error handling.
+
+## Issues Encountered
+
+- `.conf` download required Blob handling in frontend.
+- Missing `username` caused grouping issues → fixed with JOIN.
+- Manual state updates led to inconsistencies → switched to refetching.
+- Mixed API responses required robust `apiFetch`.
+
+## Next Steps
+
+- Replace alerts with toasts.
+- Improve loading states.
+- Add table sorting/filtering.
+
 ---
 
 ## Future Improvements

@@ -80,21 +80,24 @@ async function createClient(req, res, next) {
   }
 }
 
-async function getAllClients(req, res, next) {
+async function getClients(req, res, next) {
   try {
-    // Call the service function to retrieve all clients from the database. The service will return an array of client objects, which we then send back as a JSON response.
+    // Get all clients from database.
     const clients = await clientService.getAllClients();
-    res.json(clients);
-  } catch (error) {
-    next(error);
-  }
-}
 
-// get clients of the authenticated user
-async function getUserClients(req, res, next) {
-  try {
-    const clients = await clientService.getClientsByUserId(req.user.id);
-    res.json(clients);
+    // Get the list of peers from the WireGuard interface.
+    const peers = await wireguardService.getWireGuardPeers();
+
+    // check each client against the list of peers to determine if they are currently connected.
+    const result = clients
+      .filter(
+        (client) =>
+          // Only include clients that belong to the authenticated user or if the user is an admin.
+          req.user.role === "admin" || client.user_id === req.user.id,
+      )
+      .map((client) => mapClientToStatus(client, peers)); //{ clientId, name, public_key, allowedIPs, endpoint, status, userId}
+
+    res.json(result);
   } catch (error) {
     next(error);
   }
@@ -180,49 +183,9 @@ async function getClientConfig(req, res, next) {
   }
 }
 
-// Return a single client status with its connection status
-async function getClientStatus(req, res, next) {
-  try {
-    const clientId = req.params.id;
-    const client = await clientService.getClientById({
-      clientId,
-      user: req.user,
-    });
-
-    // Get the list of peers from the WireGuard interface to check if the client is currently connected.
-    const peers = await wireguardService.getWireGuardPeers();
-
-    const clientStatus = mapClientToStatus(client, peers);
-
-    res.status(200).json(clientStatus);
-  } catch (error) {
-    next(error);
-  }
-}
-
-// Return all clients with status
-async function getAllClientsStatus(req, res, next) {
-  try {
-    const clients = await clientService.getAllClients();
-
-    const peers = await wireguardService.getWireGuardPeers();
-
-    const clientsStatus = clients.map((client) =>
-      mapClientToStatus(client, peers),
-    );
-
-    res.status(200).json(clientsStatus);
-  } catch (error) {
-    next(error);
-  }
-}
-
 module.exports = {
   createClient,
-  getAllClients,
-  getUserClients,
+  getClients,
   deleteClient,
   getClientConfig,
-  getClientStatus,
-  getAllClientsStatus,
 };

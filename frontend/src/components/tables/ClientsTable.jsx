@@ -1,8 +1,9 @@
 import { useState } from "react";
 
 // import UI components
-import CreateClientButton from "../buttons/CreateClientButton";
+import OpenModalButton from "../buttons/OpenModalButton";
 import CreateClientModal from "../modals/CreateClientModal";
+import DeleteButton from "../buttons/DeleteButton";
 
 const ClientsTable = ({ clients, user, setClients }) => {
   const [showModal, setShowModal] = useState(false);
@@ -22,7 +23,10 @@ const ClientsTable = ({ clients, user, setClients }) => {
       <div className="flex items-center justify-between mb-4 mr-2">
         {" "}
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Clients</h2>
-        <CreateClientButton onClick={() => setShowModal(true)} />
+        <OpenModalButton
+          onClick={() => setShowModal(true)}
+          title="Create Client"
+        />
       </div>
 
       <div className="space-y-6">
@@ -53,14 +57,14 @@ const ClientsTable = ({ clients, user, setClients }) => {
                 <tbody>
                   {userClients.map((c) => (
                     <tr
-                      key={c.id}
+                      key={c.name}
                       className="border-b last:border-none hover:bg-gray-50 transition"
                     >
                       <td className="py-2 px-3 w-1/3 font-medium text-gray-800 truncate">
                         {c.name}
                       </td>
                       <td className="py-2 px-3 w-1/3 text-gray-600 truncate">
-                        {c.ip_address}
+                        {c.allowedIPs}
                       </td>
                       <td className="py-2 px-3 w-1/6 text-center">
                         <span
@@ -76,12 +80,7 @@ const ClientsTable = ({ clients, user, setClients }) => {
                         </span>
                       </td>
                       <td className="py-2 px-3 w-1/6 text-center">
-                        <button
-                          onClick={() => deleteClient(c.id)}
-                          className="px-2 py-1 text-xs font-semibold text-red-600 border border-red-600 rounded-md hover:bg-red-100"
-                        >
-                          Delete
-                        </button>
+                        <DeleteButton onClick={() => deleteClient(c.id)} />
                       </td>
                     </tr>
                   ))}
@@ -94,7 +93,7 @@ const ClientsTable = ({ clients, user, setClients }) => {
       <CreateClientModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        onSuccess={(newClient) => setClients((prev) => [...prev, newClient])}
+        setClients={setClients}
       />
     </div>
   );

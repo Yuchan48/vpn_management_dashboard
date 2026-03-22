@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 // import UI components
+import CreateDataButton from "../buttons/CreateDataButton";
 import Modal from "./Modal";
 import EyeIcon from "../icons/EyeIcon";
 import EyeOffIcon from "../icons/EyeOffIcon";
@@ -113,13 +114,11 @@ const CreateUserModal = ({ isOpen, onClose, currentUser, setUsers }) => {
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-700 text-white py-2 mt-2 rounded-md hover:bg-indigo-500 disabled:bg-gray-400"
-        >
-          {loading ? "Creating..." : "Create User"}
-        </button>
+        <CreateDataButton
+          onClick={handleSubmit}
+          title="Create User"
+          loading={loading}
+        />
       </form>
     </Modal>
   );

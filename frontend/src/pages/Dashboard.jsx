@@ -38,20 +38,20 @@ const Dashboard = () => {
     const loadData = async () => {
       try {
         setLoading(true);
-      const currentUser = await fetchCurrentUser();
-      setUser(currentUser);
-      if (currentUser.role === "admin") {
-        const usersData = await fetchAllUsers();
-        setUsers(usersData);
+        const currentUser = await fetchCurrentUser();
+        setUser(currentUser);
+        if (currentUser.role === "admin") {
+          const usersData = await fetchAllUsers();
+          setUsers(usersData);
+        }
+        const clientsData = await fetchClients();
+        setClients(clientsData);
+      } catch (err) {
+        setError(err.error);
+      } finally {
+        setLoading(false);
       }
-      const clientsData = await fetchClients();
-      setClients(clientsData);
-    } catch (err) {
-      setError(err.error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
     loadData();
   }, [navigate]);

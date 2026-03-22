@@ -4,7 +4,7 @@ import { useState } from "react";
 import { deleteUser } from "../../services/userService";
 
 // import UI components
-import CreateButton from "../buttons/CreateButton";
+import OpenModalButton from "../buttons/OpenModalButton";
 import CreateUserModal from "../modals/CreateUserModal";
 import DeleteButton from "../buttons/DeleteButton";
 
@@ -35,7 +35,7 @@ const UsersTable = ({ users, user, setUsers }) => {
     <div className="bg-white rounded-lg shadow-md p-5">
       <div className="flex items-center justify-between mb-4 mr-2">
         <h2 className="text-lg font-semibold text-gray-800">Users</h2>
-        <CreateButton
+        <OpenModalButton
           onClick={() => {
             setShowModal(true);
           }}

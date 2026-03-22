@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // import UI components
 // tables and user info
@@ -14,13 +15,12 @@ import ErrorScreen from "../components/ErrorScreen";
 
 // import functions
 import { isAuthenticated } from "../utils/auth";
-import {
-  fetchCurrentUser,
-  fetchUsers,
-  fetchClients,
-} from "../services/mockService";
+
+import { fetchClients } from "../services/clientService";
+import { fetchAllUsers, fetchCurrentUser } from "../services/userService";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   // loading state and error
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,26 +31,30 @@ const Dashboard = () => {
   const [clients, setClients] = useState([]);
 
   useEffect(() => {
-    /* if (!isAuthenticated()) {
+    if (!isAuthenticated()) {
       navigate("/login");
       return;
-    } */
+    }
+    const loadData = async () => {
+      try {
+        setLoading(true);
+      const currentUser = await fetchCurrentUser();
+      setUser(currentUser);
+      if (currentUser.role === "admin") {
+        const usersData = await fetchAllUsers();
+        setUsers(usersData);
+      }
+      const clientsData = await fetchClients();
+      setClients(clientsData);
+    } catch (err) {
+      setError(err.error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
     loadData();
-  }, []);
-
-  const loadData = async () => {
-    setLoading(true);
-    const currentUser = await fetchCurrentUser();
-    setUser(currentUser);
-    if (currentUser.role === "admin") {
-      const usersData = await fetchUsers();
-      setUsers(usersData);
-    }
-    const clientsData = await fetchClients(currentUser.role);
-    setClients(clientsData);
-    setLoading(false);
-  };
+  }, [navigate]);
 
   if (loading) {
     return <LoadingScreen />;

@@ -1,12 +1,26 @@
 import { useState } from "react";
-import Modal from "./Modal";
 
-const CreateUserModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
+// import UI components
+import Modal from "./Modal";
+import EyeIcon from "../icons/EyeIcon";
+import EyeOffIcon from "../icons/EyeOffIcon";
+
+// import functions
+import {
+  createUser,
+  createAdmin,
+  fetchAllUsers,
+} from "../../services/userService";
+
+const CreateUserModal = ({ isOpen, onClose, currentUser, setUsers }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // show/hide password
+  const [show, setShow] = useState(false);
 
   const isRootAdmin = currentUser?.id === 1;
 
@@ -21,12 +35,15 @@ const CreateUserModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
 
     try {
       setLoading(true);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      console.log("Creating user:", { username, password, role });
 
-      // Call onSuccess callback to refresh user list
-      onSuccess({ username, role });
+      const newUserInfo = { username, password, role };
+      role === "admin"
+        ? await createAdmin(newUserInfo, currentUser)
+        : await createUser(newUserInfo);
+      // Show success message and refresh user list
+      alert(`User "${username}" with role "${role}" created successfully`);
+      const usersData = await fetchAllUsers();
+      setUsers(usersData);
       onClose();
     } catch (err) {
       setError(err.message || "Failed to create user. Please try again.");
@@ -56,12 +73,28 @@ const CreateUserModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
           <label className="block text-sm font-medium text-gray-700">
             Password
           </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 p-2"
-          />
+          <div className="mt-1 relative">
+            <input
+              type={show ? "text" : "password"}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+              }}
+              className="block w-full rounded-md border border-gray-300 p-2"
+            />
+            <button
+              type="button"
+              onClick={() => setShow(!show)}
+              className="absolute inset-y-0 right-2 flex items-center"
+            >
+              {show ? (
+                <EyeOffIcon className="h-5 w-5 text-gray-500" />
+              ) : (
+                <EyeIcon className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
+          </div>
         </div>
 
         {isRootAdmin && (

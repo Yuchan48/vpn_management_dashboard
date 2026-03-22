@@ -27,19 +27,21 @@ const UsersTable = ({ users, user, setUsers }) => {
         <table className="w-full text-sm text-left table-fixed">
           <thead className="text-gray-500 border-b">
             <tr>
-              <th className="py-2 w-1/4">Username</th>
-              <th className="py-2 w-1/4">Role</th>
-              <th className="py-2 w-1/4">Created</th>
-              <th className="py-2 w-1/4 text-center">Actions</th>
+              <th className="py-2 w-1/5">ID</th>
+              <th className="py-2 w-1/5">Username</th>
+              <th className="py-2 w-1/5">Role</th>
+              <th className="py-2 w-1/5">Created</th>
+              <th className="py-2 w-1/5 text-center">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className="border-b">
-                <td className="py-2 w-1/4 truncate">{u.username}</td>
-                <td className="py-2 w-1/4">{u.role}</td>
-                <td className="py-2 w-1/4">
+                <td className="py-2 w-1/5">{u.id}</td>
+                <td className="py-2 w-1/5 truncate">{u.username}</td>
+                <td className="py-2 w-1/5">{u.role}</td>
+                <td className="py-2 w-1/5">
                   {new Date(u.created_at).toLocaleDateString()}
                 </td>
                 <td className="py-2 text-center w-1/4">
@@ -59,7 +61,8 @@ const UsersTable = ({ users, user, setUsers }) => {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         currentUser={user}
-        onSuccess={(newUser) => setUsers((prev) => [...prev, newUser])}
+        setUsers={setUsers}
+        /* onSuccess={(newUser) => setUsers((prev) => [...prev, newUser])} */
       />
     </div>
   );

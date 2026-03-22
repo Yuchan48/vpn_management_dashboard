@@ -47,7 +47,8 @@ async function getClientById({ clientId, user }) {
 // Returns an array of all client objects from the database.
 async function getAllClients() {
   return new Promise((resolve, reject) => {
-    const query = "SELECT * FROM clients";
+    const query =
+      "SELECT clients.id, clients.name, clients.public_key, clients.ip_address, clients.user_id, users.username FROM clients JOIN users ON clients.user_id = users.id ORDER BY clients.user_id ASC, clients.id ASC;";
     db.all(query, [], (err, rows) => {
       if (err) {
         reject(err);

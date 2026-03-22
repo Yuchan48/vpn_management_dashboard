@@ -28,6 +28,7 @@ function mapClientToStatus(client, peers) {
     endpoint: peer ? peer.endpoint : "not configured",
     status: isOnline,
     userId: client.user_id,
+    username: client.username,
   };
 }
 

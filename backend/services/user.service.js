@@ -36,7 +36,8 @@ async function createUser(username, password) {
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  return await new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
+    // create a new user
     db.run(
       // Use a parameterized query to prevent SQL injection
       `INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, ?)`,
@@ -45,18 +46,14 @@ async function createUser(username, password) {
         if (error) {
           reject(error);
         } else {
-          console.log(
-            `User ${username} with ID ${nextUserId} created successfully`,
-          );
-          resolve({
-            id: nextUserId,
-            username,
-            role: "user",
-          });
+          resolve();
         }
       },
     );
   });
+
+  // return newly created user info
+  return await getUserById(nextUserId);
 }
 
 async function createAdmin(username, password) {
@@ -84,7 +81,7 @@ async function createAdmin(username, password) {
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     db.run(
       // Use a parameterized query to prevent SQL injection
       `INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, ?)`,
@@ -93,18 +90,14 @@ async function createAdmin(username, password) {
         if (error) {
           reject(error);
         } else {
-          console.log(
-            `Admin ${username} with ID ${nextAdminId} created successfully`,
-          );
-          resolve({
-            id: nextAdminId,
-            username,
-            role: "admin",
-          });
+          resolve();
         }
       },
     );
   });
+
+  // return newly created user info
+  return await getUserById(nextAdminId);
 }
 
 async function getAllUsers() {

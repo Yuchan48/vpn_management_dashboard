@@ -612,6 +612,55 @@ Refactored Dashboard into components, added user/client creation modals, improve
 - Implement create/delete endpoints with JWT auth.
 - Add periodic client status refresh, table sorting, and success/error feedback.
 
+# Day 15 – API Integration & Client Config Download
+
+## Summary
+
+Integrated frontend with backend APIs, refactored client status fetching, unified endpoints, and implemented `.conf` file download via blob. Enforced role-based restrictions for client/user operations.
+
+## Development Implementation
+
+- **Client API**
+  - Unified backend `getClients` returns all clients; filtered for regular users internally.
+  - Removed separate `/clients/me` and `/clients/status` routes.
+  - Frontend `clientService.js` now uses:
+    - `fetchClients()` – fetch all or own clients.
+    - `createClient(clientData)` – create new client.
+    - `deleteClient(client, user)` – only owner or admin can delete.
+    - `fetchClientConfig(clientId)` – downloads `.conf` as blob via `apiFetch`.
+
+- **API Helper**
+  - `apiFetch(endpoint, options)` handles:
+    - JWT token automatically.
+    - JSON, text, and blob responses.
+    - Non-OK response error handling.
+  - Frontend downloads `.conf` using blob + temporary link for SPA behavior.
+
+- **Role-based Security**
+  - Root admin middleware (`requireRootAdmin`) enforced for createAdmin.
+  - `deleteUser` and `deleteClient` match backend rules:
+    - Regular users cannot delete others.
+    - Admins cannot delete other admins unless root.
+    - Root admin protected from deletion.
+
+- **Dashboard Updates**
+  - Tables and modals integrated with real API:
+    - UsersTable: admin-only, includes `CreateUserModal`.
+    - ClientsTable: grouped for admin, own clients for users, includes `CreateClientModal`.
+  - Loading spinners, error handling, responsive layout maintained.
+
+## Issues Encountered
+
+- Backend `.conf` download automatically triggered browser download; needed frontend blob handling to keep SPA intact.
+- Combined client status endpoints required backend filtering logic to avoid separate `/status` calls.
+- Role-based delete logic had edge cases for root admin vs admin vs user; synchronized frontend checks with backend.
+
+## Next Steps
+
+- Implement periodic client status refresh in `ClientsTable`.
+- Add table sorting and visual polish.
+- Integrate full create/delete API calls with modals and success/error messages.
+
 ---
 
 ## Future Improvements

@@ -1,7 +1,17 @@
 import { useState } from "react";
-import Modal from "./Modal";
 
-const CreateClientModal = ({ isOpen, onClose, onSuccess }) => {
+// import UI components
+import Modal from "./Modal";
+import CreateDataButton from "../buttons/CreateDataButton";
+
+// import functions
+import {
+  createClient,
+  downloadConfFile,
+  fetchClients,
+} from "../../services/clientService";
+
+const CreateClientModal = ({ isOpen, onClose, setClients }) => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,12 +27,13 @@ const CreateClientModal = ({ isOpen, onClose, onSuccess }) => {
 
     try {
       setLoading(true);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      console.log("Creating client:", { name });
+      const configText = await createClient({ name });
+      const filename = `client_${name}.conf`;
+      downloadConfFile(configText, filename);
+      alert(`Client "${name}" created successfully`);
+      const clientsData = await fetchClients();
+      setClients(clientsData);
 
-      // Call onSuccess callback to refresh client list
-      onSuccess({ name });
       onClose();
     } catch (err) {
       setError(err.message || "Failed to create client. Please try again.");
@@ -48,13 +59,11 @@ const CreateClientModal = ({ isOpen, onClose, onSuccess }) => {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-700 text-white py-2 mt-2 rounded-md hover:bg-indigo-500 disabled:bg-gray-400"
-        >
-          {loading ? "Creating..." : "Create Client"}
-        </button>
+        <CreateDataButton
+          onClick={handleSubmit}
+          title="Create Client"
+          loading={loading}
+        />
       </form>
     </Modal>
   );

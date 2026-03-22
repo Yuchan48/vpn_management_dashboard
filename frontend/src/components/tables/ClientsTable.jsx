@@ -5,8 +5,13 @@ import OpenModalButton from "../buttons/OpenModalButton";
 import CreateClientModal from "../modals/CreateClientModal";
 import DeleteButton from "../buttons/DeleteButton";
 
+// import functions
+import { deleteClient } from "../../services/clientService";
+
 const ClientsTable = ({ clients, user, setClients }) => {
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState("");
+  const [loadingId, setLoadingId] = useState(null);
 
   // group clients by username (for admin) or "My Clients" (for regular users)
   const groupedClients = clients.reduce((acc, client) => {
@@ -16,7 +21,28 @@ const ClientsTable = ({ clients, user, setClients }) => {
     return acc;
   }, {});
 
-  const deleteClient = (clientId) => {};
+  const deleteClientHandler = async (client) => {
+    setError("");
+    if (
+      !window.confirm(
+        `Are you sure you want to delete client "${client.name}"?`,
+      )
+    )
+      return;
+
+    try {
+      setLoadingId(client.clientId);
+      // Call API to delete client
+      await deleteClient(client, user);
+      // Remove client from list
+      setClients((prev) => prev.filter((c) => c.clientId !== client.clientId));
+      alert(`Client "${client.name}" deleted successfully.`);
+    } catch (err) {
+      setError(err.message || "Failed to delete client. Please try again.");
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-5">
@@ -24,10 +50,20 @@ const ClientsTable = ({ clients, user, setClients }) => {
         {" "}
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Clients</h2>
         <OpenModalButton
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setShowModal(true);
+            setError("");
+          }}
           title="Create Client"
+          disabled={loadingId !== null}
         />
       </div>
+      {/* Error message */}
+      {error && (
+        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded text-sm">
+          {error}
+        </div>
+      )}
 
       <div className="space-y-6">
         {Object.entries(groupedClients).map(([username, userClients]) => (
@@ -57,7 +93,7 @@ const ClientsTable = ({ clients, user, setClients }) => {
                 <tbody>
                   {userClients.map((c) => (
                     <tr
-                      key={c.name}
+                      key={c.clientId}
                       className="border-b last:border-none hover:bg-gray-50 transition"
                     >
                       <td className="py-2 px-3 w-1/3 font-medium text-gray-800 truncate">
@@ -80,7 +116,12 @@ const ClientsTable = ({ clients, user, setClients }) => {
                         </span>
                       </td>
                       <td className="py-2 px-3 w-1/6 text-center">
-                        <DeleteButton onClick={() => deleteClient(c.id)} />
+                        <DeleteButton
+                          onClick={() => {
+                            deleteClientHandler(c);
+                          }}
+                          disabled={loadingId === c.clientId}
+                        />
                       </td>
                     </tr>
                   ))}

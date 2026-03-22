@@ -1,5 +1,5 @@
 import Spinner from "../icons/Spinner";
-const CreateButton = ({ onClick, title, disabled }) => {
+const OpenModalButton = ({ onClick, title, disabled }) => {
   return (
     <button
       className={`inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-indigo-700 border border-indigo-700 rounded-md disabled:text-gray-500 disabled:border-gray-500 disabled:cursor-not-allowed ${!disabled ? "hover:bg-indigo-100" : ""}`}
@@ -17,4 +17,4 @@ const CreateButton = ({ onClick, title, disabled }) => {
   );
 };
 
-export default CreateButton;
+export default OpenModalButton;

@@ -1,3 +1,5 @@
+import { jwtDecode } from "jwt-decode";
+
 // Retrieve the token from localStorage
 export function getToken() {
   return localStorage.getItem("authToken");
@@ -15,5 +17,21 @@ export function removeToken() {
 
 // Check if the token exists in localStorage
 export function isAuthenticated() {
-  return !!getToken();
+  const token = getToken();
+  if (!token) return false;
+
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000; // in seconds
+
+    if (decoded.exp < currentTime) {
+      removeToken();
+      return false;
+    }
+    return true;
+  } catch (err) {
+    removeToken();
+    console.error("Invalid token:", err);
+    return false;
+  }
 }

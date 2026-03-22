@@ -1,4 +1,4 @@
-import { getToken } from "../utils/auth";
+import { getToken, removeToken } from "../utils/auth";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function apiFetch(endpoint, options = {}) {
   const token = getToken();
@@ -13,8 +13,15 @@ export async function apiFetch(endpoint, options = {}) {
     },
   });
 
+  if (response.status === 401) {
+    removeToken();
+    window.location.href = "/login";
+    return;
+  }
+
   const contentType = response.headers.get("Content-Type");
   let data;
+
   if (contentType?.includes("application/json")) {
     data = await response.json();
   } else if (response.status === 204) {

@@ -75,7 +75,7 @@ const LoginPage = () => {
             Sign in to your account
           </h2>
 
-          <div className="h-5 mt-2 text-sm text-red-600">
+          <div className="h-5 mt-2 text-sm text-red-600 bg-gray-300">
             {error || "\u00A0"}
           </div>
         </div>

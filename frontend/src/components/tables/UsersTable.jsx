@@ -8,7 +8,7 @@ import OpenModalButton from "../buttons/OpenModalButton";
 import CreateUserModal from "../modals/CreateUserModal";
 import DeleteButton from "../buttons/DeleteButton";
 
-const UsersTable = ({ users, user, setUsers }) => {
+const UsersTable = ({ users, user, setUsers, onUserDeleted }) => {
   const [showModal, setShowModal] = useState(false);
   const [loadingId, setLoadingId] = useState(null);
   const [error, setError] = useState("");
@@ -22,6 +22,8 @@ const UsersTable = ({ users, user, setUsers }) => {
       await deleteUser(idToDelete, user);
       // remove the deleted user from the list
       setUsers((prev) => prev.filter((u) => u.id !== idToDelete));
+      // refresh clients to fetch new clients data after user deletion
+      onUserDeleted();
       // Show success message and refresh user list
       alert("User deleted successfully");
     } catch (err) {

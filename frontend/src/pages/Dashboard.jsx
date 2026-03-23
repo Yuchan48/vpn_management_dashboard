@@ -16,7 +16,7 @@ import ErrorScreen from "../components/ErrorScreen";
 // import functions
 import { isAuthenticated } from "../utils/auth";
 
-import { fetchClients } from "../services/clientService";
+import { apiFetch } from "../services/apiFetch";
 import { fetchAllUsers, fetchCurrentUser } from "../services/userService";
 
 const Dashboard = () => {
@@ -44,7 +44,7 @@ const Dashboard = () => {
           const usersData = await fetchAllUsers();
           setUsers(usersData);
         }
-        const clientsData = await fetchClients();
+        const clientsData = await apiFetch("/clients");
         setClients(clientsData);
       } catch (err) {
         setError(err.message || "Failed to load dashboard data");
@@ -63,6 +63,15 @@ const Dashboard = () => {
   if (error) {
     return <ErrorScreen error={error} />;
   }
+
+  const fetchClients = async () => {
+    try {
+      const clientsData = await apiFetch("/clients");
+      setClients(clientsData);
+    } catch (err) {
+      setError(err.message || "Failed to fetch clients");
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-gray-100">
@@ -88,7 +97,12 @@ const Dashboard = () => {
 
         {/* Admin Users Card */}
         {user?.role === "admin" && (
-          <UsersTable users={users} user={user} setUsers={setUsers} />
+          <UsersTable
+            users={users}
+            user={user}
+            setUsers={setUsers}
+            onUserDeleted={fetchClients}
+          />
         )}
       </div>
     </div>

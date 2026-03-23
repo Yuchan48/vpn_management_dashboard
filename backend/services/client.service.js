@@ -2,12 +2,43 @@ const db = require("../database/db");
 
 // Create a client in the database.
 async function createClient({ name, publicKey, ipAddress, userId }) {
+  const clientCount = await new Promise((resolve, reject) => {
+    db.get(
+      "SELECT COUNT(*) AS count FROM clients WHERE user_id = ?",
+      [userId],
+      (err, row) => {
+        if (err) {
+          return reject({ status: 500, error: err.message });
+        }
+        resolve(row.count);
+      },
+    );
+  });
+
+  if (clientCount >= 5) {
+    throw {
+      status: 400,
+      error: "Client limit reached. Maximum of 5 clients per user.",
+    };
+  }
+
   return new Promise((resolve, reject) => {
     const query = `INSERT INTO clients (name, public_key, ip_address, user_id) VALUES (?, ?, ?, ?)`;
 
     db.run(query, [name, publicKey, ipAddress, userId], function (err) {
       if (err) {
-        reject(err);
+        if (err.code === "SQLITE_CONSTRAINT") {
+          return reject({
+            status: 400,
+            error:
+              "Client name already in use. Please choose a different name.",
+          });
+        }
+
+        return reject({
+          status: 500,
+          error: "Failed to create client",
+        });
       } else {
         // Return the created client object, including the newly assigned ID (this.lastID))
         resolve({
@@ -34,9 +65,9 @@ async function getClientById({ clientId, user }) {
     db.get(query, params, (err, row) => {
       // The id parameter is passed as an array to prevent SQL injection. As SQLite treats [id] as data, and not SQL code.
       if (err) {
-        reject(err);
+        reject({ status: 500, error: err.message });
       } else if (!row) {
-        reject(new Error("Client not found"));
+        reject({ status: 404, error: "Client not found" });
       } else {
         resolve(row); // row is the client object retrieved from the database that matches the given ID
       }
@@ -51,7 +82,7 @@ async function getAllClients() {
       "SELECT clients.id, clients.name, clients.public_key, clients.ip_address, clients.user_id, users.username FROM clients JOIN users ON clients.user_id = users.id ORDER BY clients.user_id ASC, clients.id ASC;";
     db.all(query, [], (err, rows) => {
       if (err) {
-        reject(err);
+        reject({ status: 500, error: err.message });
       } else {
         resolve(rows); // rows is an array of client objects retrieved from the database
       }
@@ -64,7 +95,7 @@ async function getClientsByUserId(userId) {
     const query = "SELECT * FROM clients WHERE user_id = ? ORDER BY id";
     db.all(query, [userId], (err, rows) => {
       if (err) {
-        reject(err);
+        reject({ status: 500, error: err.message });
       } else {
         resolve(rows); // rows is an array of client objects associated with the given user ID
       }
@@ -82,10 +113,10 @@ function deleteClient({ clientId, user }) {
     const params = user.role === "admin" ? [clientId] : [clientId, user.id];
     db.run(query, params, function (err) {
       if (err) {
-        reject(err);
+        reject({ status: 500, error: err.message });
       } else if (this.changes === 0) {
         // this.changes contains the number of rows affected by the delete operation. If it's 0, it means no client was found with the given ID.
-        reject(new Error("Client not found"));
+        reject({ status: 404, error: "Client not found" });
       } else {
         resolve();
       }
@@ -98,9 +129,9 @@ function updateClientPublicKey(id, newPublicKey) {
     const query = "UPDATE clients SET public_key = ? WHERE id = ?";
     db.run(query, [newPublicKey, id], function (err) {
       if (err) {
-        reject(err);
+        reject({ status: 500, error: err.message });
       } else if (this.changes === 0) {
-        reject(new Error("Client not found"));
+        reject({ status: 404, error: "Client not found" });
       } else {
         resolve();
       }

@@ -706,6 +706,49 @@ Refined client creation flow with `.conf` download, improved data consistency vi
 - Improve loading states.
 - Add table sorting/filtering.
 
+# Day 17 – Client Limits, Peer Cleanup & Config File Fixes
+
+## Summary
+
+Implemented per-user client limits, ensured proper WireGuard peer cleanup on user deletion, and fixed `.conf` file issues for cross-platform compatibility. Frontend input handling and modal behavior were improved. Tested the app thoroughly, fixing bugs and adding missing features encountered during usage.
+
+## Development Implementation
+
+- **Client Limits**
+  - Backend now restricts users/admins to a maximum of 5 clients.
+  - Frontend displays error when limit is reached.
+
+- **Peer Cleanup**
+  - On user deletion, associated WireGuard peers are removed automatically.
+  - Added `removeOrphanedPeers.js` to clean peers without associated clients.
+
+- **Config File Generation**
+  - Removed `Name` field from `[Interface]` for Android compatibility.
+  - Frontend sanitizes filenames when downloading config files to avoid invalid name errors.
+  - `.conf` extension appended correctly after sanitization.
+
+- **Frontend Improvements**
+  - Reset input values when reopening "Create Client" modal.
+  - Error messages for existing client names and limit exceeded are displayed properly.
+  - Refined modal UX to prevent stale input data.
+
+- **Testing & Bug Fixes**
+  - Tested login, logout, user creation/deletion, password changes, client creation/deletion.
+  - Fixed issues such as stale modal inputs, improper peer cleanup, and `.conf` download errors.
+  - Added missing features observed during actual app usage, improving overall workflow.
+
+## Issues Encountered
+
+- Android WireGuard app rejected `.conf` files with invalid filenames.
+- Orphaned peers persisted when deleting users without explicit peer removal.
+- Stale input values in modals led to user confusion → fixed via reset on open.
+
+## Next Steps
+
+- Test live status updates of WireGuard peers when clients connect/disconnect.
+- Refresh clients table automatically on user deletion.
+- Improve responsive design, including horizontal scrolling for tables.
+
 ---
 
 ## Future Improvements

@@ -25,6 +25,20 @@ const ClientsTable = ({ clients, user, setClients }) => {
     return acc;
   }, {});
 
+  const handleOpenModal = () => {
+    setError("");
+
+    const myClientsCount =
+      (groupedClients[user.username || "My Clients"] || []).filter(
+        (c) => c.userId === user.id,
+      ).length || 0;
+    if (myClientsCount >= 5) {
+      setError("You have reached the maximum of 5 clients. ");
+      return;
+    }
+    setShowModal(true);
+  };
+
   const deleteClientHandler = async (client) => {
     setError("");
     if (
@@ -40,6 +54,7 @@ const ClientsTable = ({ clients, user, setClients }) => {
       await deleteClient(client, user);
       // Remove client from list
       setClients((prev) => prev.filter((c) => c.clientId !== client.clientId));
+
       alert(`Client "${client.name}" deleted successfully.`);
     } catch (err) {
       setError(err.message || "Failed to delete client. Please try again.");
@@ -70,10 +85,7 @@ const ClientsTable = ({ clients, user, setClients }) => {
         {" "}
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Clients</h2>
         <OpenModalButton
-          onClick={() => {
-            setShowModal(true);
-            setError("");
-          }}
+          onClick={handleOpenModal}
           title="Create Client"
           disabled={loadingId !== null}
         />

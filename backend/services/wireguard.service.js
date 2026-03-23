@@ -56,7 +56,6 @@ async function getWireGuardPeers() {
       latestHandshake: parseInt(latestHandshake, 10),
     });
   }
-
   return peers;
 }
 

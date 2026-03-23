@@ -35,8 +35,7 @@ const CreateClientModal = ({ isOpen, onClose, setClients, showModal }) => {
     try {
       setLoading(true);
       const configText = await createClient({ name });
-      const filename = `client_${name}.conf`;
-      downloadConfFile(configText, filename);
+      downloadConfFile(configText, name);
       alert(`Client "${name}" created successfully`);
       const clientsData = await fetchClients();
       setClients(clientsData);

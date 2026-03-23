@@ -36,18 +36,18 @@ export async function fetchClientConfig(clientId) {
 export async function downloadClientConfig(client) {
   const text = await apiFetch(`/clients/${client.clientId}/config`);
 
-  const filename = `client_${client.name}.conf`;
-  downloadConfFile(text, filename);
+  downloadConfFile(text, client.name);
 }
 
 // download conf file with given text content and filename
 export function downloadConfFile(text, filename) {
-  const blob = new Blob([text], { type: "text/plain" });
+  const normalizedText = text.replace(/\r\n/g, "\n");
+  const blob = new Blob([normalizedText], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = filename;
+  link.download = filename.replace(/[^a-zA-Z0-9-]/g, "-") + ".conf";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

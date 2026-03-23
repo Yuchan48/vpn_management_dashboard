@@ -16,7 +16,7 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
 
           {/* Protected route. Only accessible if authenticated. */}
-          {/*  <Route
+          <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
@@ -32,12 +32,12 @@ const App = () => {
                 <ChangePassword />
               </ProtectedRoute>
             }
-          /> */}
+          />
 
           {/* Just for development, remove the token authentication */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/*  <Route path="/dashboard" element={<Dashboard />} />
 
-          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/change-password" element={<ChangePassword />} /> */}
         </Routes>
       </Router>
     </div>

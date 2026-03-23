@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // import UI components
 import Modal from "./Modal";
@@ -11,10 +11,17 @@ import {
   fetchClients,
 } from "../../services/clientService";
 
-const CreateClientModal = ({ isOpen, onClose, setClients }) => {
+const CreateClientModal = ({ isOpen, onClose, setClients, showModal }) => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (showModal) {
+      setName("");
+      setError("");
+    }
+  }, [showModal]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

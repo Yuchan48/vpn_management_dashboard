@@ -170,6 +170,7 @@ const ClientsTable = ({ clients, user, setClients }) => {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         setClients={setClients}
+        showModal={showModal}
       />
     </div>
   );

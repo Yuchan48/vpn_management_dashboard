@@ -88,6 +88,7 @@ const UsersTable = ({ users, user, setUsers }) => {
         onClose={() => setShowModal(false)}
         currentUser={user}
         setUsers={setUsers}
+        showModal={showModal}
         /* onSuccess={(newUser) => setUsers((prev) => [...prev, newUser])} */
       />
     </div>

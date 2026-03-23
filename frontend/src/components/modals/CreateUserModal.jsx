@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // import UI components
 import CreateDataButton from "../buttons/CreateDataButton";
@@ -13,7 +13,13 @@ import {
   fetchAllUsers,
 } from "../../services/userService";
 
-const CreateUserModal = ({ isOpen, onClose, currentUser, setUsers }) => {
+const CreateUserModal = ({
+  isOpen,
+  onClose,
+  currentUser,
+  setUsers,
+  showModal,
+}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
@@ -24,6 +30,15 @@ const CreateUserModal = ({ isOpen, onClose, currentUser, setUsers }) => {
   const [show, setShow] = useState(false);
 
   const isRootAdmin = currentUser?.id === 1;
+
+  useEffect(() => {
+    if (showModal) {
+      setUsername("");
+      setPassword("");
+      setRole("user");
+      setError("");
+    }
+  }, [showModal]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

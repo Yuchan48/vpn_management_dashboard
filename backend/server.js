@@ -12,5 +12,7 @@ validateEnvVariables();
 // Start the server and sync WireGuard peers on startup
 app.listen(port, async () => {
   console.log(`Server is running on http://localhost:${port}`);
-  await syncWireGuardPeers();
+  syncWireGuardPeers().catch((err) => {
+    console.error("WireGuard sync failed on startup:", err);
+  });
 });

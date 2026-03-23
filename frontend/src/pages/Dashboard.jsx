@@ -47,7 +47,7 @@ const Dashboard = () => {
         const clientsData = await fetchClients();
         setClients(clientsData);
       } catch (err) {
-        setError(err.error);
+        setError(err.message || "Failed to load dashboard data");
       } finally {
         setLoading(false);
       }

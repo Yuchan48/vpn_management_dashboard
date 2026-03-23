@@ -38,6 +38,7 @@ const UsersTable = ({ users, user, setUsers }) => {
         <OpenModalButton
           onClick={() => {
             setShowModal(true);
+            setError("");
           }}
           title="Create User"
           disabled={loadingId !== null}

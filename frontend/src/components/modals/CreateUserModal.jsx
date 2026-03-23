@@ -29,7 +29,7 @@ const CreateUserModal = ({ isOpen, onClose, currentUser, setUsers }) => {
     e.preventDefault();
     setError("");
 
-    if (!username || !password) {
+    if (!username.trim() || !password.trim()) {
       setError("Username and password are required.");
       return;
     }

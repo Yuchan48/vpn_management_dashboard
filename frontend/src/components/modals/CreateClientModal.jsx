@@ -20,7 +20,7 @@ const CreateClientModal = ({ isOpen, onClose, setClients }) => {
     e.preventDefault();
     setError("");
 
-    if (!name) {
+    if (!name.trim()) {
       setError("Client name is required.");
       return;
     }

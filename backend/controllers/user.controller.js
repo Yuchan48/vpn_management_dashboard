@@ -1,4 +1,6 @@
 const userService = require("../services/user.service.js");
+const clientService = require("../services/client.service");
+const { removePeer } = require("../services/wireguard.service");
 const {
   validateUsername,
   validatePassword,
@@ -59,8 +61,13 @@ async function deleteUser(req, res, next) {
     if (!Number.isInteger(targetUserId)) {
       return res.status(400).json({ error: "Invalid user ID" });
     }
+    const clients = await clientService.getClientsByUserId(targetUserId);
 
     await userService.deleteUser(req.user, targetUserId);
+
+    if (clients.length > 0) {
+      await Promise.all(clients.map((client) => removePeer(client.public_key))); // Remove all clients associated with the deleted user as peers from the WireGuard interface
+    }
     res.status(204).send();
   } catch (error) {
     next(error);

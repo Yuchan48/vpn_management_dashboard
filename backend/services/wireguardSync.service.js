@@ -1,9 +1,11 @@
 const clientService = require("../services/client.service");
-const { addPeer } = require("../services/wireguard.service");
+const { addPeer, ensureWireguardUp } = require("../services/wireguard.service");
 
 // sync WireGuard peers with the clients in the database on server startup to ensure that the WireGuard configuration is always up to date with the clients stored in the database.
 async function syncWireGuardPeers() {
   console.log("Syncing WireGuard peers...");
+
+  ensureWireguardUp();
 
   try {
     // get all clients from the database

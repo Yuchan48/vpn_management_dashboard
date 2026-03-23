@@ -60,8 +60,20 @@ async function getWireGuardPeers() {
   return peers;
 }
 
+function ensureWireguardUp() {
+  try {
+    const output = execFileSync("sudo", ["wg", "show"], { encoding: "utf-8" });
+    if (output.trim() === "")
+      throw new Error("WireGuard is not running or no interfaces found");
+  } catch {
+    console.log("Starting wg0 via wg-quick...");
+    execFileSync("sudo", ["wg-quick", "up", "wg0"], { stdio: "inherit" });
+  }
+}
+
 module.exports = {
   addPeer,
   removePeer,
   getWireGuardPeers,
+  ensureWireguardUp,
 };

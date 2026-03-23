@@ -23,7 +23,7 @@ function mapClientToStatus(client, peers) {
   return {
     clientId: client.id,
     name: client.name,
-    public_key: client.public_key,
+    publicKey: client.public_key,
     allowedIPs: client.ip_address + "/32",
     endpoint: peer ? peer.endpoint : "not configured",
     status: isOnline,

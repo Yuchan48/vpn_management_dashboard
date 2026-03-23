@@ -2,7 +2,7 @@ import { apiFetch } from "./apiFetch";
 
 export async function fetchClients() {
   return await apiFetch("/clients");
-  // return [// {id, name, public_key, ip_address, user_id, isConnected, lastHandshake}, ...]
+  // return [// {id, name, publicKey, ipAddress, user_id, isConnected, lastHandshake}, ...]
 }
 
 export async function createClient(clientData) {
@@ -18,7 +18,7 @@ export async function createClient(clientData) {
 
 export async function deleteClient(client, user) {
   // Only the owner of the client or an admin can delete the client
-  if (user.role !== "admin" && client.userid !== user.id) {
+  if (user.role !== "admin" && client.userId !== user.id) {
     throw new Error("Only the owner or an admin can delete this client");
   }
 
@@ -33,10 +33,10 @@ export async function fetchClientConfig(clientId) {
 }
 
 // Downloading conf file for existing client.
-export async function downloadClientConfig(clientId) {
-  const text = await apiFetch(`/clients/${clientId}/config`);
+export async function downloadClientConfig(client) {
+  const text = await apiFetch(`/clients/${client.clientId}/config`);
 
-  const filename = `client_${clientId}.conf`;
+  const filename = `client_${client.name}.conf`;
   downloadConfFile(text, filename);
 }
 

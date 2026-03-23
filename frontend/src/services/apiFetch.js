@@ -1,4 +1,5 @@
 import { getToken, removeToken } from "../utils/auth";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function apiFetch(endpoint, options = {}) {
   const token = getToken();
@@ -15,7 +16,10 @@ export async function apiFetch(endpoint, options = {}) {
 
   if (response.status === 401) {
     removeToken();
-    window.location.href = "/login";
+    const params = new URLSearchParams();
+    params.set("message", "Session expired. Please log in again.");
+
+    window.location.href = `/login?${params.toString()}`;
     return;
   }
 

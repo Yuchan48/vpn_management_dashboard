@@ -7,7 +7,6 @@ import EyeOffIcon from "../components/icons/EyeOffIcon";
 import Spinner from "../components/icons/Spinner";
 
 // import functions
-import { validateUsername, validatePassword } from "../utils/inputValidators";
 import { login } from "../services/authService";
 
 const LoginPage = () => {
@@ -29,8 +28,14 @@ const LoginPage = () => {
     // display message passed via navigate() from other pages
     if (location.state?.message) {
       setError(location.state.message);
+    } else {
+      const queryParams = new URLSearchParams(location.search);
+      const message = queryParams.get("message");
+      if (message) {
+        setError(message);
+      }
     }
-  }, [location.state]);
+  }, [location]);
 
   const handleSubmit = async (event) => {
     // prevents the page reloading on form submission
@@ -38,16 +43,8 @@ const LoginPage = () => {
     setError("");
 
     // validate username and password
-    if (!username || !password) {
+    if (!username.trim() || !password.trim()) {
       setError("Please enter both username and password.");
-      return;
-    }
-
-    const usernameError = validateUsername(username);
-    const passwordError = validatePassword(password);
-
-    if (usernameError || passwordError) {
-      setError(usernameError || passwordError);
       return;
     }
 

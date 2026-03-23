@@ -13,13 +13,18 @@ async function migrateKeys() {
       console.log(`Migrating keys for client: ${client.name} (${client.id})`);
 
       // genera a wireguard key pair
-      const { publicKey, privateKey } = generateKeyPair();
+      let keyPair;
+      try {
+        keyPair = await generateKeyPair();
+      } catch (err) {
+        console.error("WireGuard key generation failed:", err);
+        continue;
+      }
+
+      let { publicKey, privateKey } = keyPair;
 
       // update the client record with the new keys
-      await clientService.updateClientPublicKey(
-        client.id,
-        publicKey,
-      );
+      await clientService.updateClientPublicKey(client.id, publicKey);
 
       console.log(`Client ${client.id} - ${client.name}`);
       console.log(`  Public Key:  ${publicKey}`);

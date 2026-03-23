@@ -9,10 +9,25 @@ async function createUser(username, password) {
       [],
       (err, rows) => {
         if (err) {
-          reject(err);
+          if (
+            err.message.includes("UNIQUE constraint failed: users.username")
+          ) {
+            return reject({
+              status: 400,
+              error: "Username already taken",
+            });
+          }
+
+          return reject({
+            status: 500,
+            error: "Failed to create user",
+          });
         } else if (rows.length >= 15) {
           // limit to 15 users. id 1 is reserved for initial admin. users will be assigned ids 2-16.
-          reject(new Error("User limit reached. Cannot create more users."));
+          reject({
+            status: 400,
+            error: "User limit reached. Cannot create more users.",
+          });
         } else {
           resolve(rows);
         }
@@ -42,9 +57,21 @@ async function createUser(username, password) {
       // Use a parameterized query to prevent SQL injection
       `INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, ?)`,
       [nextUserId, username, hashedPassword, "user"],
-      function (error) {
-        if (error) {
-          reject(error);
+      function (err) {
+        if (err) {
+          if (
+            err.message.includes("UNIQUE constraint failed: users.username")
+          ) {
+            return reject({
+              status: 400,
+              error: "Username already taken",
+            });
+          }
+
+          return reject({
+            status: 500,
+            error: "Failed to create user",
+          });
         } else {
           resolve();
         }
@@ -64,7 +91,7 @@ async function createAdmin(username, password) {
       [],
       (err, rows) => {
         if (err) {
-          reject(err);
+          reject({ status: 500, error: err.message });
         } else {
           resolve(rows);
         }
@@ -88,7 +115,7 @@ async function createAdmin(username, password) {
       [nextAdminId, username, hashedPassword, "admin"],
       (error) => {
         if (error) {
-          reject(error);
+          reject({ status: 500, error: error.message });
         } else {
           resolve();
         }
@@ -107,7 +134,7 @@ async function getAllUsers() {
       [],
       (err, rows) => {
         if (err) {
-          reject(err);
+          reject({ status: 500, error: err.message });
         } else {
           resolve(rows);
         }
@@ -123,7 +150,7 @@ async function getUserById(userId) {
       "SELECT id, username, role, created_at FROM users WHERE id = ?",
       [userId],
       (err, row) => {
-        if (err) return reject(err);
+        if (err) return reject({ status: 500, error: err.message });
         resolve(row);
       },
     );
@@ -147,18 +174,21 @@ async function deleteUser(requestingUser, targetUserId) {
       [targetUserId],
       (err, targetUser) => {
         if (err) {
-          return reject(err);
+          return reject({ status: 500, error: err.message });
         } else if (!targetUser) {
-          return reject(new Error("User not found."));
+          return reject({ status: 404, error: "User not found" });
         }
         db.run(
           "DELETE FROM users WHERE id = ?",
           [targetUserId],
           function (err) {
             if (err) {
-              reject(err);
+              reject({ status: 500, error: err.message });
             } else if (this.changes === 0) {
-              reject(new Error("User not found or could not be deleted."));
+              reject({
+                status: 404,
+                error: "User not found or could not be deleted.",
+              });
             } else {
               console.log(`User with ID ${targetUserId} deleted successfully`);
               resolve();
@@ -177,16 +207,19 @@ async function changePassword(user, currentPassword, newPassword) {
       [user.id],
       async (err, row) => {
         if (err) {
-          return reject(err);
+          return reject({ status: 500, error: err.message });
         } else if (!row) {
-          return reject(new Error("User not found."));
+          return reject({ status: 404, error: "User not found" });
         } else {
           const passwordMatch = await bcrypt.compare(
             currentPassword,
             row.password_hash,
           );
           if (!passwordMatch) {
-            return reject(new Error("Current password is incorrect."));
+            return reject({
+              status: 400,
+              error: "Current password is incorrect",
+            });
           } else {
             const newHashedPassword = await bcrypt.hash(newPassword, 10);
             db.run(
@@ -194,7 +227,7 @@ async function changePassword(user, currentPassword, newPassword) {
               [newHashedPassword, user.id],
               function (err) {
                 if (err) {
-                  return reject(err);
+                  return reject({ status: 500, error: err.message });
                 } else if (this.changes === 0) {
                   return reject(
                     new Error("User not found or password not updated."),

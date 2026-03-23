@@ -19,13 +19,8 @@ async function createUser(req, res, next) {
 
     const user = await userService.createUser(username, password);
     res.status(201).json(user);
-  } catch (error) {
-    if (error.message.includes("SQLITE_CONSTRAINT")) {
-      return res.status(400).json({
-        error: "Username already taken",
-      });
-    }
-    next(error);
+  } catch (err) {
+    next(err);
   }
 }
 

@@ -24,7 +24,17 @@ async function createClient(req, res, next) {
     // console.log("REQ.BODY:", req.body); // <-- Debug
 
     // Generate wireguard key pair (in memory)
-    let { publicKey, privateKey } = await generateKeyPair();
+    let keyPair;
+    try {
+      keyPair = await generateKeyPair();
+    } catch (error) {
+      console.error("Error generating WireGuard key pair:", error);
+      return res
+        .status(500)
+        .json({ error: "Failed to generate WireGuard key pair" });
+    }
+
+    let { publicKey, privateKey } = keyPair;
 
     // Trimming whitespace to prevent any formatting issues in the generated .conf file.
     privateKey = privateKey.trim();
@@ -51,10 +61,18 @@ async function createClient(req, res, next) {
     } catch (wgError) {
       console.error("Error adding peer to WireGuard:", wgError);
       // If adding the peer fails, we should clean up by deleting the client from the database to maintain consistency.
-      await clientService.deleteClient({
-        clientId: client.id,
-        user: req.user,
-      });
+      try {
+        await clientService.deleteClient({
+          clientId: client.id,
+          user: req.user,
+        });
+      } catch (deleteError) {
+        console.error(
+          "Error deleting client after WireGuard add failure:",
+          deleteError,
+        );
+      }
+
       return res
         .status(500)
         .json({ error: "Failed to add peer to WireGuard interface" });
@@ -95,7 +113,7 @@ async function getClients(req, res, next) {
           // Only include clients that belong to the authenticated user or if the user is an admin.
           req.user.role === "admin" || client.user_id === req.user.id,
       )
-      .map((client) => mapClientToStatus(client, peers)); //{ clientId, name, public_key, allowedIPs, endpoint, status, userId}
+      .map((client) => mapClientToStatus(client, peers)); //{ clientId, name, publicKey, allowedIPs, endpoint, status, userId}
 
     res.json(result);
   } catch (error) {
@@ -112,7 +130,7 @@ async function deleteClient(req, res, next) {
 
     // Remove the client as a peer from the WireGuard interface
     try {
-      await wireguardService.removePeer(client.public_key);
+      await wireguardService.removePeer(client.publicKey);
     } catch (wgError) {
       console.error("Error removing peer from WireGuard:", wgError);
     }
@@ -141,7 +159,17 @@ async function getClientConfig(req, res, next) {
     });
 
     // generate a new WireGuard key pair for the client.
-    let { publicKey, privateKey } = await generateKeyPair();
+    let keyPair;
+    try {
+      keyPair = await generateKeyPair();
+    } catch (err) {
+      console.error("WireGuard key generation failed:", err);
+      return res
+        .status(500)
+        .json({ error: "Failed to generate WireGuard keys" });
+    }
+
+    let { publicKey, privateKey } = keyPair;
     publicKey = publicKey.trim();
     privateKey = privateKey.trim();
 

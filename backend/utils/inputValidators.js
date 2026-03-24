@@ -26,7 +26,17 @@ function validatePassword(password) {
   }
 }
 
+function validateClientName(name) {
+  const regex = /^[a-zA-Z0-9-]{5,}$/;
+  if (!regex.test(name)) {
+    throw new Error(
+      "Client name must be at least 5 characters long and contain only letters, numbers, or '-'",
+    );
+  }
+}
+
 module.exports = {
   validateUsername,
   validatePassword,
+  validateClientName,
 };

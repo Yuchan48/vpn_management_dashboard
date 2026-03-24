@@ -5,14 +5,11 @@ The controller functions are responsible for handling incoming HTTP requests, va
 const clientService = require("../services/client.service");
 const { generateClientConfig } = require("../utils/configGenerator");
 const { getNextAvailableIp } = require("../utils/ipAllocator");
-
 const { generateKeyPair } = require("../utils/wireguard");
-
 const wireguardService = require("../services/wireguard.service");
-
 const { mapClientToStatus } = require("../utils/clientStatus");
-
 const { syncWireGuardPeers } = require("../services/wireguardSync.service");
+const { validateClientName } = require("../utils/inputValidators");
 
 async function createClient(req, res, next) {
   try {
@@ -21,7 +18,11 @@ async function createClient(req, res, next) {
       return res.status(400).json({ error: "Client name is required" });
     }
 
-    // console.log("REQ.BODY:", req.body); // <-- Debug
+    try {
+      validateClientName(req.body.name);
+    } catch (error) {
+      return res.status(error.status || 400).json({ error: error.error });
+    }
 
     // Generate wireguard key pair (in memory)
     let keyPair;
@@ -130,7 +131,7 @@ async function deleteClient(req, res, next) {
 
     // Remove the client as a peer from the WireGuard interface
     try {
-      await wireguardService.removePeer(client.publicKey);
+      await wireguardService.removePeer(client.public_key);
     } catch (wgError) {
       console.error("Error removing peer from WireGuard:", wgError);
     }

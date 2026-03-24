@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 
 // import UI components
 import Modal from "./Modal";
@@ -10,6 +11,8 @@ import {
   downloadConfFile,
   fetchClients,
 } from "../../services/clientService";
+
+import { validateClientName } from "../../utils/inputValidators";
 
 const CreateClientModal = ({ isOpen, onClose, setClients, showModal }) => {
   const [name, setName] = useState("");
@@ -27,8 +30,9 @@ const CreateClientModal = ({ isOpen, onClose, setClients, showModal }) => {
     e.preventDefault();
     setError("");
 
-    if (!name.trim()) {
-      setError("Client name is required.");
+    const validationError = validateClientName(name);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -36,7 +40,7 @@ const CreateClientModal = ({ isOpen, onClose, setClients, showModal }) => {
       setLoading(true);
       const configText = await createClient({ name });
       downloadConfFile(configText, name);
-      alert(`Client "${name}" created successfully`);
+      toast.success(`Client "${name}" created successfully`);
       const clientsData = await fetchClients();
       setClients(clientsData);
 

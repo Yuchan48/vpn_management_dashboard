@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS clients (
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
--- Table to store admin users
+-- Table to store users
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,

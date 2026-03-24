@@ -1,12 +1,3 @@
-/*
-db.js
-Connects to SQLite and initializes the database.
-Responsibilities:
-- Open DB connection
-- Apply schema from schema.sql
-- Export database instance
-*/
-
 const sqlite3 = require("sqlite3").verbose();
 const fs = require("fs");
 const path = require("path");

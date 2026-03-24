@@ -749,6 +749,40 @@ Implemented per-user client limits, ensured proper WireGuard peer cleanup on use
 - Refresh clients table automatically on user deletion.
 - Improve responsive design, including horizontal scrolling for tables.
 
+# Day 18 – Real-Time Updates & Mobile VPN Testing
+
+## Summary
+
+Implemented real-time updates for clients table, refined frontend responsiveness, and tested WireGuard VPN connectivity on a mobile device. Addressed UI/UX issues and further validated backend operations.
+
+## Development Implementation
+
+- **Real-Time Clients Table**
+  - Added polling every 10 seconds to refresh client status.
+  - Ensured state updates do not conflict with ongoing operations (delete/download).
+
+- **Frontend Enhancements**
+  - Improved mobile responsiveness for users and clients tables.
+  - Tables now scroll smoothly on x-axis; column alignment maintained.
+  - Download and delete buttons centered and functional across devices.
+  - Toasts implemented for success/error messages.
+
+- **VPN Testing**
+  - Generated `.conf` files downloaded via frontend and imported on WireGuard mobile app.
+  - Verified that VPN tunnel reaches Mac server.
+  - Observed internet access blocked due to macOS security/NAT constraints; plan to test full internet access once deployed on Linux server.
+
+- **Validation and Restrictions**
+  - Client names restricted to letters, numbers, and hyphens (`-`).
+  - Limit of 5 clients per user enforced.
+  - Backend validations and error messages confirmed for client/user creation.
+
+## Issues Encountered
+
+- Mobile VPN connects to server but no internet due to macOS network/NAT rules.
+- Need to maintain column alignment when downloading `.conf` while keeping table responsive.
+- Ensuring real-time updates do not overwrite user interactions (modals, loading states).
+
 ---
 
 ## Future Improvements

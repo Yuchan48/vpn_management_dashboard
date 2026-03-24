@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 
 // import UI components
 import OpenModalButton from "../buttons/OpenModalButton";
@@ -8,6 +9,7 @@ import DownloadButton from "../buttons/DownloadButton";
 
 // import functions
 import {
+  fetchClients,
   deleteClient,
   downloadClientConfig,
 } from "../../services/clientService";
@@ -24,6 +26,24 @@ const ClientsTable = ({ clients, user, setClients }) => {
     acc[key].push(client);
     return acc;
   }, {});
+
+  useEffect(() => {
+    //update clients status every 10 seconds
+    const updateStatus = async () => {
+      try {
+        const updatedClients = await fetchClients();
+        setClients(updatedClients);
+      } catch (err) {
+        console.error("Failed to update clients status:", err);
+      }
+    };
+
+    updateStatus(); // initial fetch
+
+    // poll every 10 seconds
+    const interval = setInterval(updateStatus, 10000);
+    return () => clearInterval(interval);
+  }, [setClients]);
 
   const handleOpenModal = () => {
     setError("");
@@ -55,7 +75,7 @@ const ClientsTable = ({ clients, user, setClients }) => {
       // Remove client from list
       setClients((prev) => prev.filter((c) => c.clientId !== client.clientId));
 
-      alert(`Client "${client.name}" deleted successfully.`);
+      toast.success(`Client "${client.name}" deleted successfully.`);
     } catch (err) {
       setError(err.message || "Failed to delete client. Please try again.");
     } finally {
@@ -116,15 +136,15 @@ const ClientsTable = ({ clients, user, setClients }) => {
               </div>
 
               {/* Table */}
-              <div className="overflow-x-auto rounded-lg border">
-                <table className="w-full table-fixed text-sm text-left">
+              <div className="overflow-x-auto ">
+                <table className="min-w-[550px] w-full table-fixed text-sm text-left">
                   <thead className="bg-gray-50 text-gray-500 border-b">
                     <tr>
-                      <th className="py-2 px-3 w-2/7">Name</th>
-                      <th className="py-2 px-3 w-2/7">IP</th>
-                      <th className="py-2 px-3 w-1/7 text-center">Status</th>
-                      <th className="py-2 px-3 w-1/7 text-center">Download</th>
-                      <th className="py-2 px-3 w-1/7 text-center">Action</th>
+                      <th className="py-2 px-3 w-1/5">Name</th>
+                      <th className="py-2 px-3 w-1/5">IP</th>
+                      <th className="py-2 px-3 w-1/5 text-center">Status</th>
+                      <th className="py-2 px-3 w-1/5 text-center">Download</th>
+                      <th className="py-2 px-3 w-1/5 text-center">Action</th>
                     </tr>
                   </thead>
 
@@ -134,13 +154,13 @@ const ClientsTable = ({ clients, user, setClients }) => {
                         key={c.clientId}
                         className="border-b last:border-none hover:bg-gray-50 transition"
                       >
-                        <td className="py-2 px-3 w-2/7 font-medium text-gray-800 truncate">
+                        <td className="py-2 px-3 w-1/5 font-medium text-gray-800 truncate">
                           {c.name}
                         </td>
-                        <td className="py-2 px-3 w-2/7 text-gray-600 truncate">
+                        <td className="py-2 px-3 w-1/5 text-gray-600 truncate">
                           {c.allowedIPs}
                         </td>
-                        <td className="py-2 px-3 w-1/7 text-center">
+                        <td className="py-2 px-3 w-1/5 text-center">
                           <span
                             className={`px-2 py-1 rounded text-xs font-semibold ${
                               c.status === "Online"
@@ -153,15 +173,18 @@ const ClientsTable = ({ clients, user, setClients }) => {
                             {c.status}
                           </span>
                         </td>
-                        <td className="py-2 px-3 w-1/7 text-center">
-                          <DownloadButton
-                            onClick={() => {
-                              downloadClientHandler(c);
-                            }}
-                            disabled={loadingId === c.clientId}
-                          />
+                        <td className="py-2 px-3 w-1/5 text-center">
+                          <div className="flex justify-center">
+                            {" "}
+                            <DownloadButton
+                              onClick={() => {
+                                downloadClientHandler(c);
+                              }}
+                              disabled={loadingId === c.clientId}
+                            />
+                          </div>
                         </td>
-                        <td className="py-2 px-3 w-1/7 text-center">
+                        <td className="py-2 px-3 w-1/5 text-center">
                           <DeleteButton
                             onClick={() => {
                               deleteClientHandler(c);

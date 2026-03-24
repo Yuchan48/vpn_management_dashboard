@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { exec } = require("child_process");
 const { getAllClients } = require("../services/client.service");
 const {

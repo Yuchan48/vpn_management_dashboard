@@ -47,8 +47,16 @@ async function getWireGuardPeers() {
 
   // Split the output into lines. Skip the first line(the interface header)
   for (let i = 1; i < lines.length; i++) {
-    const [publicKey, endpoint, allowedIPs, latestHandshake, ...rest] =
-      lines[i].split("\t");
+    const [
+      publicKey,
+      presharedKey,
+      endpoint,
+      allowedIPs,
+      latestHandshake,
+      transferRx,
+      transferTx,
+      persistentKeepalive,
+    ] = lines[i].split("\t");
     peers.push({
       publicKey,
       endpoint,
@@ -56,6 +64,7 @@ async function getWireGuardPeers() {
       latestHandshake: parseInt(latestHandshake, 10),
     });
   }
+
   return peers;
 }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 // import functions
 import { deleteUser } from "../../services/userService";
@@ -25,7 +26,7 @@ const UsersTable = ({ users, user, setUsers, onUserDeleted }) => {
       // refresh clients to fetch new clients data after user deletion
       onUserDeleted();
       // Show success message and refresh user list
-      alert("User deleted successfully");
+      toast.success("User deleted successfully");
     } catch (err) {
       setError(err.message || "Failed to delete user. Please try again.");
     } finally {
@@ -54,11 +55,11 @@ const UsersTable = ({ users, user, setUsers, onUserDeleted }) => {
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left table-fixed">
+        <table className="min-w-[430px] w-full text-sm text-left table-fixed">
           <thead className="text-gray-500 border-b">
             <tr>
-              <th className="py-2 w-1/5">ID</th>
-              <th className="py-2 w-1/5">Username</th>
+              <th className="py-2 w-1/10">ID</th>
+              <th className="py-2 w-3/10">Username</th>
               <th className="py-2 w-1/5">Role</th>
               <th className="py-2 w-1/5">Created</th>
               <th className="py-2 w-1/5 text-center">Actions</th>
@@ -68,8 +69,8 @@ const UsersTable = ({ users, user, setUsers, onUserDeleted }) => {
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className="border-b">
-                <td className="py-2 w-1/5">{u.id}</td>
-                <td className="py-2 w-1/5 truncate">{u.username}</td>
+                <td className="py-2 w-1/10">{u.id}</td>
+                <td className="py-2 w-3/10 truncate ">{u.username}</td>
                 <td className="py-2 w-1/5">{u.role}</td>
                 <td className="py-2 w-1/5">
                   {new Date(u.created_at).toLocaleDateString()}

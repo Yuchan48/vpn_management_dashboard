@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 
 // import UI components
 import CreateDataButton from "../buttons/CreateDataButton";
@@ -57,7 +58,9 @@ const CreateUserModal = ({
         ? await createAdmin(newUserInfo, currentUser)
         : await createUser(newUserInfo);
       // Show success message and refresh user list
-      alert(`User "${username}" with role "${role}" created successfully`);
+      toast.success(
+        `User "${username}" with role "${role}" created successfully`,
+      );
       const usersData = await fetchAllUsers();
       setUsers(usersData);
       onClose();

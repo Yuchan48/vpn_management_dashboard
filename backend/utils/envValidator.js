@@ -7,9 +7,8 @@ function validateEnvVariables() {
     "SERVER_ENDPOINT",
     "DNS_SERVER",
     "VPN_SUBNET_MASK",
-    "ADMIN_USERNAME",
-    "ADMIN_PASSWORD_HASH",
-    "ADMIN_PASSWORD",
+    "ROOT_ADMIN_USERNAME",
+    "ROOT_ADMIN_PASSWORD",
     "WG_INTERFACE",
   ];
 

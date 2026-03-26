@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import useClientsSocket from "../hooks/useClientsSocket";
 
 // import UI components
 // tables and user info
@@ -11,43 +12,37 @@ import ChangePasswordButton from "../components/buttons/ChangePasswordButton";
 import LogoutButton from "../components/buttons/LogoutButton";
 // state screens
 import LoadingScreen from "../components/LoadingScreen";
-import ErrorScreen from "../components/ErrorScreen";
 
 // import functions
-import { isAuthenticated } from "../utils/auth";
-
-import { apiFetch } from "../services/apiFetch";
 import { fetchAllUsers, fetchCurrentUser } from "../services/userService";
+import { fetchClients } from "../services/clientService";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   // loading state and error
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   // fetched data
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [clients, setClients] = useState([]);
 
+  useClientsSocket(setClients);
+
   useEffect(() => {
-    if (!isAuthenticated()) {
-      navigate("/login");
-      return;
-    }
     const loadData = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const currentUser = await fetchCurrentUser();
         setUser(currentUser);
         if (currentUser.role === "admin") {
           const usersData = await fetchAllUsers();
           setUsers(usersData);
         }
-        const clientsData = await apiFetch("/clients");
+        const clientsData = await fetchClients();
         setClients(clientsData);
-      } catch (err) {
-        setError(err.message || "Failed to load dashboard data");
+      } catch {
+        navigate("/login");
       } finally {
         setLoading(false);
       }
@@ -59,19 +54,6 @@ const Dashboard = () => {
   if (loading) {
     return <LoadingScreen />;
   }
-
-  if (error) {
-    return <ErrorScreen error={error} />;
-  }
-
-  const fetchClients = async () => {
-    try {
-      const clientsData = await apiFetch("/clients");
-      setClients(clientsData);
-    } catch (err) {
-      setError(err.message || "Failed to fetch clients");
-    }
-  };
 
   return (
     <div className="min-h-screen w-full bg-gray-100">

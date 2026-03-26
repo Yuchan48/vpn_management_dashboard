@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 // import UI components
@@ -9,7 +9,6 @@ import DownloadButton from "../buttons/DownloadButton";
 
 // import functions
 import {
-  fetchClients,
   deleteClient,
   downloadClientConfig,
 } from "../../services/clientService";
@@ -26,24 +25,6 @@ const ClientsTable = ({ clients, user, setClients }) => {
     acc[key].push(client);
     return acc;
   }, {});
-
-  useEffect(() => {
-    //update clients status every 10 seconds
-    const updateStatus = async () => {
-      try {
-        const updatedClients = await fetchClients();
-        setClients(updatedClients);
-      } catch (err) {
-        console.error("Failed to update clients status:", err);
-      }
-    };
-
-    updateStatus(); // initial fetch
-
-    // poll every 10 seconds
-    const interval = setInterval(updateStatus, 10000);
-    return () => clearInterval(interval);
-  }, [setClients]);
 
   const handleOpenModal = () => {
     setError("");
@@ -72,8 +53,6 @@ const ClientsTable = ({ clients, user, setClients }) => {
       setLoadingId(client.clientId);
       // Call API to delete client
       await deleteClient(client, user);
-      // Remove client from list
-      setClients((prev) => prev.filter((c) => c.clientId !== client.clientId));
 
       toast.success(`Client "${client.name}" deleted successfully.`);
     } catch (err) {

@@ -10,6 +10,7 @@ const wireguardService = require("../services/wireguard.service");
 const { mapClientToStatus } = require("../utils/clientStatus");
 const { syncWireGuardPeers } = require("../services/wireguardSync.service");
 const { validateClientName } = require("../utils/inputValidators");
+const { emitIo } = require("../socketio");
 
 async function createClient(req, res, next) {
   try {
@@ -79,6 +80,14 @@ async function createClient(req, res, next) {
         .json({ error: "Failed to add peer to WireGuard interface" });
     }
 
+    // emit a Socket.IO event to notify connected clients that a new client has been created.
+    try {
+      const updatedClients = await clientService.getAllClients();
+      await emitIo(updatedClients);
+    } catch (socketError) {
+      console.error("Error emitting Socket.IO event:", socketError);
+    }
+
     // Generate a .conf file content for the newly created client.
     const configContent = generateClientConfig(client, privateKey);
 
@@ -144,6 +153,14 @@ async function deleteClient(req, res, next) {
 
     // Sync WireGuard peers after deletion
     await syncWireGuardPeers();
+
+    // emit updated client list to connected clients via Socket.IO
+    try {
+      const updatedClients = await clientService.getAllClients();
+      await emitIo(updatedClients);
+    } catch (socketError) {
+      console.error("Error emitting Socket.IO event:", socketError);
+    }
 
     res.status(204).send();
   } catch (error) {

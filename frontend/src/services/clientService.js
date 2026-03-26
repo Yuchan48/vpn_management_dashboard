@@ -1,34 +1,30 @@
 import { apiFetch } from "./apiFetch";
 
-export async function fetchClients() {
-  return await apiFetch("/clients");
-  // return [// {id, name, publicKey, ipAddress, user_id, isConnected, lastHandshake}, ...]
+export function fetchClients() {
+  return apiFetch("/clients");
 }
 
-export async function createClient(clientData) {
-  return await apiFetch("/clients", {
+export function createClient(clientData) {
+  return apiFetch("/clients", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(clientData),
   });
   // return TEXT response with .conf file content
 }
 
-export async function deleteClient(client, user) {
+export function deleteClient(client, user) {
   // Only the owner of the client or an admin can delete the client
   if (user.role !== "admin" && client.userId !== user.id) {
     throw new Error("Only the owner or an admin can delete this client");
   }
 
-  return await apiFetch(`/clients/${client.clientId}`, {
+  return apiFetch(`/clients/${client.clientId}`, {
     method: "DELETE",
   });
 }
 
-export async function fetchClientConfig(clientId) {
-  return await apiFetch(`/clients/${clientId}/config`);
+export function fetchClientConfig(clientId) {
+  return apiFetch(`/clients/${clientId}/config`);
   // return .conf file content as blob
 }
 

@@ -1,11 +1,12 @@
-import { removeToken } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
+
+import { logout } from "../../services/authService";
 
 const LogoutButton = () => {
   const navigate = useNavigate();
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // remove token
-    removeToken();
+    await logout();
     // redirect to login page
     navigate("/login");
   };

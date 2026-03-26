@@ -8,7 +8,7 @@ import Spinner from "../components/icons/Spinner";
 
 // import functions
 import { changePassword } from "../services/userService";
-import { removeToken } from "../utils/auth";
+import { logout } from "../services/authService";
 
 const ChangePassword = () => {
   // set input values
@@ -52,7 +52,7 @@ const ChangePassword = () => {
       await changePassword(currentPassword, newPassword);
 
       // On success, log out the user and redirect to login page with a message
-      removeToken();
+      await logout();
       navigate("/login", {
         state: {
           message: "Password changed. Please log in with your new password.",

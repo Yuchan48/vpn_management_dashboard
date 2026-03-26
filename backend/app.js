@@ -2,6 +2,7 @@ const express = require("express");
 
 const cors = require("cors");
 const app = express();
+const cookieParser = require("cookie-parser");
 
 const errorHandler = require("./middleware/error.middleware");
 const authenticateToken = require("./middleware/auth.middleware");
@@ -12,6 +13,7 @@ const userRoutes = require("./routes/user.routes");
 
 // Configure middleware
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
   cors({

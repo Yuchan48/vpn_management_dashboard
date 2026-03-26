@@ -1,10 +1,16 @@
 function validateEnvVariables() {
   const requiredVariables = [
+    "PORT",
+    "REACT_APP_FRONTEND_URL",
     "JWT_SECRET",
     "SERVER_PUBLIC_KEY",
     "SERVER_ENDPOINT",
     "DNS_SERVER",
     "VPN_SUBNET_MASK",
+    "ADMIN_USERNAME",
+    "ADMIN_PASSWORD_HASH",
+    "ADMIN_PASSWORD",
+    "WG_INTERFACE",
   ];
 
   const missingVariables = requiredVariables.filter(

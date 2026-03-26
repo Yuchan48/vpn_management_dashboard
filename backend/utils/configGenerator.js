@@ -3,7 +3,7 @@ function generateClientConfig(client, privateKey) {
   return `
 [Interface]
 PrivateKey = ${privateKey}
-Address = ${client.ip_address}/24
+Address = ${client.ip_address}/${process.env.VPN_SUBNET_MASK}
 DNS = ${process.env.DNS_SERVER}
 
 [Peer]

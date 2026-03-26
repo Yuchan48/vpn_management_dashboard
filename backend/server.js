@@ -1,9 +1,11 @@
-require("dotenv").config();
+// Load environment variables based on the current NODE_ENV
+const { loadEnv } = require("./config");
+loadEnv();
+
 const app = require("./app");
 const port = process.env.PORT || 5500;
 
 const { syncWireGuardPeers } = require("./services/wireguardSync.service");
-
 const { validateEnvVariables } = require("./utils/envValidator");
 
 // Validate environment variables on startup

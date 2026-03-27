@@ -20,7 +20,10 @@ async function createUser(req, res, next) {
     validateUsername(username);
     validatePassword(password);
 
-    const user = await userService.createUser(username, password);
+    // check is the user is demo user by checking if the username starts with "demo_"
+    const isDemo = username.startsWith("demo_") ? 1 : 0;
+
+    const user = await userService.createUser(username, password, isDemo);
     res.status(201).json(user);
   } catch (err) {
     next(err);
@@ -86,6 +89,13 @@ async function deleteUser(req, res, next) {
 // Change own password. User must provide current password for verification, and new password.
 async function changePassword(req, res, next) {
   try {
+    // check if it is demo user, if so, reject the request with 403 status code.
+    if (req.user.is_demo) {
+      return res
+        .status(403)
+        .json({ error: "Demo users are not allowed to change password" });
+    }
+
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {

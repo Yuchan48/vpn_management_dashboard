@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const db = require("../database/db.js");
 
-async function createUser(username, password) {
+async function createUser(username, password, isDemo) {
   // fetch all existing user ids to determine the next id.
   const userIdRows = await new Promise((resolve, reject) => {
     db.all(
@@ -55,8 +55,8 @@ async function createUser(username, password) {
     // create a new user
     db.run(
       // Use a parameterized query to prevent SQL injection
-      `INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, ?)`,
-      [nextUserId, username, hashedPassword, "user"],
+      `INSERT INTO users (id, username, password_hash, role, is_demo) VALUES (?, ?, ?, ?, ?)`,
+      [nextUserId, username, hashedPassword, "user", isDemo],
       function (err) {
         if (err) {
           if (
@@ -147,7 +147,7 @@ async function getAllUsers() {
 async function getUserById(userId) {
   return new Promise((resolve, reject) => {
     db.get(
-      "SELECT id, username, role, created_at FROM users WHERE id = ?",
+      "SELECT id, username, role, created_at, is_demo FROM users WHERE id = ?",
       [userId],
       (err, row) => {
         if (err) return reject({ status: 500, error: err.message });

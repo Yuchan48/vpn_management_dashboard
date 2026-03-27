@@ -81,7 +81,7 @@ async function getClientById({ clientId, user }) {
 async function getAllClients() {
   return new Promise((resolve, reject) => {
     const query =
-      "SELECT clients.id, clients.name, clients.public_key, clients.ip_address, clients.user_id, users.username FROM clients JOIN users ON clients.user_id = users.id ORDER BY clients.user_id ASC, clients.id ASC;";
+      "SELECT clients.id, clients.name, clients.public_key, clients.ip_address, clients.user_id, users.username, users.is_demo FROM clients JOIN users ON clients.user_id = users.id ORDER BY clients.user_id ASC, clients.id ASC;";
     db.all(query, [], (err, rows) => {
       if (err) {
         reject({ status: 500, error: err.message });

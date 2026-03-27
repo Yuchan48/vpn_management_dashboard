@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { customAlphabet } from "nanoid";
 
 // import UI components
 import Modal from "./Modal";
@@ -14,7 +15,13 @@ import {
 
 import { validateClientName } from "../../utils/inputValidators";
 
-const CreateClientModal = ({ isOpen, onClose, setClients, showModal }) => {
+const CreateClientModal = ({
+  isOpen,
+  onClose,
+  setClients,
+  showModal,
+  isDemo,
+}) => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,7 +31,15 @@ const CreateClientModal = ({ isOpen, onClose, setClients, showModal }) => {
       setName("");
       setError("");
     }
-  }, [showModal]);
+    if (isDemo) {
+      // for demo users, pre-fill the client name with unique value.
+      const alphabet =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-";
+      const nanoidCustom = customAlphabet(alphabet, 8); // control length and characters of the generated ID
+      const name = `demo-${nanoidCustom()}`;
+      setName(name);
+    }
+  }, [showModal, isDemo]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -63,6 +63,12 @@ const LoginPage = () => {
     }
   };
 
+  const handleDemoLogin = () => {
+    setUsername("demo_user");
+    setPassword("demo_password");
+    setError("");
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-700 px-5 sm:px-4">
       <div className="w-full max-w-sm bg-gray-300 rounded-lg shadow-lg px-6 py-10 sm:px-10 sm:py-14">
@@ -143,6 +149,15 @@ const LoginPage = () => {
             )}
           </button>
         </form>
+
+        {/* ⭐ Demo Login Button */}
+        <button
+          onClick={handleDemoLogin}
+          disabled={isLoading}
+          className="mt-4 w-full flex items-center justify-center rounded-md border border-indigo-700 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 disabled:bg-gray-200 disabled:cursor-not-allowed"
+        >
+          Use Demo Account
+        </button>
       </div>
     </div>
   );

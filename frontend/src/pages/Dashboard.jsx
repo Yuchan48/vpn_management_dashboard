@@ -68,7 +68,7 @@ const Dashboard = () => {
           </div>
 
           <div className="flex gap-2">
-            <ChangePasswordButton />
+            <ChangePasswordButton disabled={user.is_demo === 1} />
 
             <LogoutButton />
           </div>

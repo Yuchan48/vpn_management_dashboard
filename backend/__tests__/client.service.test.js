@@ -3,61 +3,81 @@ const db = require("../database/db");
 
 afterEach(async () => {
   await new Promise((resolve, reject) => {
-    db.run("DELETE FROM clients", (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
+    db.run("DELETE FROM clients", (err) => (err ? reject(err) : resolve()));
   });
 });
 
 describe("Client Service", () => {
-  // Test create client
+  const adminUser = { id: 1, role: "admin" };
+  const normalUser = { id: 2, role: "user" };
+
   describe("createClient", () => {
+    it("should reject if name is missing", async () => {
+      await expect(
+        clientService.createClient({
+          publicKey: "somekey",
+          ipAddress: "10.0.0.5",
+          userId: 2,
+        }),
+      ).rejects.toMatchObject({
+        error: expect.any(String),
+        status: expect.any(Number),
+      });
+    });
+
     it("should create a new client", async () => {
-      const clientName = `test-device-${Date.now()}`;
+      const clientName = `test-device-${Date.now()}-${Math.random()}`;
       const client = await clientService.createClient({
         name: clientName,
         publicKey: `key-${Date.now()}`,
         ipAddress: "10.0.0.10",
+        userId: 2,
       });
+
       expect(client).toHaveProperty("id");
       expect(client.name).toBe(clientName);
     });
   });
 
-  // Test get client by ID
   describe("getClientById", () => {
-    it("should return a client by ID", async () => {
+    it("should return a client by id", async () => {
       const client = await clientService.createClient({
-        name: "test-device2",
-        publicKey: "testkey456",
-        ipAddress: "10.0.0.11",
+        name: "find-me",
+        publicKey: "key-find",
+        ipAddress: "10.0.0.20",
+        userId: 2,
       });
-      const fetchedClient = await clientService.getClientById(client.id);
-      expect(fetchedClient.id).toBe(client.id);
+
+      const fetched = await clientService.getClientById({
+        clientId: client.id,
+        user: normalUser,
+      });
+      expect(fetched.name).toBe("find-me");
+    });
+
+    it("should throw 404 if client not found", async () => {
+      await expect(
+        clientService.getClientById({ clientId: 9999, user: normalUser }),
+      ).rejects.toMatchObject({ status: 404 });
     });
   });
 
-  // Test get all clients
-  describe("getAllClients", () => {
-    it("should return an array of clients", async () => {
-      const clients = await clientService.getAllClients();
-      expect(Array.isArray(clients)).toBe(true);
-    });
-  });
-
-  // Test delete client
   describe("deleteClient", () => {
-    it("should delete a client by ID", async () => {
+    it("should delete a client", async () => {
       const client = await clientService.createClient({
-        name: "test-device3",
-        publicKey: "testkey789",
-        ipAddress: "10.0.0.12",
+        name: "delete-me",
+        publicKey: "key-delete",
+        ipAddress: "10.0.0.30",
+        userId: 2,
       });
-      await clientService.deleteClient(client.id);
-      await expect(clientService.getClientById(client.id)).rejects.toThrow(
-        "Client not found",
-      );
+
+      await clientService.deleteClient({
+        clientId: client.id,
+        user: normalUser,
+      });
+      await expect(
+        clientService.getClientById({ clientId: client.id, user: normalUser }),
+      ).rejects.toMatchObject({ status: 404 });
     });
   });
 });

@@ -829,23 +829,37 @@ Transitioned from polling to WebSocket‑based real‑time updates, planned the 
 - Still refining connection handling for WebSockets to recover gracefully on disconnect/reconnects.
 - Need to review backend events to ensure they emit appropriate and consistent updates for all WebSocket clients.
 
-## Next Steps
+# Day 20 – Demo User Enhancements & Periodic Cleanup
 
-- Finalize WebSocket server and client event flows to reliably react to all CRUD operations on clients.
-- Add and refine unit/integration tests in both backend and frontend before containerization.
-- Create `Dockerfile`s and a `docker‑compose.yml` with volumes, Nginx configuration, and entrypoints.
-- Explore database backup setup and logging persistence strategies.
-- Perform local Docker build and test, followed by VPS deployment with wireguard installed on host.
+## Summary
 
----
+Added full support for demo users, including auto-filled login and client creation fields, disabled password changes, and a periodic cleanup mechanism for demo clients. Updated unit tests and prepared for frontend-backend integration improvements.
 
-## Future Improvements
+## Development Implementation
 
-- Add real-time connection statistics for each client
-- Implement user roles and multi-user support
-- Deploy on cloud server with automated setup using Terraform or Ansible
-- Implement email notifications on new client creation
+- **Demo User Enhancements**
+  - Added "Use Demo Account" button on login to autofill demo credentials (`demo_user` / `demo_password`).
+  - Disabled change password button in frontend and rejected password change requests in backend for demo users.
+  - Auto-filled client creation input for demo users with unique names using safe characters (`demo-${nanoid(8)}`) to comply with validation regex `/^[a-zA-Z0-9-]{5,}$/`.
+  - Demo clients can still be created and deleted, showing full app functionality to recruiters without altering demo credentials.
 
-```
+- **Periodic Cleanup of Demo Clients**
+  - Added `is_demo` field in the database for demo users.
+  - Created `cleanupOldDemoClients()` service to remove demo clients older than 30 minutes and their associated WireGuard peers.
+  - Scheduled cleanup to run every 30 minutes using `setInterval`.
+  - Initial cleanup runs at server startup to prevent stale demo clients.
 
-```
+- **Testing & Validation**
+  - Updated unit tests to cover demo client creation and cleanup logic.
+  - Verified real-time updates and Socket.IO emits still work after demo client deletions.
+  - Ensured demo clients are filtered correctly and backend rejects restricted operations (like changing password).
+
+- **Frontend Integration**
+  - Demo login autofill implemented for convenience during interviews.
+  - Client creation modal autofill ensures demo users can easily test app functionality without conflicts or validation errors.
+
+## Issues Encountered
+
+- `nanoid` generated `_` character by default, which violated client name validation; fixed with custom alphabet.
+- Demo client cleanup needed careful handling to remove associated WireGuard peers without affecting non-demo users.
+- Ensured auto-generated demo client names remain unique to avoid collisions during multiple sessions.

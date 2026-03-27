@@ -1,4 +1,6 @@
 const db = require("../database/db");
+const wireguardService = require("./wireguard.service");
+const { mapClientToStatus } = require("../utils/clientStatus");
 
 // Create a client in the database.
 async function createClient({ name, publicKey, ipAddress, userId }) {
@@ -89,6 +91,17 @@ async function getAllClients() {
     });
   });
 }
+
+// Returns array of all clients for admin and clients associated with the authenticated user for regular users with their status.
+async function getClientsWithStatus(user) {
+  const clients = await getAllClients();
+  const peers = await wireguardService.getWireGuardPeers();
+
+  return clients
+    .filter((client) => user.role === "admin" || client.user_id === user.id)
+    .map((client) => mapClientToStatus(client, peers));
+}
+
 // Returns an array of all client objects associated with a specific user ID from the database.
 async function getClientsByUserId(userId) {
   return new Promise((resolve, reject) => {
@@ -143,6 +156,7 @@ module.exports = {
   createClient,
   getClientById,
   getAllClients,
+  getClientsWithStatus,
   getClientsByUserId,
   deleteClient,
   updateClientPublicKey,

@@ -82,7 +82,7 @@ async function createClient(req, res, next) {
 
     // emit a Socket.IO event to notify connected clients that a new client has been created.
     try {
-      const updatedClients = await clientService.getAllClients();
+      const updatedClients = await clientService.getClientsWithStatus(req.user);
       await emitIo(updatedClients);
     } catch (socketError) {
       console.error("Error emitting Socket.IO event:", socketError);
@@ -110,22 +110,11 @@ async function createClient(req, res, next) {
 
 async function getClients(req, res, next) {
   try {
-    // Get all clients from database.
-    const clients = await clientService.getAllClients();
+    const clientsWithStatus = await clientService.getClientsWithStatus(
+      req.user,
+    );
 
-    // Get the list of peers from the WireGuard interface.
-    const peers = await wireguardService.getWireGuardPeers();
-
-    // check each client against the list of peers to determine if they are currently connected.
-    const result = clients
-      .filter(
-        (client) =>
-          // Only include clients that belong to the authenticated user or if the user is an admin.
-          req.user.role === "admin" || client.user_id === req.user.id,
-      )
-      .map((client) => mapClientToStatus(client, peers)); //{ clientId, name, publicKey, allowedIPs, endpoint, status, userId}
-
-    res.json(result);
+    res.json(clientsWithStatus);
   } catch (error) {
     next(error);
   }
@@ -156,7 +145,7 @@ async function deleteClient(req, res, next) {
 
     // emit updated client list to connected clients via Socket.IO
     try {
-      const updatedClients = await clientService.getAllClients();
+      const updatedClients = await clientService.getClientsWithStatus(req.user);
       await emitIo(updatedClients);
     } catch (socketError) {
       console.error("Error emitting Socket.IO event:", socketError);

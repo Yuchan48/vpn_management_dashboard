@@ -7,13 +7,13 @@ const useClientsSocket = (setClients) => {
     socket.connect();
 
     // listen for client updates
-    socket.on("clientUpdate", (updatedClients) => {
+    socket.on("clientsUpdated", (updatedClients) => {
       setClients(updatedClients);
     });
 
     //cleanup on unmount
     return () => {
-      socket.off("clientUpdate");
+      socket.off("clientsUpdated");
       socket.disconnect();
     };
   }, [setClients]);

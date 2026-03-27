@@ -5,6 +5,7 @@ const {
   validateUsername,
   validatePassword,
 } = require("../utils/inputValidators.js");
+const { emitIo } = require("../socketio");
 
 async function createUser(req, res, next) {
   try {
@@ -67,6 +68,14 @@ async function deleteUser(req, res, next) {
 
     if (clients.length > 0) {
       await Promise.all(clients.map((client) => removePeer(client.public_key))); // Remove all clients associated with the deleted user as peers from the WireGuard interface
+    }
+
+    // emit updated client list to connected clients via Socket.IO
+    try {
+      const updatedClients = await clientService.getClientsWithStatus(req.user);
+      await emitIo(updatedClients);
+    } catch (socketError) {
+      console.error("Error emitting Socket.IO event:", socketError);
     }
     res.status(204).send();
   } catch (error) {

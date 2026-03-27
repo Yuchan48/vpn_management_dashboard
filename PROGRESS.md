@@ -783,6 +783,60 @@ Implemented real-time updates for clients table, refined frontend responsiveness
 - Need to maintain column alignment when downloading `.conf` while keeping table responsive.
 - Ensuring real-time updates do not overwrite user interactions (modals, loading states).
 
+# Day 19 – WebSockets Integration & Deployment Planning
+
+## Summary
+
+Transitioned from polling to WebSocket‑based real‑time updates, planned the Dockerization and deployment architecture, and made several backend/frontend quality improvements in preparation for containerization.
+
+## Development Implementation
+
+- **WebSocket Integration**
+  - Added `socket.io` to backend and initialized a persistent connection from the frontend.
+  - Emits client list updates to connected clients on relevant events (e.g., create/delete).
+  - Integrated WebSocket event handler in React to update clients state in real time.
+
+- **Root Admin Auto‑Creation**
+  - Implemented server startup logic to check for the existence of a root admin (id = 1).
+  - If missing, automatically seeds a root admin account to ensure secure administrative control.
+
+- **Security Improvements**
+  - Switched from JWT in `localStorage` to **HTTP‑only cookies** for authentication.
+  - Updated client API calls to send credentials and handle session via cookies securely.
+
+- **Environment Configuration Separation**
+  - Introduced `.env.development` and `.env.production` files with environment‑specific settings.
+  - Prepared secrets, API base paths, and other variables to align with future Docker and Nginx deployments.
+
+- **Code Quality Enhancements**
+  - Added a comprehensive `.dockerignore` to reduce image size and exclude sensitive/config files.
+  - Cleaned up polling useEffect logic in favor of WebSocket event handling.
+  - Began backend and frontend unit test improvements (particularly around client/user workflows).
+
+- **Deployment Planning & Design**
+  - Drafted containerization strategy using Docker with:
+    - Backend container
+    - Frontend container served through Nginx
+    - Named Docker volumes for SQLite persistence and application logs
+    - Backup strategy via cron or backup container performing periodic `.backup` of SQLite
+    - Non‑root user execution inside containers for better security
+  - Determined WireGuard should run on the host OS instead of inside Docker for proper networking and kernel access.
+  - Mapped routing and reverse proxy behavior expected for Nginx to forward `/api` and WebSocket connections.
+
+## Issues Encountered
+
+- Client deletion sometimes did not automatically update the clients list in the UI without a page refresh — an effect that predates WebSocket migration and will be resolved in tandem with both WebSocket and backend test improvements.
+- Still refining connection handling for WebSockets to recover gracefully on disconnect/reconnects.
+- Need to review backend events to ensure they emit appropriate and consistent updates for all WebSocket clients.
+
+## Next Steps
+
+- Finalize WebSocket server and client event flows to reliably react to all CRUD operations on clients.
+- Add and refine unit/integration tests in both backend and frontend before containerization.
+- Create `Dockerfile`s and a `docker‑compose.yml` with volumes, Nginx configuration, and entrypoints.
+- Explore database backup setup and logging persistence strategies.
+- Perform local Docker build and test, followed by VPS deployment with wireguard installed on host.
+
 ---
 
 ## Future Improvements

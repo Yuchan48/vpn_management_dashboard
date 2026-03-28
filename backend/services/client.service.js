@@ -99,7 +99,9 @@ async function getClientsWithStatus(user) {
   const peers = await wireguardService.getWireGuardPeers();
 
   return clients
-    .filter((client) => user.role === "admin" || client.user_id === user.id)
+    .filter(
+      (client) => !user || user.role === "admin" || client.user_id === user.id,
+    )
     .map((client) => mapClientToStatus(client, peers));
 }
 

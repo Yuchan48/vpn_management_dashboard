@@ -9,6 +9,7 @@ function validateEnvVariables() {
     "VPN_SUBNET_MASK",
     "ROOT_ADMIN_USERNAME",
     "ROOT_ADMIN_PASSWORD",
+    "DEMO_CLEANUP_INTERVAL",
     "WG_INTERFACE",
   ];
 

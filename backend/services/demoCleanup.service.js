@@ -1,14 +1,16 @@
 const clientService = require("./client.service.js");
 const wireguardService = require("./wireguard.service.js");
 
-// Delete all demo clients and their associated WireGuard peers. after 30 minutes of creation.
-async function cleanupOldDemoClients(cutoffMinutes = 30) {
+// Delete all demo clients and their associated WireGuard peers after a specified interval.
+async function cleanupOldDemoClients() {
   try {
     console.log("[DemoCleanup] Starting cleanup of demo clients...");
 
     // Calculate cutoff time
     const now = new Date();
-    const cutoffTime = new Date(now.getTime() - cutoffMinutes * 60 * 1000);
+    const cutoffTime = new Date(
+      now.getTime() - (process.env.DEMO_CLEANUP_INTERVAL || 1800000),
+    );
     const allClients = await clientService.getAllClients();
 
     // Filter demo clients created before cutoff time
@@ -43,12 +45,11 @@ async function cleanupOldDemoClients(cutoffMinutes = 30) {
       }
     }
 
-    console.log(
-      `[DemoCleanup] Cleanup complete. Deleted ${demoClientsToDelete.length} demo clients.`,
-    );
+    return demoClientsToDelete.length;
   } catch (error) {
     console.error("[DemoCleanup] error:", error);
   }
+  return 0;
 }
 
 module.exports = {

@@ -1,5 +1,7 @@
-require("dotenv").config();
-const { exec } = require("child_process");
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV || "development"}`,
+});
+
 const { getAllClients } = require("../services/client.service");
 const {
   getWireGuardPeers,

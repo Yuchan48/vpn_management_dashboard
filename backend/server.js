@@ -16,7 +16,9 @@ const ensureRootAdmin = require("./utils/initAdmin");
 const { syncWireGuardPeers } = require("./services/wireguardSync.service");
 const { validateEnvVariables } = require("./utils/envValidator");
 
-const { cleanupOldDemoClients } = require("./services/demoCleanup.service");
+const {
+  cleanupAndReloadDemoClients,
+} = require("./utils/cleanupAndReloadDemoClients");
 
 async function startServer() {
   try {
@@ -35,14 +37,13 @@ async function startServer() {
     });
 
     // initial cleanup of expired demo clients on server startup
-    await cleanupOldDemoClients();
+    await cleanupAndReloadDemoClients();
 
     // schedule  periodic demo cleanup every 30 minutes
     setInterval(
       async () => {
         try {
-          console.log("[DemoCleanup] Running scheduled cleanup...");
-          await cleanupOldDemoClients();
+          await cleanupAndReloadDemoClients();
         } catch (error) {
           console.error("[DemoCleanup] error:", error);
         }

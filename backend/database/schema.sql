@@ -1,6 +1,6 @@
 -- Table to store VPN clients
 CREATE TABLE IF NOT EXISTS clients (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
     -- Device name; must be unique
     public_key TEXT,

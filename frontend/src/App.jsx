@@ -15,7 +15,6 @@ const App = () => {
         position="top-right"
         reverseOrder={false}
         toastOptions={{
-          duration: 5000, // 5 seconds instead of default 3
           style: {
             background: "#333", // dark background
             color: "#fff", // text color

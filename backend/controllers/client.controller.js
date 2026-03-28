@@ -66,7 +66,8 @@ async function createClient(req, res, next) {
       try {
         await clientService.deleteClient({
           clientId: client.id,
-          user: req.user,
+          userRole: req.user.role,
+          userId: req.user.id,
         });
       } catch (deleteError) {
         console.error(
@@ -137,7 +138,8 @@ async function deleteClient(req, res, next) {
     // delete the client from the database.
     await clientService.deleteClient({
       clientId: req.params.id,
-      user: req.user,
+      userRole: req.user.role,
+      userId: req.user.id,
     });
 
     // Sync WireGuard peers after deletion

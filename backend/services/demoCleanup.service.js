@@ -30,7 +30,11 @@ async function cleanupOldDemoClients(cutoffMinutes = 30) {
 
       try {
         // delete client from database
-        await clientService.deleteClient({ clientId: client.id });
+        await clientService.deleteClient({
+          clientId: client.id,
+          userRole: "admin",
+          userId: null,
+        });
       } catch (dbErr) {
         console.error(
           `[DemoCleanup] fail to delete client: ${client.id} from database:`,

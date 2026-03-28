@@ -4,6 +4,7 @@ const { mapClientToStatus } = require("../utils/clientStatus");
 
 // Create a client in the database.
 async function createClient({ name, publicKey, ipAddress, userId }) {
+  // Check if the user has reached the maximum number of clients (5 clients per user)
   const clientCount = await new Promise((resolve, reject) => {
     db.get(
       "SELECT COUNT(*) AS count FROM clients WHERE user_id = ?",
@@ -81,7 +82,7 @@ async function getClientById({ clientId, user }) {
 async function getAllClients() {
   return new Promise((resolve, reject) => {
     const query =
-      "SELECT clients.id, clients.name, clients.public_key, clients.ip_address, clients.user_id, users.username, users.is_demo FROM clients JOIN users ON clients.user_id = users.id ORDER BY clients.user_id ASC, clients.id ASC;";
+      "SELECT clients.id, clients.name, clients.public_key, clients.ip_address, clients.user_id,clients.created_at, users.username,  users.is_demo FROM clients JOIN users ON clients.user_id = users.id ORDER BY clients.user_id ASC, clients.id ASC;";
     db.all(query, [], (err, rows) => {
       if (err) {
         reject({ status: 500, error: err.message });
@@ -117,13 +118,13 @@ async function getClientsByUserId(userId) {
 }
 
 // Delete a client by ID from the database.
-function deleteClient({ clientId, user }) {
+function deleteClient({ clientId, userRole, userId }) {
   return new Promise((resolve, reject) => {
     const query =
-      user.role === "admin"
+      userRole === "admin"
         ? "DELETE FROM clients WHERE id = ?"
         : "DELETE FROM clients WHERE id = ? AND user_id = ?";
-    const params = user.role === "admin" ? [clientId] : [clientId, user.id];
+    const params = userRole === "admin" ? [clientId] : [clientId, userId];
     db.run(query, params, function (err) {
       if (err) {
         reject({ status: 500, error: err.message });

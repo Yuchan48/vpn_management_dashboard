@@ -2,6 +2,8 @@ require("dotenv").config({
   path: `.env.${process.env.NODE_ENV || "development"}`,
 });
 
+const { db, initDb } = require("./database/db");
+
 const app = require("./app");
 
 // create server from express app and initialize Socket.IO
@@ -25,7 +27,10 @@ async function startServer() {
     // Validate environment variables on startup
     validateEnvVariables();
 
-    // Ensure root admin user exists on startup
+    // Initialize the database (this will also ensure the root admin user exists)
+    await initDb();
+
+    //Ensure root admin user exists on startup
     await ensureRootAdmin();
 
     // Sync WireGuard peers with clients in the database on startup

@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 // Importing pages
@@ -41,6 +46,7 @@ const App = () => {
       />
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
 
           {/* Protected route. Only accessible if authenticated. */}
@@ -62,10 +68,7 @@ const App = () => {
             }
           />
 
-          {/* Just for development, remove the token authentication */}
-          {/*  <Route path="/dashboard" element={<Dashboard />} />
-
-          <Route path="/change-password" element={<ChangePassword />} /> */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </div>

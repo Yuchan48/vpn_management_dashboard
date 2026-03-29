@@ -1,8 +1,12 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// For development
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// For production
+const API_BASE_URL = "/api";
 
 export async function login(username, password) {
   // Call the login API with the provided username and password
-  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+  const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -20,7 +24,7 @@ export async function login(username, password) {
 }
 
 export function logout() {
-  return fetch(`${API_BASE_URL}/api/auth/logout`, {
+  return fetch(`${API_BASE_URL}/auth/logout`, {
     method: "POST",
     credentials: "include",
   });

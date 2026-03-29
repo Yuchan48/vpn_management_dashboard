@@ -5,7 +5,7 @@ const { login } = require("../controllers/auth.controller");
 const { loginRateLimiter } = require("../middleware/rateLimit.middleware");
 const authenticateToken = require("../middleware/auth.middleware");
 
-// /api/auth
+// /auth
 // login
 router.post("/login", loginRateLimiter, login);
 

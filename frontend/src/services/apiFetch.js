@@ -1,4 +1,9 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// For development
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// For production
+const API_BASE_URL = "/api";
+
 export async function apiFetch(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,

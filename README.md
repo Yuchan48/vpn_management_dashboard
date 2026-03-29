@@ -58,6 +58,13 @@ This project is a **self-hosted VPN management platform** that allows users to s
 
 This stack emphasizes simplicity, clarity, and maintainability. Each layer has a focused responsibility: React handles the UI, Express manages business logic and APIs, WireGuard secures network traffic, JWT provides stateless authentication, and Docker ensures environment consistency. Technology choices were made intentionally, balancing performance, automation, and scalability while avoiding unnecessary complexity or overengineering.
 
+## Security Considerations
+
+- **Authentication Tokens:** JWTs are stored in **HttpOnly Secure Cookies** to mitigate XSS attacks by preventing JavaScript access to tokens.
+- **Environment Variables:** Production secrets are managed via environment variables and never committed to source control.
+- **WSGI/Reverse Proxy:** Nginx is configured to serve static files and proxy API requests securely.
+- **Database Persistence:** SQLite data and logs are stored in Docker volumes to ensure data durability.
+
 ---
 
 ## Project Structure

@@ -22,12 +22,12 @@ app.use(
   }),
 );
 
-// Mount routes at /clients
-app.use("/clients", authenticateToken, clientRoutes);
-// Mount auth routes at /auth
+// Mount routes at /api/clients
+app.use("/api/clients", authenticateToken, clientRoutes);
+// Mount auth routes at /api/auth
 app.use("/api/auth", authRoutes);
-
-app.use("/users", authenticateToken, userRoutes);
+// Mount user routes at /api/users
+app.use("/api/users", authenticateToken, userRoutes);
 
 // Status endpoint for client status checks
 app.get("/status", (req, res) => {

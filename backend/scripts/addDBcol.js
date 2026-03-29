@@ -1,4 +1,4 @@
-const db = require("../database/db.js");
+const { db } = require("../database/db.js");
 
 db.run(`ALTER TABLE users ADD COLUMN is_demo INTEGER DEFAULT 0`, (err) => {
   if (err) {

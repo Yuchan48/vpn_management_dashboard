@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const db = require("../database/db.js");
+const { db } = require("../database/db.js");
 
 async function createUser(username, password, isDemo) {
   // fetch all existing user ids to determine the next id.
@@ -9,19 +9,7 @@ async function createUser(username, password, isDemo) {
       [],
       (err, rows) => {
         if (err) {
-          if (
-            err.message.includes("UNIQUE constraint failed: users.username")
-          ) {
-            return reject({
-              status: 400,
-              error: "Username already taken",
-            });
-          }
-
-          return reject({
-            status: 500,
-            error: "Failed to create user",
-          });
+          reject({ status: 500, error: err.message });
         } else if (rows.length >= 15) {
           // limit to 15 users. id 1 is reserved for initial admin. users will be assigned ids 2-16.
           reject({
@@ -51,33 +39,37 @@ async function createUser(username, password, isDemo) {
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  await new Promise((resolve, reject) => {
-    // create a new user
-    db.run(
-      // Use a parameterized query to prevent SQL injection
-      `INSERT INTO users (id, username, password_hash, role, is_demo) VALUES (?, ?, ?, ?, ?)`,
-      [nextUserId, username, hashedPassword, "user", isDemo],
-      function (err) {
-        if (err) {
-          if (
-            err.message.includes("UNIQUE constraint failed: users.username")
-          ) {
-            return reject({
-              status: 400,
-              error: "Username already taken",
-            });
-          }
+  try {
+    await new Promise((resolve, reject) => {
+      // create a new user
+      db.run(
+        // Use a parameterized query to prevent SQL injection
+        `INSERT INTO users (id, username, password_hash, role, is_demo) VALUES (?, ?, ?, ?, ?)`,
+        [nextUserId, username, hashedPassword, "user", isDemo],
+        function (err) {
+          if (err) {
+            if (
+              err.message.includes("UNIQUE constraint failed: users.username")
+            ) {
+              return reject({
+                status: 400,
+                error: "Username already taken",
+              });
+            }
 
-          return reject({
-            status: 500,
-            error: "Failed to create user",
-          });
-        } else {
-          resolve();
-        }
-      },
-    );
-  });
+            return reject({
+              status: 500,
+              error: "Failed to create user",
+            });
+          } else {
+            resolve();
+          }
+        },
+      );
+    });
+  } catch (error) {
+    throw error;
+  }
 
   // return newly created user info
   return await getUserById(nextUserId);
@@ -108,11 +100,47 @@ async function createAdmin(username, password) {
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  try {
+    await new Promise((resolve, reject) => {
+      db.run(
+        // Use a parameterized query to prevent SQL injection
+        `INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, ?)`,
+        [nextAdminId, username, hashedPassword, "admin"],
+        (err) => {
+          if (err) {
+            if (
+              err.message.includes("UNIQUE constraint failed: users.username")
+            ) {
+              return reject({
+                status: 400,
+                error: "Username already taken",
+              });
+            }
+            return reject({
+              status: 500,
+              error: "Failed to create user",
+            });
+          } else {
+            resolve();
+          }
+        },
+      );
+    });
+  } catch (error) {
+    throw error;
+  }
+  // return newly created user info
+  return await getUserById(nextAdminId);
+}
+
+async function createRootAdmin(username, password) {
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 10);
   await new Promise((resolve, reject) => {
     db.run(
       // Use a parameterized query to prevent SQL injection
       `INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, ?)`,
-      [nextAdminId, username, hashedPassword, "admin"],
+      [1, username, hashedPassword, "admin"],
       (error) => {
         if (error) {
           reject({ status: 500, error: error.message });
@@ -122,9 +150,8 @@ async function createAdmin(username, password) {
       },
     );
   });
-
   // return newly created user info
-  return await getUserById(nextAdminId);
+  return await getUserById(1);
 }
 
 async function getAllUsers() {
@@ -250,6 +277,7 @@ async function changePassword(user, currentPassword, newPassword) {
 module.exports = {
   createUser,
   createAdmin,
+  createRootAdmin,
   getAllUsers,
   getUserById,
   deleteUser,

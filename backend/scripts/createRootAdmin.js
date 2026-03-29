@@ -1,7 +1,7 @@
 // This is a one-off script to seed the initial admin user into the database.
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const db = require("../database/db.js");
+const { db } = require("../database/db.js");
 
 async function createRootAdmin() {
   const username = process.env.ROOT_ADMIN_USERNAME;

@@ -1,4 +1,4 @@
-const db = require("../database/db");
+const { db } = require("../database/db");
 const wireguardService = require("./wireguard.service");
 const { mapClientToStatus } = require("../utils/clientStatus");
 

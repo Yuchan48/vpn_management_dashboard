@@ -1,4 +1,4 @@
-const db = require("../database/db.js");
+const { db } = require("../database/db.js");
 
 // find user by username
 async function findUserByUsername(username) {

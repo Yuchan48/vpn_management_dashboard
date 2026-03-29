@@ -1,5 +1,5 @@
 const clientService = require("../services/client.service");
-const db = require("../database/db");
+const { db } = require("../database/db");
 
 afterEach(async () => {
   await new Promise((resolve, reject) => {

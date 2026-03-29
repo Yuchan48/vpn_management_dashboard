@@ -6,9 +6,8 @@ const { get } = require("http");
 function addPeer(publicKey, allowedIPs) {
   // wg set command to add a peer with the specified public key and allowed IPs
   execFileSync(
-    "sudo",
+    "wg",
     [
-      "wg",
       "set",
       process.env.WG_INTERFACE,
       "peer",
@@ -26,8 +25,8 @@ function addPeer(publicKey, allowedIPs) {
 function removePeer(publicKey) {
   // wg set command to remove a peer with the specified public key
   execFileSync(
-    "sudo",
-    ["wg", "set", process.env.WG_INTERFACE, "peer", publicKey, "remove"],
+    "wg",
+    ["set", process.env.WG_INTERFACE, "peer", publicKey, "remove"],
     {
       encoding: "utf-8",
     },
@@ -37,7 +36,7 @@ function removePeer(publicKey) {
 async function getWireGuardPeers() {
   const wgInterface = process.env.WG_INTERFACE || "wg0";
   // wg show command to get the current WireGuard configuration in JSON format
-  const output = execFileSync("sudo", ["wg", "show", wgInterface, "dump"], {
+  const output = execFileSync("wg", ["show", wgInterface, "dump"], {
     encoding: "utf-8",
   });
 
@@ -70,12 +69,12 @@ async function getWireGuardPeers() {
 
 function ensureWireguardUp() {
   try {
-    const output = execFileSync("sudo", ["wg", "show"], { encoding: "utf-8" });
+    const output = execFileSync("wg", ["show"], { encoding: "utf-8" });
     if (output.trim() === "")
       throw new Error("WireGuard is not running or no interfaces found");
   } catch {
     console.log("Starting wg0 via wg-quick...");
-    execFileSync("sudo", ["wg-quick", "up", "wg0"], { stdio: "inherit" });
+    execFileSync("wg-quick", ["up", "wg0"], { stdio: "inherit" });
   }
 }
 

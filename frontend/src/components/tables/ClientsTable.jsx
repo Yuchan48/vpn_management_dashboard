@@ -10,10 +10,9 @@ import DownloadButton from "../buttons/DownloadButton";
 // import functions
 import {
   deleteClient,
-  downloadClientConfig,
 } from "../../services/clientService";
 
-const ClientsTable = ({ clients, user, setClients }) => {
+const ClientsTable = ({ clients, user }) => {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [loadingId, setLoadingId] = useState(null);
@@ -67,8 +66,11 @@ const ClientsTable = ({ clients, user, setClients }) => {
 
     try {
       setLoadingId(client.clientId);
-      // Call API to download client config
-      await downloadClientConfig(client);
+      const link = document.createElement("a");
+      link.href = `${import.meta.env.VITE_API_BASE_URL}/clients/${client.clientId}/config`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (err) {
       setError(
         err.message || "Failed to download client config. Please try again.",
@@ -183,7 +185,6 @@ const ClientsTable = ({ clients, user, setClients }) => {
       <CreateClientModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        setClients={setClients}
         showModal={showModal}
         isDemo={user.is_demo === 1}
       />

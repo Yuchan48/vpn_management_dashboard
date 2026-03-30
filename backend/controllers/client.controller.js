@@ -89,6 +89,11 @@ async function createClient(req, res, next) {
       console.error("Error emitting Socket.IO event:", socketError);
     }
 
+    return res.status(201).json({
+      id: client.id,
+      name: client.name,
+    });
+    /*
     // Generate a .conf file content for the newly created client.
     const configContent = generateClientConfig(client, privateKey);
 
@@ -102,7 +107,7 @@ async function createClient(req, res, next) {
     res.setHeader("Content-Type", "text/plain");
 
     // Send the generated .conf file as the response body, allowing the client to download it immediately after creation.
-    res.send(configContent);
+    res.send(configContent); */
   } catch (error) {
     console.error("Error creating client:", error);
     next(error);

@@ -7,21 +7,11 @@ import Modal from "./Modal";
 import CreateDataButton from "../buttons/CreateDataButton";
 
 // import functions
-import {
-  createClient,
-  downloadConfFile,
-  fetchClients,
-} from "../../services/clientService";
+import { createClient } from "../../services/clientService";
 
 import { validateClientName } from "../../utils/inputValidators";
 
-const CreateClientModal = ({
-  isOpen,
-  onClose,
-  setClients,
-  showModal,
-  isDemo,
-}) => {
+const CreateClientModal = ({ isOpen, onClose, showModal, isDemo }) => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,11 +43,19 @@ const CreateClientModal = ({
 
     try {
       setLoading(true);
-      const configText = await createClient({ name });
-      downloadConfFile(configText, name);
+      /* const configText = await createClient({ name });
+      downloadConfFile(configText, name); */
+      const client = await createClient({ name });
+
+      const link = document.createElement("a");
+      link.href = `${import.meta.env.VITE_API_BASE_URL}/clients/${client.id}/config`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
       toast.success(`Client "${name}" created successfully`);
-      const clientsData = await fetchClients();
-      setClients(clientsData);
+      /* const clientsData = await fetchClients();
+      setClients(clientsData); */
 
       onClose();
     } catch (err) {

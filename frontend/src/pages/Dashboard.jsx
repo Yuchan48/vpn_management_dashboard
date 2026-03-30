@@ -75,7 +75,7 @@ const Dashboard = () => {
         </div>
 
         {/* Clients Card */}
-        <ClientsTable clients={clients} user={user} setClients={setClients} />
+        <ClientsTable clients={clients} user={user} />
 
         {/* Admin Users Card */}
         {user?.role === "admin" && (

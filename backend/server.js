@@ -1,5 +1,8 @@
 require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV || "development"}`,
+  path:
+    process.env.NODE_ENV === "production"
+      ? `${__dirname}/.env.production`
+      : `${__dirname}/.env.development`,
 });
 
 const { db, initDb } = require("./database/db");

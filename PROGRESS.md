@@ -959,3 +959,44 @@ Deployed the application to a live Ubuntu server on Hetzner, configured networki
 - Implement `.zip` download for WireGuard config files to ensure compatibility across devices.
 - Fix WebSocket (Socket.IO) configuration in Nginx for stable real-time communication.
 - Debug and resolve WireGuard networking (iptables/NAT) to enable internet access for clients.
+
+# Day 23 – Frontend Build Deployment, Zip Downloads & WebSocket Fix
+
+## Summary
+
+Deployed updated frontend build to production, fixed `.zip` download issues on mobile devices, and resolved Socket.IO connectivity between frontend and backend. Verified real-time client updates are reflected correctly in the dashboard table.
+
+## Development Implementation
+
+- **Frontend Build & Deployment**
+  - Rebuilt frontend with `npm run build` to include the latest changes.
+  - Copied `dist/` folder contents to Nginx root (`/usr/local/var/www/frontend`) and reloaded Nginx.
+  - Verified that new build is loaded in production by adding console logs and checking Chrome DevTools.
+
+- **Zip File Download Fix**
+  - Updated client configuration download logic to wrap response in a `Blob` with type `application/zip`.
+  - Ensured Android and iOS devices correctly download `.zip` files without `.json` or `.txt` extensions.
+  - Confirmed backend API returns valid zip data and frontend correctly triggers file download.
+
+- **Socket.IO / WebSocket Fix**
+  - Updated backend Socket.IO server to use `path: "/api/socket.io"` matching Nginx proxy location.
+  - Configured Nginx to proxy `/api/socket.io/` with proper WebSocket headers (`Upgrade`, `Connection`).
+  - Updated frontend Socket.IO client to use `path: "/api/socket.io"` and `transports: ["websocket"]`.
+  - Verified that creating and deleting clients triggers `clientsUpdated` events and updates the frontend client table in real time.
+
+- **Nginx Proxy & WebSocket**
+  - Reloaded Nginx after updating configuration.
+  - Confirmed WebSocket handshake succeeds (`wss://` connection) in Chrome DevTools Network tab.
+  - Verified correct CORS headers and credentials handling for frontend-backend communication.
+
+## Issues Encountered
+
+- Frontend build caching caused old version to load initially, preventing socket and download fixes from taking effect.
+- Android browsers automatically appended `.json` or `.txt` to downloaded `.zip` files without proper `Blob` type.
+- Initial Socket.IO connection failed due to mismatched path between frontend, backend, and Nginx proxy.
+
+## Next Steps
+
+- Debug WireGuard server NAT/routing rules to allow connected clients to access the internet.
+- Continue testing `.zip` downloads and Socket.IO events across multiple devices and browsers.
+- Monitor production server logs for any intermittent WebSocket or download issues.

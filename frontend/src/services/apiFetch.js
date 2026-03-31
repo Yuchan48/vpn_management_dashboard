@@ -41,3 +41,17 @@ export async function apiFetch(endpoint, options = {}) {
 
   return data;
 }
+
+export async function apiFetchBlob(endpoint, options = {}) {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "API request failed");
+  }
+
+  return await response.blob();
+}

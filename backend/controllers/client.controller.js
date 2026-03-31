@@ -215,15 +215,6 @@ async function getClientConfig(req, res, next) {
 
     const configContent = generateClientConfig(client, privateKey);
 
-    console.log(
-      "Generated client config content:\n",
-      configContent,
-      ", type: ",
-      typeof configContent,
-    ); // Log the generated config content for debugging
-
-    console.log("type of: ", typeof filename, ", value: ", filename); // Log the filename for debugging
-
     archive.append(configContent, {
       name: filename,
     });

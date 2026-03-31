@@ -1,4 +1,4 @@
-import { apiFetch } from "./apiFetch";
+import { apiFetch, apiFetchBlob } from "./apiFetch";
 
 export function fetchClients() {
   return apiFetch("/clients");
@@ -25,7 +25,7 @@ export function deleteClient(client, user) {
 
 // download conf file with given text content and filename
 export async function downloadConfFile(clientId, clientName) {
-  const blob = await apiFetch(`/clients/${clientId}/config`);
+  const blob = await apiFetchBlob(`/clients/${clientId}/config`);
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

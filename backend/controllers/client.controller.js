@@ -205,6 +205,8 @@ async function getClientConfig(req, res, next) {
     res.setHeader("Content-Type", "application/octet-stream");
 
     res.send(generateClientConfig(client, privateKey));
+
+    res.setHeader("X-Content-Type-Options", "nosniff");
   } catch (error) {
     next(error);
   }

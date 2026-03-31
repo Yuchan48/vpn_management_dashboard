@@ -1,4 +1,4 @@
-import { apiFetch, apiFetchBlob } from "./apiFetch";
+import { apiFetch } from "./apiFetch";
 
 export function fetchClients() {
   return apiFetch("/clients");
@@ -9,7 +9,6 @@ export function createClient(clientData) {
     method: "POST",
     body: JSON.stringify(clientData),
   });
-  // return TEXT response with .conf file content
 }
 
 export function deleteClient(client, user) {
@@ -25,7 +24,12 @@ export function deleteClient(client, user) {
 
 // download conf file with given text content and filename
 export async function downloadConfFile(clientId, clientName) {
-  const blob = await apiFetchBlob(`/clients/${clientId}/config`);
+  console.log("DOWNLOAD FUNCTION CALLED");
+  const response = await fetch(`/api/clients/${clientId}/config`, {
+    credentials: "include",
+  });
+
+  const blob = await response.blob();
   console.log("Received blob:", blob);
   console.log("Blob type:", blob.constructor.name); // should be "Blob"
   console.log("Blob size:", blob.size);

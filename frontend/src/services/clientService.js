@@ -28,24 +28,11 @@ export function fetchClientConfig(clientId) {
   // return .conf file content as blob
 }
 
-// Downloading conf file for existing client.
-export async function downloadClientConfig(client) {
-  const text = await apiFetch(`/clients/${client.clientId}/config`);
-
-  downloadConfFile(text, client.name);
-}
-
 // download conf file with given text content and filename
-export function downloadConfFile(text, filename) {
-  const normalizedText = text.replace(/\r\n/g, "\n");
-  const blob = new Blob([normalizedText], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-
+export function downloadConfFile(clientId) {
   const link = document.createElement("a");
-  link.href = url;
-  link.download = filename.replace(/[^a-zA-Z0-9-]/g, "-") + ".conf";
+  link.href = `/api/clients/${clientId}/config`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  setTimeout(() => URL.revokeObjectURL(url), 100);
 }

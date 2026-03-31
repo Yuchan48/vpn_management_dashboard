@@ -93,21 +93,6 @@ async function createClient(req, res, next) {
       id: client.id,
       name: client.name,
     });
-    /*
-    // Generate a .conf file content for the newly created client.
-    const configContent = generateClientConfig(client, privateKey);
-
-    // The filename is dynamically generated based on the client's ID for better organization.
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=client_${client.id}.conf`,
-    );
-
-    // Set the content type to indicate that the response is a file download.
-    res.setHeader("Content-Type", "text/plain");
-
-    // Send the generated .conf file as the response body, allowing the client to download it immediately after creation.
-    res.send(configContent); */
   } catch (error) {
     console.error("Error creating client:", error);
     next(error);
@@ -215,9 +200,9 @@ async function getClientConfig(req, res, next) {
     // Generate a new .conf file content for the client with the updated public key and send it as a response, allowing the client to download the updated configuration.
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=client_${client.id}.conf`,
+      `attachment; filename=${client.name}.conf`,
     );
-    res.setHeader("Content-Type", "text/plain");
+    res.setHeader("Content-Type", "application/octet-stream");
 
     res.send(generateClientConfig(client, privateKey));
   } catch (error) {

@@ -7,7 +7,7 @@ import Modal from "./Modal";
 import CreateDataButton from "../buttons/CreateDataButton";
 
 // import functions
-import { createClient } from "../../services/clientService";
+import { createClient, downloadConfFile } from "../../services/clientService";
 
 import { validateClientName } from "../../utils/inputValidators";
 
@@ -43,19 +43,11 @@ const CreateClientModal = ({ isOpen, onClose, showModal, isDemo }) => {
 
     try {
       setLoading(true);
-      /* const configText = await createClient({ name });
-      downloadConfFile(configText, name); */
-      const client = await createClient({ name });
 
-      const link = document.createElement("a");
-      link.href = `${import.meta.env.VITE_API_BASE_URL}/clients/${client.id}/config`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const client = await createClient({ name });
+      downloadConfFile(client.clientId);
 
       toast.success(`Client "${name}" created successfully`);
-      /* const clientsData = await fetchClients();
-      setClients(clientsData); */
 
       onClose();
     } catch (err) {

@@ -8,9 +8,7 @@ import DeleteButton from "../buttons/DeleteButton";
 import DownloadButton from "../buttons/DownloadButton";
 
 // import functions
-import {
-  deleteClient,
-} from "../../services/clientService";
+import { deleteClient, downloadConfFile } from "../../services/clientService";
 
 const ClientsTable = ({ clients, user }) => {
   const [showModal, setShowModal] = useState(false);
@@ -66,11 +64,7 @@ const ClientsTable = ({ clients, user }) => {
 
     try {
       setLoadingId(client.clientId);
-      const link = document.createElement("a");
-      link.href = `${import.meta.env.VITE_API_BASE_URL}/clients/${client.clientId}/config`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      downloadConfFile(client.clientId);
     } catch (err) {
       setError(
         err.message || "Failed to download client config. Please try again.",

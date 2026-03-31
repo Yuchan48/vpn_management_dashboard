@@ -1,16 +1,13 @@
-/*
-The controller functions are responsible for handling incoming HTTP requests, validating the input, calling the appropriate service functions to perform the business logic, and sending back JSON responses to the client.
-*/
-
 const clientService = require("../services/client.service");
 const { generateClientConfig } = require("../utils/configGenerator");
 const { getNextAvailableIp } = require("../utils/ipAllocator");
 const { generateKeyPair } = require("../utils/wireguard");
 const wireguardService = require("../services/wireguard.service");
-const { mapClientToStatus } = require("../utils/clientStatus");
 const { syncWireGuardPeers } = require("../services/wireguardSync.service");
 const { validateClientName } = require("../utils/inputValidators");
 const { emitIo } = require("../socketio");
+
+const archiver = require("archiver");
 
 async function createClient(req, res, next) {
   try {
@@ -197,18 +194,30 @@ async function getClientConfig(req, res, next) {
 
     client.public_key = publicKey; // Update the client object with the new public key for generating the config.
 
-    // Generate a new .conf file content for the client with the updated public key and send it as a response, allowing the client to download the updated configuration.
+    // Generate a zip file with a new .conf file content for the client with the updated public key and send it as a response, allowing the client to download the updated configuration.
+    const filename = `${client.name}.conf`;
+
+    res.setHeader("Content-Type", "application/zip");
+
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=${client.name}.conf;  filename*=UTF-8''${encodeURIComponent(client.name)}.conf`,
+      `attachment; filename=${client.name}.zip`,
     );
-    res.setHeader("Content-Type", "application/octet-stream");
 
-    res.setHeader("X-Content-Type-Options", "nosniff");
+    const archive = archiver("zip", { zlib: { level: 9 } });
 
-    res.send(generateClientConfig(client, privateKey));
+    archive.on("error", (err) => {
+      console.error("Error creating zip archive:", err);
+      res.status(500).json({ error: "Failed to create zip archive" });
+    });
 
+    archive.pipe(res);
 
+    archive.append(generateClientConfig(client, privateKey), {
+      name: filename,
+    });
+
+    archive.finalize();
   } catch (error) {
     next(error);
   }

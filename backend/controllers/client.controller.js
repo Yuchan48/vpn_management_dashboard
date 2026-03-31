@@ -154,8 +154,6 @@ async function getClientConfig(req, res, next) {
       user: req.user,
     });
 
-    console.log("Generating new config for client:", client);
-
     // generate a new WireGuard key pair for the client.
     let keyPair;
     try {
@@ -197,13 +195,13 @@ async function getClientConfig(req, res, next) {
     client.public_key = publicKey; // Update the client object with the new public key for generating the config.
 
     // Generate a zip file with a new .conf file content for the client with the updated public key and send it as a response, allowing the client to download the updated configuration.
-    const filename = `${String(client.name || "client")}.conf`;
+    const filename = `${client.name}.conf`;
 
     res.setHeader("Content-Type", "application/zip");
 
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=${String(client.name || "client")}.zip`,
+      `attachment; filename=${client.name}.zip`,
     );
 
     const archive = archiver("zip", { zlib: { level: 9 } });

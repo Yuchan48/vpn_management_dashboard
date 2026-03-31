@@ -87,7 +87,7 @@ async function createClient(req, res, next) {
     }
 
     return res.status(201).json({
-      id: client.id,
+      clientId: client.id,
       name: client.name,
     });
   } catch (error) {

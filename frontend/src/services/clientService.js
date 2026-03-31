@@ -33,7 +33,7 @@ export async function downloadConfFile(clientId, clientName) {
   const url = URL.createObjectURL(zipBlob);
   const link = document.createElement("a");
   link.href = url;
-  // link.download = `${clientName}.zip`;
+  link.download = `${clientName}.zip`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

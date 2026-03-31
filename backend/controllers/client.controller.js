@@ -200,7 +200,7 @@ async function getClientConfig(req, res, next) {
     // Generate a new .conf file content for the client with the updated public key and send it as a response, allowing the client to download the updated configuration.
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=${client.name}.conf`,
+      `attachment; filename=${client.name}.conf;  filename*=UTF-8''${encodeURIComponent(client.name)}.conf`,
     );
     res.setHeader("Content-Type", "application/octet-stream");
 

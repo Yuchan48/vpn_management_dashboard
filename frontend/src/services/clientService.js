@@ -24,19 +24,16 @@ export function deleteClient(client, user) {
 
 // download conf file with given text content and filename
 export async function downloadConfFile(clientId, clientName) {
-  console.log("DOWNLOAD FUNCTION CALLED");
   const response = await fetch(`/api/clients/${clientId}/config`, {
     credentials: "include",
   });
 
   const blob = await response.blob();
-  console.log("Received blob:", blob);
-  console.log("Blob type:", blob.constructor.name); // should be "Blob"
-  console.log("Blob size:", blob.size);
-  const url = URL.createObjectURL(blob);
+  const zipBlob = new Blob([blob], { type: "application/zip" });
+  const url = URL.createObjectURL(zipBlob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${clientName}.zip`;
+  // link.download = `${clientName}.zip`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

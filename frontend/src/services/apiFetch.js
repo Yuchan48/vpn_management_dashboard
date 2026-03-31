@@ -53,5 +53,6 @@ export async function apiFetchBlob(endpoint, options = {}) {
     throw new Error(errorText || "API request failed");
   }
 
+  console.log("Received response for blob request:", response.blob());
   return await response.blob();
 }

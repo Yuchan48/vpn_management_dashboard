@@ -44,6 +44,8 @@ backend/*.key
 backend/*.pub
 backend/*.conf
 
+backend/ecosystem.config.js
+
 # ===============================
 # Frontend (React)
 # ===============================

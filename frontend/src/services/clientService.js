@@ -26,6 +26,9 @@ export function deleteClient(client, user) {
 // download conf file with given text content and filename
 export async function downloadConfFile(clientId, clientName) {
   const blob = await apiFetchBlob(`/clients/${clientId}/config`);
+  console.log("Received blob:", blob);
+  console.log("Blob type:", blob.constructor.name); // should be "Blob"
+  console.log("Blob size:", blob.size);
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

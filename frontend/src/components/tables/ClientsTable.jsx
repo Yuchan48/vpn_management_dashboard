@@ -64,7 +64,7 @@ const ClientsTable = ({ clients, user }) => {
 
     try {
       setLoadingId(client.clientId);
-      downloadConfFile(client.clientId);
+      await downloadConfFile(client.clientId, client.name);
     } catch (err) {
       setError(
         err.message || "Failed to download client config. Please try again.",

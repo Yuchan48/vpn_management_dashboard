@@ -23,16 +23,15 @@ export function deleteClient(client, user) {
   });
 }
 
-export function fetchClientConfig(clientId) {
-  return apiFetch(`/clients/${clientId}/config`);
-  // return .conf file content as blob
-}
-
 // download conf file with given text content and filename
-export function downloadConfFile(clientId) {
+export async function downloadConfFile(clientId, clientName) {
+  const blob = await apiFetch(`/clients/${clientId}/config`);
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.href = `/api/clients/${clientId}/config`;
+  link.href = url;
+  link.download = `${clientName}.zip`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }

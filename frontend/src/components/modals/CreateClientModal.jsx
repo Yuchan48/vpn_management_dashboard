@@ -45,7 +45,7 @@ const CreateClientModal = ({ isOpen, onClose, showModal, isDemo }) => {
       setLoading(true);
 
       const client = await createClient({ name });
-      downloadConfFile(client.clientId);
+      await downloadConfFile(client.clientId, name);
 
       toast.success(`Client "${name}" created successfully`);
 

@@ -863,3 +863,99 @@ Added full support for demo users, including auto-filled login and client creati
 - `nanoid` generated `_` character by default, which violated client name validation; fixed with custom alphabet.
 - Demo client cleanup needed careful handling to remove associated WireGuard peers without affecting non-demo users.
 - Ensured auto-generated demo client names remain unique to avoid collisions during multiple sessions.
+
+# Day 21 – Production Build Testing & Nginx Configuration
+
+## Summary
+
+Tested the application in a production-like environment without Docker, fixed environment variable and database initialization issues, and configured Nginx for serving the frontend and proxying backend requests. Resolved Socket.IO connection issues to ensure real-time functionality works in production.
+
+## Development Implementation
+
+- **Production Build Testing**
+  - Decided not to use Docker to avoid complications with WireGuard, which requires direct access to host networking and kernel interfaces that are difficult to manage reliably inside containers.
+  - Built frontend using `npm run build` and served backend with `node server.js`.
+  - Verified core functionalities including authentication, client management, and API communication.
+
+- **Environment Variables Fix**
+  - Resolved issues with missing environment variables by properly configuring `.env.production`.
+  - Ensured backend correctly loads environment variables using `dotenv` with `NODE_ENV=production`.
+
+- **Database Initialization Fix**
+  - Fixed database initialization logic where tables were not being created automatically.
+  - Issue caused by missing `async/await`, leading to race conditions during startup.
+  - Ensured database setup completes before server starts handling requests.
+
+- **Nginx Configuration**
+  - Configured Nginx to serve frontend static files from build directory.
+  - Set up reverse proxy to backend (`localhost:3000`) for API routes.
+  - Added routing rules to support SPA (React) using `try_files`.
+
+- **Socket.IO Fix**
+  - Encountered connection issues with Socket.IO in production.
+  - Fixed by adding proper WebSocket headers in Nginx configuration:
+    - `Upgrade`
+    - `Connection`
+  - Verified real-time updates (client status, events) work correctly.
+
+## Issues Encountered
+
+- Backend failed silently due to missing environment variables.
+- Database initialization did not complete due to improper async handling.
+- Socket.IO failed to connect due to missing Nginx WebSocket configuration.
+- Needed to carefully align frontend build paths with Nginx root configuration.
+
+# Day 22 – Server Deployment, HTTPS Setup & Production Testing
+
+## Summary
+
+Deployed the application to a live Ubuntu server on Hetzner, configured networking and services (WireGuard, Nginx, SSH), connected domain via DuckDNS, and enabled HTTPS using Certbot. Conducted end-to-end testing and identified remaining issues related to file downloads, WebSocket communication, and WireGuard connectivity.
+
+## Development Implementation
+
+- **Server Setup (Hetzner)**
+  - Provisioned Ubuntu-based VPS on Hetzner.
+  - Configured SSH access and basic security settings.
+  - Installed required software:
+    - Node.js
+    - Nginx
+    - WireGuard
+    - Git
+
+- **Project Deployment**
+  - Cloned project repository from GitHub.
+  - Installed dependencies and built frontend (`npm run build`).
+  - Started backend server using Node.js and managed processes.
+
+- **Domain & DNS Configuration**
+  - Registered domain using DuckDNS (`wg-management-dashboard.duckdns.org`).
+  - Configured DNS records to point to server IPv4 and IPv6.
+  - Resolved connectivity issues caused by IPv6 misconfiguration.
+
+- **Nginx Configuration**
+  - Set up Nginx to serve frontend and proxy API requests.
+  - Fixed issues where frontend and backend were not properly connected due to misconfigured routes and proxy settings.
+  - Verified correct routing for API and static assets.
+
+- **HTTPS Setup**
+  - Installed Certbot and generated SSL certificate.
+  - Enabled HTTPS with automatic redirection from HTTP.
+  - Ensured secure cookie handling and authentication over HTTPS.
+
+- **Production Testing**
+  - Tested login, logout, and CRUD operations successfully.
+  - Verified frontend-backend integration works over HTTPS.
+
+## Issues Encountered
+
+- Nginx configuration initially incomplete, causing frontend/backend communication failure.
+- IPv6 connection attempts failed, blocking access until properly configured.
+- `.conf` file download on Android adds `.txt` extension due to browser limitations.
+- Socket.IO (WebSocket) not transmitting data correctly in production environment.
+- WireGuard clients can connect but do not have internet access, indicating missing NAT or routing configuration.
+
+## Next Steps
+
+- Implement `.zip` download for WireGuard config files to ensure compatibility across devices.
+- Fix WebSocket (Socket.IO) configuration in Nginx for stable real-time communication.
+- Debug and resolve WireGuard networking (iptables/NAT) to enable internet access for clients.

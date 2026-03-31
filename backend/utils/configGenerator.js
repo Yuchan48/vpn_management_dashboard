@@ -1,8 +1,5 @@
 // Generate the content of the WireGuard configuration file (.conf) for the client.
 function generateClientConfig(client, privateKey) {
-  console.log(
-    `privateKey: ${privateKey}, ipAddress: ${client.ip_address}, serverPublicKey: ${process.env.SERVER_PUBLIC_KEY}, serverEndpoint: ${process.env.SERVER_ENDPOINT}, VPNSubnetMask: ${process.env.VPN_SUBNET_MASK}, dnsServer: ${process.env.DNS_SERVER}`,
-  );
   return `
 [Interface]
 PrivateKey = ${privateKey}

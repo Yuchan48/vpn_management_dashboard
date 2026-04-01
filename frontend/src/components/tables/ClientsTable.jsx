@@ -5,10 +5,10 @@ import { toast } from "react-hot-toast";
 import OpenModalButton from "../buttons/OpenModalButton";
 import CreateClientModal from "../modals/CreateClientModal";
 import DeleteButton from "../buttons/DeleteButton";
-import DownloadButton from "../buttons/DownloadButton";
+// import DownloadButton from "../buttons/DownloadButton";
 
 // import functions
-import { deleteClient, downloadConfFile } from "../../services/clientService";
+import { deleteClient } from "../../services/clientService";
 
 const ClientsTable = ({ clients, user }) => {
   const [showModal, setShowModal] = useState(false);
@@ -59,7 +59,8 @@ const ClientsTable = ({ clients, user }) => {
     }
   };
 
-  const downloadClientHandler = async (client) => {
+  // disabled as re creating conf file requires regeneration of client privatekey, which gives instability in wireguard connection in the server.
+  /* const downloadClientHandler = async (client) => {
     setError("");
 
     try {
@@ -72,7 +73,7 @@ const ClientsTable = ({ clients, user }) => {
     } finally {
       setLoadingId(null);
     }
-  };
+  }; */
 
   return (
     <div className="bg-white rounded-lg shadow-md p-5">
@@ -115,11 +116,11 @@ const ClientsTable = ({ clients, user }) => {
                 <table className="min-w-[600px] w-full table-fixed text-sm text-left">
                   <thead className="bg-gray-50 text-gray-500 border-b">
                     <tr>
-                      <th className="py-2 px-3 w-1/3">Name</th>
-                      <th className="py-2 px-3 w-1/6">IP</th>
-                      <th className="py-2 px-3 w-1/6 text-center">Status</th>
-                      <th className="py-2 px-3 w-1/6 text-center">Download</th>
-                      <th className="py-2 px-3 w-1/6 text-center">Action</th>
+                      <th className="py-2 px-3 w-2/5">Name</th>
+                      <th className="py-2 px-3 w-1/5">IP</th>
+                      <th className="py-2 px-3 w-1/5 text-center">Status</th>
+                      {/*  <th className="py-2 px-3 w-1/6 text-center">Download</th> */}
+                      <th className="py-2 px-3 w-1/5 text-center">Action</th>
                     </tr>
                   </thead>
 
@@ -129,13 +130,13 @@ const ClientsTable = ({ clients, user }) => {
                         key={c.clientId}
                         className="border-b last:border-none hover:bg-gray-50 transition"
                       >
-                        <td className="py-2 px-3 w-1/3 font-medium text-gray-800 truncate">
+                        <td className="py-2 px-3 w-2/5 font-medium text-gray-800 truncate">
                           {c.name}
                         </td>
-                        <td className="py-2 px-3 w-1/6 text-gray-600 truncate">
+                        <td className="py-2 px-3 w-1/5 text-gray-600 truncate">
                           {c.allowedIPs}
                         </td>
-                        <td className="py-2 px-3 w-1/6 text-center">
+                        <td className="py-2 px-3 w-1/5 text-center">
                           <span
                             className={`px-2 py-1 rounded text-xs font-semibold ${
                               c.status === "Online"
@@ -148,7 +149,8 @@ const ClientsTable = ({ clients, user }) => {
                             {c.status}
                           </span>
                         </td>
-                        <td className="py-2 px-3 w-1/6 text-center">
+
+                        {/* <td className="py-2 px-3 w-1/6 text-center">
                           <div className="flex justify-center">
                             {" "}
                             <DownloadButton
@@ -158,8 +160,9 @@ const ClientsTable = ({ clients, user }) => {
                               disabled={loadingId === c.clientId}
                             />
                           </div>
-                        </td>
-                        <td className="py-2 px-3 w-1/6 text-center">
+                        </td> */}
+
+                        <td className="py-2 px-3 w-1/5 text-center">
                           <DeleteButton
                             onClick={() => {
                               deleteClientHandler(c);

@@ -7,7 +7,7 @@ import Modal from "./Modal";
 import CreateDataButton from "../buttons/CreateDataButton";
 
 // import functions
-import { createClient, downloadConfFile } from "../../services/clientService";
+import { createClient } from "../../services/clientService";
 
 import { validateClientName } from "../../utils/inputValidators";
 
@@ -44,8 +44,7 @@ const CreateClientModal = ({ isOpen, onClose, showModal, isDemo }) => {
     try {
       setLoading(true);
 
-      const client = await createClient({ name });
-      await downloadConfFile(client.clientId, name);
+      await createClient(name);
 
       toast.success(`Client "${name}" created successfully`);
 

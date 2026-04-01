@@ -5,6 +5,7 @@ const { generateKeyPair } = require("../utils/wireguard");
 const wireguardService = require("../services/wireguard.service");
 const { syncWireGuardPeers } = require("../services/wireguardSync.service");
 const { validateClientName } = require("../utils/inputValidators");
+const { zipGenerator } = require("../utils/zipGenerator");
 const { emitIo } = require("../socketio");
 
 const archiver = require("archiver");
@@ -51,17 +52,6 @@ async function createClient(req, res, next) {
       userId: req.user.id,
     });
 
-    console.log(
-      "createClient() client: ",
-      client.name,
-      " IP: ",
-      ipAddress,
-      " UserId: ",
-      req.user.id,
-      " Role: ",
-      req.user.role,
-    );
-
     // Add the new client as a peer to the WireGuard interface
     try {
       await wireguardService.addPeer(publicKey, ipAddress);
@@ -94,10 +84,7 @@ async function createClient(req, res, next) {
       console.error("Error emitting Socket.IO event:", socketError);
     }
 
-    return res.status(201).json({
-      clientId: client.id,
-      name: client.name,
-    });
+    return zipGenerator(res, client, privateKey);
   } catch (error) {
     console.error("Error creating client:", error);
     next(error);
@@ -152,14 +139,14 @@ async function deleteClient(req, res, next) {
 }
 
 // Generates a new .conf file for the client with the updated configuration.
-async function getClientConfig(req, res, next) {
+async function downloadClientConfig(req, res, next) {
   try {
     const client = await clientService.getClientById({
       clientId: req.params.id,
       user: req.user,
     });
 
-    console.log("getClientConfig() client: ", client);
+    console.log("downloadClientConfig() client: ", client);
     // generate a new WireGuard key pair for the client.
     let keyPair;
     try {
@@ -176,7 +163,7 @@ async function getClientConfig(req, res, next) {
     privateKey = privateKey.trim();
 
     console.log(
-      "getClientConfig() Generated new WireGuard key pair: ",
+      "downloadClientConfig() Generated new WireGuard key pair: ",
       keyPair,
     );
 
@@ -205,32 +192,7 @@ async function getClientConfig(req, res, next) {
 
     client.public_key = publicKey; // Update the client object with the new public key for generating the config.
 
-    // Generate a zip file with a new .conf file content for the client with the updated public key and send it as a response, allowing the client to download the updated configuration.
-    const filename = `${client.name}.conf`;
-
-    res.setHeader("Content-Type", "application/zip");
-
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${client.name}.zip`,
-    );
-
-    const archive = archiver("zip", { zlib: { level: 9 } });
-
-    archive.on("error", (err) => {
-      console.error("Error creating zip archive:", err);
-      res.status(500).json({ error: "Failed to create zip archive" });
-    });
-
-    archive.pipe(res);
-
-    const configContent = generateClientConfig(client, privateKey);
-
-    archive.append(configContent, {
-      name: filename,
-    });
-
-    archive.finalize();
+    return zipGenerator(res, client, privateKey);
   } catch (error) {
     next(error);
   }
@@ -240,5 +202,5 @@ module.exports = {
   createClient,
   getClients,
   deleteClient,
-  getClientConfig,
+  downloadClientConfig,
 };

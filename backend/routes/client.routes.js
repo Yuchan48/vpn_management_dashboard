@@ -8,6 +8,7 @@ router.post("/", clientController.createClient);
 
 router.delete("/:id", clientController.deleteClient);
 
-router.get("/:id/config", clientController.getClientConfig);
+// This route is commented out due to instability issue with wireguard system. For simplicity and security, configs are generated once and not stored server-side.
+//router.get("/:id/config", clientController.downloadClientConfig);
 
 module.exports = router;

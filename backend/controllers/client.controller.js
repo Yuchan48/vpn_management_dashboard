@@ -56,8 +56,8 @@ async function createClient(req, res, next) {
       client.name,
       " IP: ",
       ipAddress,
-      " User: ",
-      req.user.username,
+      " UserId: ",
+      req.user.id,
       " Role: ",
       req.user.role,
     );

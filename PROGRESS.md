@@ -1000,3 +1000,39 @@ Deployed updated frontend build to production, fixed `.zip` download issues on m
 - Debug WireGuard server NAT/routing rules to allow connected clients to access the internet.
 - Continue testing `.zip` downloads and Socket.IO events across multiple devices and browsers.
 - Monitor production server logs for any intermittent WebSocket or download issues.
+
+# Day 24 – Backend Client Creation Refactor & Direct Zip Download
+
+## Summary
+
+Refactored backend client creation API to return the `.zip` configuration file directly upon client creation. Updated frontend to handle ZIP download immediately after client creation, removing the need for a separate "Download Config" button. Verified the new flow works across desktop and mobile browsers.
+
+## Development Implementation
+
+- **Backend Refactor**
+  - Created `utils/zipGenerator.js` to handle `.zip` generation for WireGuard client configs.
+  - Updated `createClient` controller to generate a new WireGuard key pair and immediately return the `.zip` file containing the `.conf`.
+  - Removed the separate `/clients/:id/config` download route, simplifying backend logic.
+  - Ensured private keys are never stored in the database; old configs become inactive automatically.
+
+- **Frontend Update**
+  - Updated `createClient` function to fetch `/api/clients` and handle `.zip` response directly.
+  - Replaced previous `downloadConfFile` logic with immediate download after client creation.
+  - Updated `CreateClientModal` to remove the "Download Config" button and handle errors and loading state correctly.
+  - Verified ZIP download triggers automatically on desktop, Android, and iOS devices.
+
+- **UX Improvements**
+  - Displayed success toast immediately after client creation.
+  - Error handling in modal for failed client creation is consistent with backend messages.
+
+## Issues Encountered
+
+- Some clients still cannot access the internet even though WireGuard handshake succeeds and IP addresses match between database, config, and `wg show`.
+- Suspected potential WireGuard routing/NAT configuration issues on the server.
+- Client creation and ZIP download flow is confirmed working; issue seems network-level rather than frontend/backend.
+
+## Next Steps
+
+- Debug WireGuard interface, NAT, and firewall rules to ensure all clients can access the internet.
+- Continue testing demo and admin clients, paying attention to IP allocation and peer synchronization.
+- Monitor production server logs for any anomalies during client creation or peer syncing.

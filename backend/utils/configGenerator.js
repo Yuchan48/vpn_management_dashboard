@@ -9,7 +9,7 @@ DNS = ${process.env.DNS_SERVER}
 [Peer]
 PublicKey = ${process.env.SERVER_PUBLIC_KEY}
 Endpoint = ${process.env.SERVER_ENDPOINT}
-AllowedIPs = 0.0.0.0/0
+AllowedIPs = 0.0.0.0/0, ::/0
 PersistentKeepalive = 25
 `.trim();
 }

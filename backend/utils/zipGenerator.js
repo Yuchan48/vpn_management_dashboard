@@ -1,5 +1,5 @@
 const archiver = require("archiver");
-const { generateClientConfig } = require("../utils/wireguardConfigGenerator");
+const { generateClientConfig } = require("./configGenerator");
 
 function zipGenerator(res, client, privateKey) {
   const filename = `${client.name}.conf`;

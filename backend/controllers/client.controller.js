@@ -8,8 +8,6 @@ const { validateClientName } = require("../utils/inputValidators");
 const { zipGenerator } = require("../utils/zipGenerator");
 const { emitIo } = require("../socketio");
 
-const archiver = require("archiver");
-
 async function createClient(req, res, next) {
   try {
     // Validate that the request body contains a 'name' property, which is required to create a new client.

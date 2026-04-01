@@ -65,9 +65,6 @@ async function createClient(req, res, next) {
     // Add the new client as a peer to the WireGuard interface
     try {
       await wireguardService.addPeer(publicKey, ipAddress);
-
-      // Sync all peers in case anything got out of sync
-      await syncWireGuardPeers();
     } catch (wgError) {
       console.error("Error adding peer to WireGuard:", wgError);
       // If adding the peer fails, we should clean up by deleting the client from the database to maintain consistency.
@@ -139,9 +136,6 @@ async function deleteClient(req, res, next) {
       userRole: req.user.role,
       userId: req.user.id,
     });
-
-    // Sync WireGuard peers after deletion
-    await syncWireGuardPeers();
 
     // emit updated client list to connected clients via Socket.IO
     try {

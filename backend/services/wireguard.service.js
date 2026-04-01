@@ -4,7 +4,7 @@ const { get } = require("http");
 
 // add a peer to the WireGuard configuration
 function addPeer(publicKey, allowedIPs) {
-  console.log("Adding WireGuard peer:", publicKey, "AllowedIPs:", allowedIPs);
+  console.log("addPeer() publicKey: ", publicKey, ", AllowedIPs: ", allowedIPs);
 
   // wg set command to add a peer with the specified public key and allowed IPs
   execFileSync(
@@ -25,6 +25,7 @@ function addPeer(publicKey, allowedIPs) {
 
 // remove a peer from the WireGuard configuration
 function removePeer(publicKey) {
+  console.log("removePeer() publicKey: ", publicKey);
   // wg set command to remove a peer with the specified public key
   execFileSync(
     "wg",

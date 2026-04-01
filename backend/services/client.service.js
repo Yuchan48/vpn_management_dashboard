@@ -141,8 +141,13 @@ function deleteClient({ clientId, userRole, userId }) {
 }
 
 function updateClientPublicKey(id, newPublicKey) {
-  console.log("Updating client public key for client ID:", id);
-  console.log("New public key:", newPublicKey);
+  console.log(
+    "UpdateClientPublicKey() clientId: ",
+    id,
+    ", New public key:",
+    newPublicKey,
+  );
+
   return new Promise((resolve, reject) => {
     const query = "UPDATE clients SET public_key = ? WHERE id = ?";
     db.run(query, [newPublicKey, id], function (err) {

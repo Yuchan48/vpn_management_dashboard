@@ -43,6 +43,14 @@ async function createClient(req, res, next) {
     const clients = await clientService.getAllClients();
     const ipAddress = getNextAvailableIp(clients);
 
+    // Create a new client object
+    const client = await clientService.createClient({
+      name: req.body.name,
+      publicKey,
+      ipAddress,
+      userId: req.user.id,
+    });
+
     console.log(
       "Creating client:",
       client.name,
@@ -53,14 +61,6 @@ async function createClient(req, res, next) {
       "Role:",
       req.user.role,
     );
-
-    // Create a new client object
-    const client = await clientService.createClient({
-      name: req.body.name,
-      publicKey,
-      ipAddress,
-      userId: req.user.id,
-    });
 
     // Add the new client as a peer to the WireGuard interface
     try {

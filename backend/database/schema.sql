@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS clients (
     -- Device name; must be unique
     public_key TEXT,
     -- WireGuard public key
-    ip_address TEXT,
+    ip_address TEXT UNIQUE,
     -- VPN internal IP address
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     -- User ID

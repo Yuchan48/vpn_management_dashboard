@@ -43,6 +43,17 @@ async function createClient(req, res, next) {
     const clients = await clientService.getAllClients();
     const ipAddress = getNextAvailableIp(clients);
 
+    console.log(
+      "Creating client:",
+      client.name,
+      "IP:",
+      ipAddress,
+      "User:",
+      req.user.username,
+      "Role:",
+      req.user.role,
+    );
+
     // Create a new client object
     const client = await clientService.createClient({
       name: req.body.name,
@@ -154,6 +165,7 @@ async function getClientConfig(req, res, next) {
       user: req.user,
     });
 
+    console.log("getClientConfig client:", client);
     // generate a new WireGuard key pair for the client.
     let keyPair;
     try {
@@ -168,6 +180,8 @@ async function getClientConfig(req, res, next) {
     let { publicKey, privateKey } = keyPair;
     publicKey = publicKey.trim();
     privateKey = privateKey.trim();
+
+    console.log("Generated new WireGuard key pair", keyPair);
 
     // Remove the old peer configuration from the WireGuard interface using the client's existing public key before updating it with the new key pair.
     try {

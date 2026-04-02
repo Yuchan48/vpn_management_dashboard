@@ -1,5 +1,5 @@
 const { Server } = require("socket.io");
-const { extractJwtFromCookie } = require("./utils/auth");
+const { extractJtwFromCookie } = require("./utils/auth");
 const jwt = require("jsonwebtoken");
 const { getClientsWithStatus } = require("./services/client.service");
 const { get } = require("./app");
@@ -19,7 +19,7 @@ function initSocketIO(server) {
   io.use((socket, next) => {
     try {
       const cookieHeader = socket.handshake.headers.cookie;
-      const token = extractJwtFromCookie(cookieHeader);
+      const token = extractJtwFromCookie(cookieHeader);
       if (!token) {
         return next(new Error("Unauthorized: No token provided"));
       }

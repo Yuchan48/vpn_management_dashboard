@@ -24,9 +24,6 @@ const { validateEnvVariables } = require("./utils/envValidator");
 const {
   cleanupAndReloadDemoClients,
 } = require("./utils/cleanupAndReloadDemoClients");
-const { cleanupOldDemoClients } = require("./services/demoCleanup.service");
-
-const { emitIoPerUser } = require("./socketio");
 
 async function startServer() {
   try {

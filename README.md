@@ -1,141 +1,138 @@
-# 📝 Personal VPN Management Platform
+# 📝 Personal VPN Management Platform (Wireguard)
 
-## Overview
+[Live Demo](https://wg-management-dashboard.duckdns.org) – _Demo account accessible for recruiters_
 
-This project is a **self-hosted VPN management platform** that allows users to securely create, manage, and monitor VPN clients through a web dashboard. It demonstrates fullstack development, network security, and DevOps skills.
-
-**Key Features:**
-
-- Create, list, and delete VPN clients via API
-- Download WireGuard configuration files for each client
-- Secure authentication using JWT
-- Frontend dashboard built with React to manage clients and view stats
-- Easy deployment to cloud servers or local Linux VM
-- Dockerized backend and frontend for consistent deployment
+A full-stack web application for managing WireGuard VPN clients with real-time monitoring, secure authentication, and role-based access control. This project demonstrates end-to-end development skills, from backend architecture and WebSocket integration to frontend UX and deployment.
 
 ---
 
-## Tech Choice Rationale
+## Testing Demo Clients
 
-- **Frontend:** React
-  Chosen for its component-based architecture and efficient virtual DOM, which allows responsive, dynamic dashboards for managing VPN peers and monitoring connections. Unlike Next.js, server-side rendering and SEO are unnecessary for this private app, so client-side rendering keeps the architecture simple, lightweight, and easier to maintain.
-  - Simplifies routing and state management
-  - Reduces deployment complexity compared to hybrid SSR frameworks
-  - Provides full control over UI and interactions
+You can test the WireGuard VPN using the demo client configuration available in the dashboard. Follow these steps to install the WireGuard app and import the configuration file:
 
-- **Backend:** Express.js
-  Selected for its minimalism and flexibility in building RESTful APIs. While frameworks like NestJS offer additional abstractions and Fastify provides performance optimizations, Express gives transparent routing and middleware patterns that are ideal for authentication, VPN peer provisioning, and configuration management.
-  - Lightweight and unopinionated
-  - Clear route definitions and middleware flow
-  - Easier to read and maintain for a project of this scale
+### WireGuard App Installation
 
-- **VPN:** WireGuard
-  Modern, fast, and secure VPN protocol. Runs in the Linux kernel for high performance and low latency, uses a small (~4,000 lines) and auditable codebase, and employs modern cryptography by default. Compared to OpenVPN, it is easier to automate peer provisioning via backend scripts, aligning with this project’s goal of a lightweight, maintainable VPN infrastructure.
-  - Minimal codebase reduces complexity and potential bugs
-  - Key-based configuration simplifies automation
-  - Modern cryptography (Curve25519, ChaCha20, Poly1305) reduces misconfiguration risk
-  - **Key Generation (Dev vs Production):**
-  - During development (macOS/local testing):
-    - Private and public keys are generated in-memory using Node.js placeholders
-    - Public key is derived from the private key (mock derivation)
-    - Allows safe testing of API, database, and frontend without requiring WireGuard CLI
-  - During deployment (Linux server):
-    - Real WireGuard keys are generated using the system `wg` CLI or proper Curve25519 derivation
-    - Keys are stored securely in SQLite and used to configure VPN peers
+- **macOS:** Download from [WireGuard for macOS](https://www.wireguard.com/install/) and open the `.conf` file via the app. macOS may only establish handshake but might require additional routing for full internet access.
+- **Windows:** Download from [WireGuard for Windows](https://www.wireguard.com/install/). Import the `.conf` file via the app interface.
+- **Android:** Install from [Google Play Store](https://play.google.com/store/apps/details?id=com.wireguard.android). Tap the plus (+) button and import the `.conf` file.
+- **iOS:** Install from [App Store](https://apps.apple.com/app/wireguard/id1441195209). Tap “Add a Tunnel” → “Add from File or Archive” to import the `.conf` file.
 
-- **Authentication:** JWT
-  Stateless and widely used for secure API authentication. Eliminates server-side session storage, scales easily across multiple instances, and integrates cleanly with REST APIs.
-  - Supports horizontal scaling without session synchronization
-  - Simplifies token-based authorization flow
-
-- **Containerization:** Docker
-  Ensures consistent runtime environments across development and production. Simplifies dependency management, streamlines cloud deployment, and supports future scalability through orchestration tools.
-  - Eliminates “works on my machine” issues
-  - Simplifies versioning and dependency control
-  - Prepares the project for scalable deployment pipelines
-
-### Architectural Philosophy:
-
-This stack emphasizes simplicity, clarity, and maintainability. Each layer has a focused responsibility: React handles the UI, Express manages business logic and APIs, WireGuard secures network traffic, JWT provides stateless authentication, and Docker ensures environment consistency. Technology choices were made intentionally, balancing performance, automation, and scalability while avoiding unnecessary complexity or overengineering.
-
-## Security Considerations
-
-- **Authentication Tokens:** JWTs are stored in **HttpOnly Secure Cookies** to mitigate XSS attacks by preventing JavaScript access to tokens.
-- **Environment Variables:** Production secrets are managed via environment variables and never committed to source control.
-- **WSGI/Reverse Proxy:** Nginx is configured to serve static files and proxy API requests securely.
-- **Database Persistence:** SQLite data and logs are stored in Docker volumes to ensure data durability.
+> ⚠️ Note: Demo clients are temporary and auto-deleted after 30 minutes. Re-downloading a configuration file will invalidate the previous one. If the downloaded filename is automatically appended with `(1)` or similar, rename it before importing, as special characters and filenames longer than 15 characters are not supported.
 
 ---
 
-## Project Structure
+## 🚀 Features
 
-```text
-vpn-project/
-├── backend/          # Express API and WireGuard integration
-│   ├── routes/
-│   ├── controllers/
-│   ├── services/
-│   └── server.js
-├── frontend/         # React dashboard
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   └── styles/
-│   └── public/
-├── docker/
-│   ├── backend.Dockerfile
-│   └── frontend.Dockerfile
-├── scripts/          # WireGuard client creation scripts / automation
-├── PROGRESS.md       # Future improvements & roadmap
-└── README.md
-```
+### Role-Based Access
+
+| Role           | Permissions                                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Demo User**  | - View their own clients and status<br>- Create demo clients<br>- Delete clients<br>- Download client configuration (`.zip`) |
+| **User**       | - All demo user permissions<br>- Change password                                                                             |
+| **Admin**      | - Manage users (create/delete)<br>- View clients for all users<br>- All client operations                                    |
+| **Root Admin** | - Manage admin users<br>- Cannot be deleted                                                                                  |
+
+> **Note:** Each user can create up to **5 clients**, max **15 users** in the system.
 
 ---
 
-## Setup & Installation
+### VPN Client Management
 
-### Prerequisites
-
-- Node.js v20+
-- npm or yarn
-- WireGuard installed on Linux VM (for testing)
-- Docker (optional, for deployment)
-
-### Backend
-
-```bash
-cd backend
-npm install
-cp .env.example .env
-# configure environment variables
-node server.js
-```
-
-### frontend
-
-```bash
-cd frontend
-npm install
-npm start
-# Dashboard will run at http://localhost:3000
-```
-
-### Docker Deployment (Optional)
-
-```bash
-docker build -t vpn-backend ./backend
-docker build -t vpn-frontend ./frontend
-
-docker run -p 3001:3000 vpn-backend
-docker run -p 3000:3000 vpn-frontend
-```
+- On client creation, a `.zip` configuration file for WireGuard is downloaded automatically.
+- Supported devices:
+  - **macOS:** [WireGuard Desktop App](https://www.wireguard.com/install/)
+  - **Windows:** [WireGuard Windows App](https://www.wireguard.com/install/)
+  - **Android:** [WireGuard Android App](https://play.google.com/store/apps/details?id=com.wireguard.android)
+  - **iOS:** [WireGuard iOS App](https://apps.apple.com/app/wireguard/id1441195209)
+- Demo clients are temporary and **auto-removed after 30 minutes**.
+- Re-downloading a config invalidates the previous one (security measure, private key not stored).
 
 ---
 
-## Usage
+### Dashboard & Real-Time Updates
 
-1. Open the React dashboard in a browser
-2. Log in with your credentials
-3. Add VPN clients via the “Add Client” button
-4. Download the `.conf` file for each WireGuard client
-5. Connect using the WireGuard client application
+- Client table shows real-time VPN status (online/offline) via **Socket.IO**.
+- Status updates are optimized to **emit only when changes occur**.
+- Clean and responsive dashboard UI powered by **React + Nginx**.
+- Demo accounts allow recruiters to explore features without affecting production data.
+
+> ⚠️ WireGuard does not emit disconnect events; status is calculated from last handshake timestamp. Clients may show offline ~2 minutes after disconnecting.
+
+---
+
+## 🛠 Tech Stack
+
+| Layer         | Technology & Purpose                                                          |
+| ------------- | ----------------------------------------------------------------------------- |
+| **Frontend**  | React, Nginx for static hosting and reverse proxy                             |
+| **Backend**   | Node.js, Express, Socket.IO for real-time updates, PM2 for process management |
+| **VPN Layer** | WireGuard, client key management, peer synchronization                        |
+| **Database**  | SQLite                                                                        |
+| **Security**  | HTTP-only cookies, JWT authentication, role-based access, secure key handling |
+
+**Why this stack?**
+
+- **Socket.IO** enables instant client status updates without refreshing.
+- **WireGuard** provides lightweight, high-performance VPN.
+- **Nginx + PM2** ensures production-grade deployment and scalability.
+- **JWT + HTTP-only cookies** secure session management.
+
+---
+
+## ⚙️ Security Considerations
+
+- Private keys in `.conf` files are **never stored in the database**.
+- Re-downloading config regenerates a new key pair for security.
+- JWTs with short expiration are used for authentication.
+- Role-based access control ensures data isolation per user.
+
+---
+
+## 🏗 Architectural Philosophy
+
+- **Modular design:** clear separation between backend API, Socket.IO, frontend, and VPN configuration management.
+- **Real-time reactive UX:** minimal polling, change detection ensures efficiency.
+- **Clean deployment:** Docker/Nginx or bare-metal deployment with SSL termination.
+- **Scalable & secure:** isolated rooms per user in Socket.IO, proper NAT & firewall configuration for WireGuard.
+
+---
+
+## 📌 Known Downsides
+
+- Re-downloading a client config invalidates the previous one (by design, for security).
+- Status updates rely on last WireGuard handshake; offline status may take ~2 minutes.
+- Demo clients expire automatically and cannot be restored.
+
+---
+
+## 🛠 Skills Demonstrated
+
+- Full-stack development with React and Node.js.
+- Real-time communication with Socket.IO and WebSocket proxying.
+- VPN configuration and integration (WireGuard).
+- System-level networking and firewall management (iptables, NAT).
+- Deployment and production readiness (Nginx, SSL, PM2).
+- Role-based access control, JWT authentication, and secure cookie handling.
+- Writing clean, maintainable code with modular architecture.
+- Debugging complex connectivity and security issues.
+
+---
+
+## ⚠️ Advanced Deployment Notice
+
+This project is **not a plug-and-play application**. Running it locally or on another machine requires advanced system, networking, and security knowledge. Key considerations include:
+
+- **Operating System:** Must run on Linux (Ubuntu, Debian, etc.). Other OSes (e.g., macOS, Windows) are not fully supported due to system-level differences in VPN interfaces (macOS uses `utunX` devices, Linux uses `wg0`).
+- **WireGuard Setup:** You must install and configure WireGuard manually, including `wg0.conf`, peer management, and NAT rules for packet forwarding.
+- **Networking:** Proper iptables/NAT configuration is required for VPN clients to access the internet. Mac and Windows clients may establish handshake but not full routing without additional configuration.
+- **Web Server:** Nginx configuration is needed for serving the frontend and proxying WebSocket connections (Socket.IO) securely.
+- **Security:** SSL certificates, JWT-based authentication, and HTTP-only cookies must be correctly configured for production use.
+
+> ⚡ **Why this matters:** Setting this up exercises skills in OS-level networking, VPN configuration, firewall rules, real-time server communication, and secure web deployment. Building and debugging this project required modifying multiple configuration files on Linux, testing network routes, and ensuring end-to-end security.
+
+---
+
+## 🔗 Live Demo
+
+- [Demo Dashboard](https://wg-management-dashboard.duckdns.org) – demo account available for recruiters.
+  Explore creating/deleting clients and real-time status updates.

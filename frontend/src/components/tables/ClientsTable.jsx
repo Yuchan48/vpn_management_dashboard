@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import OpenModalButton from "../buttons/OpenModalButton";
 import CreateClientModal from "../modals/CreateClientModal";
 import DeleteButton from "../buttons/DeleteButton";
-// import DownloadButton from "../buttons/DownloadButton";
+import DownloadButton from "../buttons/DownloadButton";
 
 // import functions
 import { deleteClient, downloadConfFile } from "../../services/clientService";

@@ -78,7 +78,9 @@ const Dashboard = () => {
         {user.is_demo === 1 && (
           <div className="mb-4 px-6 py-3 bg-yellow-100 text-yellow-800 rounded text-sm">
             ⚠️ Demo clients are temporary and auto-removed after 30 minutes.
-            Re-downloading the config will invalidate any previous file.
+            Re-downloading the config invalidates previous files. If the
+            downloaded filename adds "(1)" or similar, rename it to only
+            letters, numbers, or "-" (max 15 chars) to avoid errors.
           </div>
         )}
         <ClientsTable clients={clients} user={user} setClients={setClients} />

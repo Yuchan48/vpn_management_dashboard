@@ -2,7 +2,6 @@ const { Server } = require("socket.io");
 const { extractJtwFromCookie } = require("./utils/auth");
 const jwt = require("jsonwebtoken");
 const { getClientsWithStatus } = require("./services/client.service");
-const { get } = require("./app");
 
 let io;
 const lastStatePerUser = new Map();

@@ -144,7 +144,6 @@ async function downloadClientConfig(req, res, next) {
       user: req.user,
     });
 
-    console.log("downloadClientConfig() client: ", client);
     // generate a new WireGuard key pair for the client.
     let keyPair;
     try {
@@ -159,11 +158,6 @@ async function downloadClientConfig(req, res, next) {
     let { publicKey, privateKey } = keyPair;
     publicKey = publicKey.trim();
     privateKey = privateKey.trim();
-
-    console.log(
-      "downloadClientConfig() Generated new WireGuard key pair: ",
-      keyPair,
-    );
 
     // Remove the old peer configuration from the WireGuard interface using the client's existing public key before updating it with the new key pair.
     try {

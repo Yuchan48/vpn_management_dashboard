@@ -1036,3 +1036,61 @@ Refactored backend client creation API to return the `.zip` configuration file d
 - Debug WireGuard interface, NAT, and firewall rules to ensure all clients can access the internet.
 - Continue testing demo and admin clients, paying attention to IP allocation and peer synchronization.
 - Monitor production server logs for any anomalies during client creation or peer syncing.
+
+# Day 25 – Deployment Completion, Real-Time Updates & Socket.IO Improvements
+
+## Summary
+
+Completed deployment and stabilized real-time client updates using Socket.IO with per-user data isolation. Implemented polling with change detection to ensure the dashboard reflects client status updates without requiring manual refresh. Finalized demo client lifecycle behavior and improved overall system reliability.
+
+## Development Implementation
+
+- **Internet Access Debugging**
+  - Spent hours troubleshooting clients unable to reach the internet despite successful WireGuard handshakes.
+  - Cause: residual `ufw` chains were still loaded even though UFW was disabled; also, the `wg0` IP in config mismatched the actual interface.
+  - Solution: completely flushed `iptables` and rebuilt NAT and forwarding rules:
+    ```bash
+    sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    sudo iptables -A FORWARD -i wg0 -o eth0 -j ACCEPT
+    sudo iptables -A FORWARD -i eth0 -o wg0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+    ```
+  - Corrected `wg0.conf` from `10.10.0.1/24` → `10.0.0.1/24`, restoring full internet connectivity for all clients.
+
+- **Socket.IO Authentication & Isolation**
+  - Implemented JWT authentication for Socket.IO using HTTP-only cookies.
+  - Extracted token from cookie during handshake and verified it on connection.
+  - Attached user information (`id`, `role`) to each socket instance.
+  - Assigned sockets to user-specific rooms (`user_<id>`) to prevent cross-user data exposure.
+
+- **Per-User Real-Time Updates**
+  - Created `emitIoPerUser()` to emit client data per authenticated user.
+  - Grouped connected sockets by user ID and emitted only relevant client data.
+  - Updated `getClientsWithStatus(user)` to filter clients based on user role and ownership.
+
+- **Polling with Change Detection**
+  - Introduced 10-second polling interval in `server.js`.
+  - Implemented `lastStatePerUser` to track previously emitted client state.
+  - Compared current vs previous state using `JSON.stringify` to emit updates only when changes occur.
+  - Ensured efficient updates without unnecessary network traffic.
+
+- **Demo Client Lifecycle**
+  - Refactored `cleanupAndReloadDemoClients()` to handle only cleanup and WireGuard sync.
+  - Moved Socket.IO emit logic to `server.js` for better separation of concerns.
+  - Ensured expired demo clients are removed automatically and reflected in UI in near real-time.
+
+- **Nginx & WebSocket Fix**
+  - Fixed reverse proxy configuration to support Socket.IO over HTTPS.
+  - Ensured proper handling of `Upgrade` and `Connection` headers for WebSocket.
+  - Resolved issue where frontend was not receiving real-time updates after HTTPS enforcement.
+
+## Issues Encountered
+
+- Socket.IO initially failed after Nginx reconfiguration due to missing WebSocket headers.
+- Real-time updates were not triggering unless demo clients were deleted (emit tied to cleanup logic).
+- Status updates for disconnected clients were delayed due to WireGuard handshake timing (~2 minutes).
+- Resolved by decoupling emit logic from cleanup and introducing polling-based state reconciliation.
+
+## Next Steps
+
+- Perform extended testing across devices and networks to ensure stability.
+- Document deployment and architecture decisions for future reference.

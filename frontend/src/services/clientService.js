@@ -1,4 +1,5 @@
 import { apiFetch } from "./apiFetch";
+import { downloadZip } from "../utils/downloadZip";
 
 export function fetchClients() {
   return apiFetch("/clients");
@@ -25,17 +26,7 @@ export async function createClient(clientName) {
     }
   }
 
-  // handle zip download
-  const blob = await response.blob();
-  const zipBlob = new Blob([blob], { type: "application/zip" });
-  const url = URL.createObjectURL(zipBlob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${clientName}.zip`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  await downloadZip(response, `${clientName}.zip`);
 }
 
 export function deleteClient(client, user) {
@@ -50,20 +41,9 @@ export function deleteClient(client, user) {
 }
 
 // download conf file with given text content and filename
-/* export async function downloadConfFile(clientId, clientName) {
+export async function downloadConfFile(clientId, clientName) {
   const response = await fetch(`/api/clients/${clientId}/config`, {
     credentials: "include",
   });
-
-  const blob = await response.blob();
-  const zipBlob = new Blob([blob], { type: "application/zip" });
-  const url = URL.createObjectURL(zipBlob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${clientName}.zip`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  await downloadZip(response, `${clientName}.zip`);
 }
- */

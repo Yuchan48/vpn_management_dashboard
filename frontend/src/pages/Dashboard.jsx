@@ -77,8 +77,8 @@ const Dashboard = () => {
         {/* Clients Card */}
         {user.is_demo === 1 && (
           <div className="mb-4 px-6 py-3 bg-yellow-100 text-yellow-800 rounded text-sm">
-            ⚠️ Demo clients are temporary and will be automatically removed 30
-            minutes after creation. Configuration files will become unavailable.
+            ⚠️ Demo clients are temporary and auto-removed after 30 minutes.
+            Re-downloading the config will invalidate any previous file.
           </div>
         )}
         <ClientsTable clients={clients} user={user} setClients={setClients} />

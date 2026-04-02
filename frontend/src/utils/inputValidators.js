@@ -22,8 +22,8 @@ export function validatePassword(password) {
 }
 
 export function validateClientName(name) {
-  if (!/^[a-zA-Z0-9-]{5,}$/.test(name)) {
-    return "Client name must be at least 5 characters long and can only contain letters, numbers, and hyphens.";
+  if (!/^[a-zA-Z0-9-]{5,15}$/.test(name)) {
+    return "Client name must be 5-15 characters long and contain only letters, numbers, or '-'";
   }
   return null; // No errors
 }

@@ -24,6 +24,9 @@ const { validateEnvVariables } = require("./utils/envValidator");
 const {
   cleanupAndReloadDemoClients,
 } = require("./utils/cleanupAndReloadDemoClients");
+const { cleanupOldDemoClients } = require("./services/demoCleanup.service");
+
+const { emitIoPerUser } = require("./socketio");
 
 async function startServer() {
   try {
@@ -47,17 +50,18 @@ async function startServer() {
     // initial cleanup of expired demo clients on server startup
     await cleanupAndReloadDemoClients();
 
-    // schedule  periodic demo cleanup every 30 minutes
-    setInterval(
-      async () => {
-        try {
-          await cleanupAndReloadDemoClients();
-        } catch (error) {
-          console.error("[DemoCleanup] error:", error);
+    // polling every 10 second for clean up demo clinets and client status update
+    setInterval(async () => {
+      try {
+        const deletedCount = await cleanupAndReloadDemoClients();
+
+        if (deletedCount > 0) {
+          console.log(`[Polling] ${deletedCount} demo clients removed.`);
         }
-      },
-      30 * 60 * 1000,
-    );
+      } catch (error) {
+        console.error("[Polling] error:", error);
+      }
+    }, 10 * 1000);
   } catch (error) {
     console.error("Error starting server:", error);
     process.exit(1);

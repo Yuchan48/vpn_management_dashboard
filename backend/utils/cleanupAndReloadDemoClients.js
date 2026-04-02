@@ -1,7 +1,6 @@
 const { cleanupOldDemoClients } = require("../services/demoCleanup.service");
 const { syncWireGuardPeers } = require("../services/wireguardSync.service");
-const { getClientsWithStatus } = require("../services/client.service");
-const { emitIo } = require("../socketio");
+const { emitIoPerUser } = require("../socketio");
 
 async function cleanupAndReloadDemoClients() {
   try {
@@ -10,8 +9,8 @@ async function cleanupAndReloadDemoClients() {
     if (deletedCount > 0) {
       console.log(`[DemoCleanup] ${deletedCount} clients removed.`);
       await syncWireGuardPeers();
-      const updatedClients = await getClientsWithStatus();
-      emitIo(updatedClients);
+
+      await emitIoPerUser();
     }
   } catch (error) {
     console.error("Error during demo client cleanup:", error);

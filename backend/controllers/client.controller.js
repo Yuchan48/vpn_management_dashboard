@@ -6,7 +6,7 @@ const wireguardService = require("../services/wireguard.service");
 const { syncWireGuardPeers } = require("../services/wireguardSync.service");
 const { validateClientName } = require("../utils/inputValidators");
 const { zipGenerator } = require("../utils/zipGenerator");
-const { emitIo } = require("../socketio");
+const { emitIoPerUser } = require("../socketio");
 
 async function createClient(req, res, next) {
   try {
@@ -76,8 +76,7 @@ async function createClient(req, res, next) {
 
     // emit a Socket.IO event to notify connected clients that a new client has been created.
     try {
-      const updatedClients = await clientService.getClientsWithStatus(req.user);
-      await emitIo(updatedClients);
+      await emitIoPerUser();
     } catch (socketError) {
       console.error("Error emitting Socket.IO event:", socketError);
     }
@@ -124,8 +123,7 @@ async function deleteClient(req, res, next) {
 
     // emit updated client list to connected clients via Socket.IO
     try {
-      const updatedClients = await clientService.getClientsWithStatus(req.user);
-      await emitIo(updatedClients);
+      await emitIoPerUser();
     } catch (socketError) {
       console.error("Error emitting Socket.IO event:", socketError);
     }

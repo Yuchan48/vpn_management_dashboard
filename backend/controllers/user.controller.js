@@ -5,7 +5,7 @@ const {
   validateUsername,
   validatePassword,
 } = require("../utils/inputValidators.js");
-const { emitIo } = require("../socketio");
+const { emitIoPerUser } = require("../socketio");
 
 async function createUser(req, res, next) {
   try {
@@ -75,8 +75,7 @@ async function deleteUser(req, res, next) {
 
     // emit updated client list to connected clients via Socket.IO
     try {
-      const updatedClients = await clientService.getClientsWithStatus(req.user);
-      await emitIo(updatedClients);
+      await emitIoPerUser();
     } catch (socketError) {
       console.error("Error emitting Socket.IO event:", socketError);
     }

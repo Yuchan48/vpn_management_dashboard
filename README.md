@@ -129,8 +129,7 @@ You can test the WireGuard VPN using the demo client configuration available in 
 - Full-stack development with React and Node.js.
 - Real-time communication with Socket.IO and WebSocket proxying.
 - Self-hosted VPN setup and configuration (WireGuard, wg0 interface, peer management).
-- Linux server administration and networking (iptables, NAT, IPv4/IPv6 configuration).
-- System-level networking and firewall management (iptables, NAT).
+- Linux server administration and networking (iptables, NAT, IPv4/IPv6, firewall, WireGuard interface management).
 - Deployment and production readiness (Nginx, SSL, PM2).
 - Role-based access control, JWT authentication, and secure cookie handling.
 - Writing clean, maintainable code with modular architecture.

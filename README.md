@@ -3,7 +3,7 @@
 🚀 [Live Demo](https://wg-management-dashboard.duckdns.org) – _Demo account accessible for recruiters_
 
 <img width="422" alt="admin dashboard" src="https://github.com/user-attachments/assets/67a29eb2-9ab0-4fab-bfa9-be9f240b5113" />
-<br>
+<br><br>
 
 A full-stack web application for managing WireGuard VPN clients with real-time monitoring, secure authentication, and role-based access control. This project demonstrates end-to-end development skills, from backend architecture and WebSocket integration to frontend UX and deployment.
 
@@ -143,17 +143,17 @@ This project is **not a plug-and-play application**. Running it locally or on an
 ---
 
 ## 📸 Screenshots
-<img width="400"  alt="active wireguard vpn" src="https://github.com/user-attachments/assets/19dad1bb-f22b-4a07-957f-efff5e049cdb" />
+<img width="350"  alt="active wireguard vpn" src="https://github.com/user-attachments/assets/19dad1bb-f22b-4a07-957f-efff5e049cdb" />
 <br>
-<img width="400" alt="admin dashboard" src="https://github.com/user-attachments/assets/25c09e1a-817e-4c3c-a995-3a95418d4494" />
+<img width="350" alt="admin dashboard" src="https://github.com/user-attachments/assets/25c09e1a-817e-4c3c-a995-3a95418d4494" />
 <br>
-<img width="400" alt="login page" src="https://github.com/user-attachments/assets/1c7cd569-764e-4c5c-a728-8cf0f87fe7d7" />
+<img width="350" alt="login page" src="https://github.com/user-attachments/assets/1c7cd569-764e-4c5c-a728-8cf0f87fe7d7" />
 <br>
-<img width="400" alt="create user" src="https://github.com/user-attachments/assets/f6ad7eac-c590-4e0e-8d5f-638ab6ba82a2" />
+<img width="350" alt="create user" src="https://github.com/user-attachments/assets/f6ad7eac-c590-4e0e-8d5f-638ab6ba82a2" />
 <br>
-<img width="400" alt="create client" src="https://github.com/user-attachments/assets/4f065f3a-e8ea-45a3-a99b-6a990b835859" />
+<img width="350" alt="create client" src="https://github.com/user-attachments/assets/4f065f3a-e8ea-45a3-a99b-6a990b835859" />
 <br>
-<img width="400" alt="change password" src="https://github.com/user-attachments/assets/03357bc0-5cc0-4470-a54d-1ac41103e2d4" />
+<img width="350" alt="change password" src="https://github.com/user-attachments/assets/03357bc0-5cc0-4470-a54d-1ac41103e2d4" />
 
 
 

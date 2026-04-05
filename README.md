@@ -1,8 +1,17 @@
-# 📝 Personal VPN Management Platform (Wireguard)
+# 🔐 WireGuard VPN Management Platform (Self-Hosted & Full-Stack)
 
-[Live Demo](https://wg-management-dashboard.duckdns.org) – _Demo account accessible for recruiters_
+### 🔑 Demo Access
 
-A full-stack web application for managing WireGuard VPN clients with real-time monitoring, secure authentication, and role-based access control. This project demonstrates end-to-end development skills, from backend architecture and WebSocket integration to frontend UX and deployment.
+🚀 [Live Demo](https://wg-management-dashboard.duckdns.org) 
+
+Recruiters can log in using a demo account directly from the app.
+- Demo users can safely explore core features (client creation, deletion, config download)
+- Admin-level functionality is described in this README
+
+<img width="422" alt="admin dashboard" src="https://github.com/user-attachments/assets/67a29eb2-9ab0-4fab-bfa9-be9f240b5113" />
+<br><br>
+
+A self-hosted full-stack platform for managing WireGuard VPN clients, featuring real-time monitoring, secure authentication, and role-based access control. This project goes beyond a typical dashboard — it includes manual configuration of a WireGuard VPN server on Linux, NAT/firewall setup, and production deployment using Nginx and PM2. It demonstrates end-to-end engineering skills across backend development, real-time systems, networking, and infrastructure.
 
 ---
 
@@ -18,6 +27,16 @@ You can test the WireGuard VPN using the demo client configuration available in 
 - **iOS:** Install from [App Store](https://apps.apple.com/app/wireguard/id1441195209). Tap “Add a Tunnel” → “Add from File or Archive” to import the `.conf` file.
 
 > ⚠️ Note: Demo clients are temporary and auto-deleted after 30 minutes. Re-downloading a configuration file will invalidate the previous one. If the downloaded filename is automatically appended with `(1)` or similar, rename it before importing, as special characters and filenames longer than 15 characters are not supported.
+
+---
+
+## ✨ Key Highlights
+
+- 🔐 Self-hosted WireGuard VPN server configured on Linux (wg0 interface, NAT, firewall rules)
+- 🌐 Production deployment with Nginx (reverse proxy, SSL) and PM2 (process management)
+- ⚡ Real-time client monitoring using Socket.IO (no polling)
+- 👥 Role-based system with Admin, User, and Demo accounts
+- 📦 Secure client config generation (no private key storage)
 
 ---
 
@@ -65,7 +84,7 @@ You can test the WireGuard VPN using the demo client configuration available in 
 | Layer         | Technology & Purpose                                                          |
 | ------------- | ----------------------------------------------------------------------------- |
 | **Frontend**  | React, Nginx for static hosting and reverse proxy                             |
-| **Backend**   | Node.js, Express, Socket.IO for real-time updates, PM2 for process management |
+| **Backend**   | Node.js, Express, Socket.IO (real-time), PM2 (process management & uptime) |
 | **VPN Layer** | WireGuard, client key management, peer synchronization                        |
 | **Database**  | SQLite                                                                        |
 | **Security**  | HTTP-only cookies, JWT authentication, role-based access, secure key handling |
@@ -109,8 +128,8 @@ You can test the WireGuard VPN using the demo client configuration available in 
 
 - Full-stack development with React and Node.js.
 - Real-time communication with Socket.IO and WebSocket proxying.
-- VPN configuration and integration (WireGuard).
-- System-level networking and firewall management (iptables, NAT).
+- Self-hosted VPN setup and configuration (WireGuard, wg0 interface, peer management).
+- Linux server administration and networking (iptables, NAT, IPv4/IPv6, firewall, WireGuard interface management).
 - Deployment and production readiness (Nginx, SSL, PM2).
 - Role-based access control, JWT authentication, and secure cookie handling.
 - Writing clean, maintainable code with modular architecture.
@@ -136,3 +155,21 @@ This project is **not a plug-and-play application**. Running it locally or on an
 
 - [Demo Dashboard](https://wg-management-dashboard.duckdns.org) – demo account available for recruiters.
   Explore creating/deleting clients and real-time status updates.
+
+---
+
+## 📸 Screenshots
+<img width="350"  alt="active wireguard vpn" src="https://github.com/user-attachments/assets/19dad1bb-f22b-4a07-957f-efff5e049cdb" />
+<br>
+<img width="350" alt="admin dashboard" src="https://github.com/user-attachments/assets/25c09e1a-817e-4c3c-a995-3a95418d4494" />
+<br>
+<img width="350" alt="login page" src="https://github.com/user-attachments/assets/1c7cd569-764e-4c5c-a728-8cf0f87fe7d7" />
+<br>
+<img width="350" alt="create user" src="https://github.com/user-attachments/assets/f6ad7eac-c590-4e0e-8d5f-638ab6ba82a2" />
+<br>
+<img width="350" alt="create client" src="https://github.com/user-attachments/assets/4f065f3a-e8ea-45a3-a99b-6a990b835859" />
+<br>
+<img width="350" alt="change password" src="https://github.com/user-attachments/assets/03357bc0-5cc0-4470-a54d-1ac41103e2d4" />
+
+
+

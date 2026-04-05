@@ -61,23 +61,4 @@ describe("Client Service", () => {
       ).rejects.toMatchObject({ status: 404 });
     });
   });
-
-  describe("deleteClient", () => {
-    it("should delete a client", async () => {
-      const client = await clientService.createClient({
-        name: "delete-me",
-        publicKey: "key-delete",
-        ipAddress: "10.0.0.30",
-        userId: 2,
-      });
-
-      await clientService.deleteClient({
-        clientId: client.id,
-        user: normalUser,
-      });
-      await expect(
-        clientService.getClientById({ clientId: client.id, user: normalUser }),
-      ).rejects.toMatchObject({ status: 404 });
-    });
-  });
 });

@@ -52,10 +52,10 @@ const LoginPage = () => {
       setIsLoading(true);
 
       // Call the login API
-      const data = await login(username, password);
+      await login(username, password);
 
-      // Navigate to the dashboard and pass the token in state
-      navigate("/dashboard", { state: { token: data.token } });
+      // Navigate to the dashboard
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     } finally {

@@ -9,6 +9,7 @@ import Spinner from "../components/icons/Spinner";
 // import functions
 import { changePassword } from "../services/userService";
 import { logout } from "../services/authService";
+import { validatePassword } from "../utils/inputValidators";
 
 const ChangePassword = () => {
   // set input values
@@ -42,6 +43,12 @@ const ChangePassword = () => {
     }
     if (currentPassword === newPassword) {
       setError("New password must be different from current password.");
+      return;
+    }
+
+    const validationError = validatePassword(newPassword);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 

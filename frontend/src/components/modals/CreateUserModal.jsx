@@ -13,6 +13,10 @@ import {
   createAdmin,
   fetchAllUsers,
 } from "../../services/userService";
+import {
+  validateUsername,
+  validatePassword,
+} from "../../utils/inputValidators";
 
 const CreateUserModal = ({
   isOpen,
@@ -47,6 +51,18 @@ const CreateUserModal = ({
 
     if (!username.trim() || !password.trim()) {
       setError("Username and password are required.");
+      return;
+    }
+
+    const usernameError = validateUsername(username);
+    if (usernameError) {
+      setError(usernameError);
+      return;
+    }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      setError(passwordError);
       return;
     }
 

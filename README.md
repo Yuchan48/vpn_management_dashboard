@@ -6,27 +6,27 @@
 
 Recruiters can log in using a demo account directly from the app.
 - Demo users can safely explore core features (client creation, deletion, config download)
-- Admin-level functionality is described in this README
+- Admin-level functionalities are described in this README
 
 <img width="422" alt="admin dashboard" src="https://github.com/user-attachments/assets/67a29eb2-9ab0-4fab-bfa9-be9f240b5113" />
 <br><br>
 
-A self-hosted full-stack platform for managing WireGuard VPN clients, featuring real-time monitoring, secure authentication, and role-based access control. This project goes beyond a typical dashboard — it includes manual configuration of a WireGuard VPN server on Linux, NAT/firewall setup, and production deployment using Nginx and PM2. It demonstrates end-to-end engineering skills across backend development, real-time systems, networking, and infrastructure.
+A self-hosted full-stack platform for managing WireGuard VPN clients with real-time monitoring, authentication, and role-based access control. The system includes WireGuard server configuration on Linux, NAT/firewall setup, and production deployment using Nginx and PM2. It demonstrates end-to-end engineering across backend systems, real-time communication, networking, and infrastructure.
 
 ---
 
 ## Testing Demo Clients
 
-You can test the WireGuard VPN using the demo client configuration available in the dashboard. Follow these steps to install the WireGuard app and import the configuration file:
+You can use the demo client configuration available in the dashboard to test the WireGuard VPN. Follow these steps to install the WireGuard app and import the configuration file:
 
 ### WireGuard App Installation
 
-- **macOS:** Download from [WireGuard for macOS](https://www.wireguard.com/install/) and open the `.conf` file via the app. macOS may only establish handshake but might require additional routing for full internet access.
+- **macOS:** Download from [WireGuard for macOS](https://www.wireguard.com/install/) and open the `.conf` file via the app. macOS may only establish a handshake but might require additional routing for full internet access.
 - **Windows:** Download from [WireGuard for Windows](https://www.wireguard.com/install/). Import the `.conf` file via the app interface.
 - **Android:** Install from [Google Play Store](https://play.google.com/store/apps/details?id=com.wireguard.android). Tap the plus (+) button and import the `.conf` file.
 - **iOS:** Install from [App Store](https://apps.apple.com/app/wireguard/id1441195209). Tap “Add a Tunnel” → “Add from File or Archive” to import the `.conf` file.
 
-> ⚠️ Note: Demo clients are temporary and auto-deleted after 30 minutes. Re-downloading a configuration file will invalidate the previous one. If the downloaded filename is automatically appended with `(1)` or similar, rename it before importing, as special characters and filenames longer than 15 characters are not supported.
+> ⚠️ Note: Demo clients are temporary and auto-deleted after 30 minutes. Re-downloading a configuration file will invalidate the previous one. If the downloaded filename is automatically appended with (1) or similar, rename it before importing, as filenames longer than 15 characters or containing special characters are not supported.
 
 ---
 
@@ -34,7 +34,7 @@ You can test the WireGuard VPN using the demo client configuration available in 
 
 - 🔐 Self-hosted WireGuard VPN server configured on Linux (wg0 interface, NAT, firewall rules)
 - 🌐 Production deployment with Nginx (reverse proxy, SSL) and PM2 (process management)
-- ⚡ Real-time client monitoring using Socket.IO (no polling)
+- ⚡ Real-time client monitoring using Socket.IO with event-driven updates
 - 👥 Role-based system with Admin, User, and Demo accounts
 - 📦 Secure client config generation (no private key storage)
 
@@ -101,7 +101,7 @@ You can test the WireGuard VPN using the demo client configuration available in 
 ## ⚙️ Security Considerations
 
 - Private keys in `.conf` files are **never stored in the database**.
-- Re-downloading config regenerates a new key pair for security.
+- Re-downloading a configuration regenerates a new key pair for security.
 - JWTs with short expiration are used for authentication.
 - Role-based access control ensures data isolation per user.
 
@@ -141,7 +141,7 @@ You can test the WireGuard VPN using the demo client configuration available in 
 
 This project is **not a plug-and-play application**. Running it locally or on another machine requires advanced system, networking, and security knowledge. Key considerations include:
 
-- **Operating System:** Must run on Linux (Ubuntu, Debian, etc.). Other OSes (e.g., macOS, Windows) are not fully supported due to system-level differences in VPN interfaces (macOS uses `utunX` devices, Linux uses `wg0`).
+- **Operating System:** Must run on Linux (Ubuntu, Debian, etc.). Other operating systems (e.g., macOS, Windows) are not fully supported due to system-level differences in VPN interfaces (macOS uses utunX, Linux uses wg0).
 - **WireGuard Setup:** You must install and configure WireGuard manually, including `wg0.conf`, peer management, and NAT rules for packet forwarding.
 - **Networking:** Proper iptables/NAT configuration is required for VPN clients to access the internet. Mac and Windows clients may establish handshake but not full routing without additional configuration.
 - **Web Server:** Nginx configuration is needed for serving the frontend and proxying WebSocket connections (Socket.IO) securely.

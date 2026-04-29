@@ -1,17 +1,18 @@
-# 🔐 WireGuard VPN Management Platform (Self-Hosted & Full-Stack)
+# 🔐 Self-Hosted WireGuard VPN Management System
 
 ### 🔑 Demo Access
 
-🚀 [Live Demo](https://wg-management-dashboard.duckdns.org) 
+🚀 [Live Demo](https://wg-management-dashboard.duckdns.org)
 
 Recruiters can log in using a demo account directly from the app.
+
 - Demo users can safely explore core features (client creation, deletion, config download)
 - Admin-level functionalities are described in this README
 
 <img width="422" alt="admin dashboard" src="https://github.com/user-attachments/assets/67a29eb2-9ab0-4fab-bfa9-be9f240b5113" />
 <br><br>
 
-A self-hosted full-stack platform for managing WireGuard VPN clients with real-time monitoring, authentication, and role-based access control. The system includes WireGuard server configuration on Linux, NAT/firewall setup, and production deployment using Nginx and PM2. It demonstrates end-to-end engineering across backend systems, real-time communication, networking, and infrastructure.
+A self-hosted WireGuard VPN management system for provisioning and monitoring VPN clients with real-time updates, authentication, and role-based access control. Deployed on a Linux environment with WireGuard server configuration, NAT/firewall setup, and production-grade infrastructure using Nginx and PM2. The project demonstrates end-to-end system design across backend engineering, networking, real-time communication, and infrastructure deployment.
 
 ---
 
@@ -84,7 +85,7 @@ You can use the demo client configuration available in the dashboard to test the
 | Layer         | Technology & Purpose                                                          |
 | ------------- | ----------------------------------------------------------------------------- |
 | **Frontend**  | React, Nginx for static hosting and reverse proxy                             |
-| **Backend**   | Node.js, Express, Socket.IO (real-time), PM2 (process management & uptime) |
+| **Backend**   | Node.js, Express, Socket.IO (real-time), PM2 (process management & uptime)    |
 | **VPN Layer** | WireGuard, client key management, peer synchronization                        |
 | **Database**  | SQLite                                                                        |
 | **Security**  | HTTP-only cookies, JWT authentication, role-based access, secure key handling |
@@ -159,6 +160,7 @@ This project is **not a plug-and-play application**. Running it locally or on an
 ---
 
 ## 📸 Screenshots
+
 <img width="350"  alt="active wireguard vpn" src="https://github.com/user-attachments/assets/19dad1bb-f22b-4a07-957f-efff5e049cdb" />
 <br>
 <img width="350" alt="admin dashboard" src="https://github.com/user-attachments/assets/25c09e1a-817e-4c3c-a995-3a95418d4494" />
@@ -170,6 +172,3 @@ This project is **not a plug-and-play application**. Running it locally or on an
 <img width="350" alt="create client" src="https://github.com/user-attachments/assets/4f065f3a-e8ea-45a3-a99b-6a990b835859" />
 <br>
 <img width="350" alt="change password" src="https://github.com/user-attachments/assets/03357bc0-5cc0-4470-a54d-1ac41103e2d4" />
-
-
-

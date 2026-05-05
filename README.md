@@ -4,15 +4,18 @@
 
 🚀 [Live Demo](https://wg-management-dashboard.duckdns.org)
 
-Recruiters can log in using a demo account directly from the app.
+Use the demo account to explore:
 
-- Demo users can safely explore core features (client creation, deletion, config download)
-- Admin-level functionalities are described in this README
+- Create and delete VPN clients
+- Generate and download WireGuard configuration files
+- Monitor client status via the dashboard
+
+> ⚠️ Note: Client connections are established using the official WireGuard app. Admin-level features are outlined in this README.
 
 <img width="422" alt="admin dashboard" src="https://github.com/user-attachments/assets/67a29eb2-9ab0-4fab-bfa9-be9f240b5113" />
 <br><br>
 
-A self-hosted WireGuard VPN management system for provisioning and monitoring VPN clients with real-time updates, authentication, and role-based access control. Deployed on a Linux environment with WireGuard server configuration, NAT/firewall setup, and production-grade infrastructure using Nginx and PM2. The project demonstrates end-to-end system design across backend engineering, networking, real-time communication, and infrastructure deployment.
+A self-hosted WireGuard VPN server with a custom management dashboard for provisioning and monitoring VPN clients. Features include **real-time updates**, **authentication**, and **role-based access control**. Deployed on a Linux environment with WireGuard server configuration, including **network routing, NAT, and firewall setup**, and production-ready infrastructure using **Nginx** and **PM2**. This project demonstrates **end-to-end system design**, covering **backend engineering**, **networking**, **real-time communication**, and **infrastructure deployment**.
 
 ---
 
@@ -22,22 +25,12 @@ You can use the demo client configuration available in the dashboard to test the
 
 ### WireGuard App Installation
 
-- **macOS:** Download from [WireGuard for macOS](https://www.wireguard.com/install/) and open the `.conf` file via the app. macOS may only establish a handshake but might require additional routing for full internet access.
+- **macOS:** Download from [WireGuard for macOS](https://www.wireguard.com/install/) and open the `.conf` file via the app.
 - **Windows:** Download from [WireGuard for Windows](https://www.wireguard.com/install/). Import the `.conf` file via the app interface.
 - **Android:** Install from [Google Play Store](https://play.google.com/store/apps/details?id=com.wireguard.android). Tap the plus (+) button and import the `.conf` file.
 - **iOS:** Install from [App Store](https://apps.apple.com/app/wireguard/id1441195209). Tap “Add a Tunnel” → “Add from File or Archive” to import the `.conf` file.
 
 > ⚠️ Note: Demo clients are temporary and auto-deleted after 30 minutes. Re-downloading a configuration file will invalidate the previous one. If the downloaded filename is automatically appended with (1) or similar, rename it before importing, as filenames longer than 15 characters or containing special characters are not supported.
-
----
-
-## ✨ Key Highlights
-
-- 🔐 Self-hosted WireGuard VPN server configured on Linux (wg0 interface, NAT, firewall rules)
-- 🌐 Production deployment with Nginx (reverse proxy, SSL) and PM2 (process management)
-- ⚡ Real-time client monitoring using Socket.IO with event-driven updates
-- 👥 Role-based system with Admin, User, and Demo accounts
-- 📦 Secure client config generation (no private key storage)
 
 ---
 
@@ -56,30 +49,6 @@ You can use the demo client configuration available in the dashboard to test the
 
 ---
 
-### VPN Client Management
-
-- On client creation, a `.zip` configuration file for WireGuard is downloaded automatically.
-- Supported devices:
-  - **macOS:** [WireGuard Desktop App](https://www.wireguard.com/install/)
-  - **Windows:** [WireGuard Windows App](https://www.wireguard.com/install/)
-  - **Android:** [WireGuard Android App](https://play.google.com/store/apps/details?id=com.wireguard.android)
-  - **iOS:** [WireGuard iOS App](https://apps.apple.com/app/wireguard/id1441195209)
-- Demo clients are temporary and **auto-removed after 30 minutes**.
-- Re-downloading a config invalidates the previous one (security measure, private key not stored).
-
----
-
-### Dashboard & Real-Time Updates
-
-- Client table shows real-time VPN status (online/offline) via **Socket.IO**.
-- Status updates are optimized to **emit only when changes occur**.
-- Clean and responsive dashboard UI powered by **React + Nginx**.
-- Demo accounts allow recruiters to explore features without affecting production data.
-
-> ⚠️ WireGuard does not emit disconnect events; status is calculated from last handshake timestamp. Clients may show offline ~2 minutes after disconnecting.
-
----
-
 ## 🛠 Tech Stack
 
 | Layer         | Technology & Purpose                                                          |
@@ -89,13 +58,6 @@ You can use the demo client configuration available in the dashboard to test the
 | **VPN Layer** | WireGuard, client key management, peer synchronization                        |
 | **Database**  | SQLite                                                                        |
 | **Security**  | HTTP-only cookies, JWT authentication, role-based access, secure key handling |
-
-**Why this stack?**
-
-- **Socket.IO** enables instant client status updates without refreshing.
-- **WireGuard** provides lightweight, high-performance VPN.
-- **Nginx + PM2** ensures production-grade deployment and scalability.
-- **JWT + HTTP-only cookies** secure session management.
 
 ---
 
@@ -114,14 +76,6 @@ You can use the demo client configuration available in the dashboard to test the
 - **Real-time reactive UX:** minimal polling, change detection ensures efficiency.
 - **Clean deployment:** Docker/Nginx or bare-metal deployment with SSL termination.
 - **Scalable & secure:** isolated rooms per user in Socket.IO, proper NAT & firewall configuration for WireGuard.
-
----
-
-## 📌 Known Downsides
-
-- Re-downloading a client config invalidates the previous one (by design, for security).
-- Status updates rely on last WireGuard handshake; offline status may take ~2 minutes.
-- Demo clients expire automatically and cannot be restored.
 
 ---
 
@@ -147,8 +101,6 @@ This project is **not a plug-and-play application**. Running it locally or on an
 - **Networking:** Proper iptables/NAT configuration is required for VPN clients to access the internet. Mac and Windows clients may establish handshake but not full routing without additional configuration.
 - **Web Server:** Nginx configuration is needed for serving the frontend and proxying WebSocket connections (Socket.IO) securely.
 - **Security:** SSL certificates, JWT-based authentication, and HTTP-only cookies must be correctly configured for production use.
-
-> ⚡ **Why this matters:** Setting this up exercises skills in OS-level networking, VPN configuration, firewall rules, real-time server communication, and secure web deployment. Building and debugging this project required modifying multiple configuration files on Linux, testing network routes, and ensuring end-to-end security.
 
 ---
 

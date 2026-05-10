@@ -101,6 +101,8 @@ const Dashboard = () => {
       {/* Impressum */}
       <a
         href="/impressum"
+        target="_blank"
+        rel="noopener noreferrer"
         className="w-full text-center text-sm mb-4 text-gray-500 hover:underline"
       >
         Impressum

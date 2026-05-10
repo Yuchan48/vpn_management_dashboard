@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 import ChangePassword from "./pages/ChangePassword";
+import Impressum from "./pages/Impressum";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -67,6 +68,8 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route path="/impressum" element={<Impressum />} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

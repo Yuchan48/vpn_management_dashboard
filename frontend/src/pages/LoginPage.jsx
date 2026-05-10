@@ -70,95 +70,112 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-700 px-5 sm:px-4">
-      <div className="w-full max-w-sm bg-gray-300 rounded-lg shadow-lg px-6 py-10 sm:px-10 sm:py-14">
-        {/* Title + Error */}
-        <div className="w-full text-center mb-6">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-800">
-            Sign in to your account
-          </h2>
+    <div className="h-screen w-screen overflow-hidden flex flex-col items-center justify-center bg-gray-700 px-5 sm:px-4">
+      <div className="flex flex-1 items-center justify-center">
+        <div className="flex flex-col flex-1 items-center justify-center   bg-gray-300 rounded-lg shadow-lg py-10 px-6 sm:px-10 w-[320px]">
+          {/* Title + Error */}
+          <div className="w-full text-center mb-6">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-800">
+              Sign in to your account
+            </h2>
 
-          <div className="h-5 mt-2 text-sm text-red-600 bg-gray-300">
-            {error || "\u00A0"}
-          </div>
-        </div>
-
-        {/* Form */}
-        <form className="space-y-4 text-gray-900" onSubmit={handleSubmit}>
-          {/* Username */}
-          <div>
-            <label className="block text-sm font-medium">Username</label>
-            <input
-              type="text"
-              required
-              disabled={isLoading}
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                setError("");
-              }}
-              autoComplete="username"
-              className="mt-1 block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium">Password</label>
-            <div className="mt-1 relative">
-              <input
-                type={show ? "text" : "password"}
-                required
-                disabled={isLoading}
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError("");
-                }}
-                autoComplete="current-password"
-                className="block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-
-              <button
-                type="button"
-                className="absolute inset-y-0 right-2 flex items-center"
-                onClick={() => setShow(!show)}
-              >
-                {show ? (
-                  <EyeOffIcon className="h-5 w-5 text-gray-500" />
-                ) : (
-                  <EyeIcon className="h-5 w-5 text-gray-500" />
-                )}
-              </button>
+            <div className="h-5 mt-2 text-sm text-red-600 bg-gray-300">
+              {error || "\u00A0"}
             </div>
           </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full flex items-center justify-center rounded-md bg-indigo-600 mt-6 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+          {/* Form */}
+          <form
+            className="space-y-4 text-gray-900 w-[260px]"
+            onSubmit={handleSubmit}
           >
-            {isLoading ? (
-              <>
-                <Spinner className="h-5 w-5 mr-2 text-white" />
-                Processing...
-              </>
-            ) : (
-              "Sign in"
-            )}
-          </button>
-        </form>
+            {/* Username */}
+            <div>
+              <label className="block text-sm font-medium">Username</label>
+              <input
+                type="text"
+                required
+                disabled={isLoading}
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError("");
+                }}
+                autoComplete="username"
+                className="mt-1 block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
 
-        {/* ⭐ Demo Login Button */}
-        <button
-          onClick={handleDemoLogin}
-          disabled={isLoading}
-          className="mt-4 w-full flex items-center justify-center rounded-md border border-indigo-700 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 disabled:bg-gray-200 disabled:cursor-not-allowed"
-        >
-          Use Demo Account
-        </button>
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium">Password</label>
+              <div className="mt-1 relative">
+                <input
+                  type={show ? "text" : "password"}
+                  required
+                  disabled={isLoading}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError("");
+                  }}
+                  autoComplete="current-password"
+                  className="block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-2 flex items-center"
+                  onClick={() => setShow(!show)}
+                >
+                  {show ? (
+                    <EyeOffIcon className="h-5 w-5 text-gray-500" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5 text-gray-500" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center rounded-md bg-indigo-600 mt-6 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <>
+                  <Spinner className="h-5 w-5 mr-2 text-white" />
+                  Processing...
+                </>
+              ) : (
+                "Sign in"
+              )}
+            </button>
+          </form>
+
+          {/* ⭐ Demo Login Button */}
+          <button
+            onClick={handleDemoLogin}
+            disabled={isLoading}
+            className="w-[260px] mt-4  flex items-center justify-center rounded-md border border-indigo-700 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 disabled:bg-gray-200 disabled:cursor-not-allowed"
+          >
+            Use Demo Account
+          </button>
+        </div>
       </div>
+
+      {/* Impressum */}
+      <a
+        href="/impressum"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mb-6 text-sm text-gray-400 hover:text-gray-200
+        transition-colors duration-200
+      "
+      >
+        Impressum
+      </a>
     </div>
   );
 };

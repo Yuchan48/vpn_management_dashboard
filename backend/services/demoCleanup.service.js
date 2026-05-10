@@ -7,16 +7,20 @@ async function cleanupOldDemoClients() {
     console.log("[DemoCleanup] Starting cleanup of demo clients...");
 
     // Calculate cutoff time
-    const now = new Date();
-    const cutoffTime = new Date(
-      now.getTime() - (process.env.DEMO_CLEANUP_INTERVAL || 1800000),
+    const now = Date.now();
+    const cleanupInterval = Number(
+      process.env.DEMO_CLEANUP_INTERVAL || 1800000,
     );
+
+    const cutoffTime = now - cleanupInterval;
+
     const allClients = await clientService.getAllClients();
 
     // Filter demo clients created before cutoff time
     const demoClientsToDelete = allClients.filter(
       (client) =>
-        client.is_demo === 1 && new Date(client.created_at) < cutoffTime,
+        client.is_demo === 1 &&
+        new Date(client.created_at + "Z").getTime() < cutoffTime,
     );
 
     for (const client of demoClientsToDelete) {

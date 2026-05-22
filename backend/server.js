@@ -49,8 +49,8 @@ async function startServer() {
     // initial cleanup of expired demo clients on server startup
     await cleanupAndReloadDemoClients();
 
-    // Schedule a cron job to clean up expired demo clients every 5 minutes
-    cron.schedule("*/5 * * * *", async () => {
+    // Schedule a cron job to clean up expired demo clients every hour
+    cron.schedule("0 * * * *", async () => {
       try {
         const deletedCount = await cleanupAndReloadDemoClients();
         if (deletedCount > 0) {

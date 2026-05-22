@@ -61,14 +61,14 @@ async function startServer() {
       }
     });
 
-    // polling every 10 second for clean up demo clients and client status update
+    // polling every 15 second for clean up demo clients and client status update
     setInterval(async () => {
       try {
         await emitIoPerUser();
       } catch (error) {
         console.error("[Polling] error:", error);
       }
-    }, 10 * 1000);
+    }, 15 * 1000);
   } catch (error) {
     console.error("Error starting server:", error);
     process.exit(1);

@@ -1,8 +1,8 @@
 // For development
-// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL + "/api";
 
 // For production
-const API_BASE_URL = "/api";
+// const API_BASE_URL = "/api";
 
 export async function apiFetch(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -25,7 +25,7 @@ export async function apiFetch(endpoint, options = {}) {
           : "Unauthorized access. Please log in.",
       );
       window.location.href = "/login";
-    return;
+      return;
     } else {
       throw new Error(data?.error || "Authentication failed.");
     }

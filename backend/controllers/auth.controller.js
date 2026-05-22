@@ -10,8 +10,10 @@ exports.login = async (req, res) => {
     return res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // HTTPS only in prod
-        sameSite: "strict",
+        //secure: process.env.NODE_ENV === "production", // HTTPS only in prod
+        //sameSite: "strict",
+        secure: process.env.NODE_ENV === "development",
+        sameSite: "lax",
         maxAge: 1000 * 60 * 60, // 1 hour
       })
       .json({ message: "Login successful" });

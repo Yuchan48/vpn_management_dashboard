@@ -22,8 +22,6 @@ function authenticateToken(req, res, next) {
           .json({ error: "Invalid token", code: "TOKEN_INVALID" });
       }
 
-      // console.log("Decoded token: ", user); // debugging purpose
-
       // Attach user info to the request object for use in route handlers
       req.user = {
         id: user.sub,

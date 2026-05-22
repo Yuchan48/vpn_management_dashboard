@@ -95,6 +95,7 @@ async function emitIoPerUser() {
       const currentClients = await getClientsWithStatus(user);
       const lastState = lastStatePerUser.get(userId) || [];
 
+      // send update only if client list has changed since last emit
       if (JSON.stringify(currentClients) !== JSON.stringify(lastState)) {
         socketsArr.forEach((s) => s.emit("clientsUpdated", currentClients));
         lastStatePerUser.set(userId, currentClients);

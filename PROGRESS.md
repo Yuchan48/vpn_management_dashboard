@@ -954,12 +954,6 @@ Deployed the application to a live Ubuntu server on Hetzner, configured networki
 - Socket.IO (WebSocket) not transmitting data correctly in production environment.
 - WireGuard clients can connect but do not have internet access, indicating missing NAT or routing configuration.
 
-## Next Steps
-
-- Implement `.zip` download for WireGuard config files to ensure compatibility across devices.
-- Fix WebSocket (Socket.IO) configuration in Nginx for stable real-time communication.
-- Debug and resolve WireGuard networking (iptables/NAT) to enable internet access for clients.
-
 # Day 23 – Frontend Build Deployment, Zip Downloads & WebSocket Fix
 
 ## Summary
@@ -995,12 +989,6 @@ Deployed updated frontend build to production, fixed `.zip` download issues on m
 - Android browsers automatically appended `.json` or `.txt` to downloaded `.zip` files without proper `Blob` type.
 - Initial Socket.IO connection failed due to mismatched path between frontend, backend, and Nginx proxy.
 
-## Next Steps
-
-- Debug WireGuard server NAT/routing rules to allow connected clients to access the internet.
-- Continue testing `.zip` downloads and Socket.IO events across multiple devices and browsers.
-- Monitor production server logs for any intermittent WebSocket or download issues.
-
 # Day 24 – Backend Client Creation Refactor & Direct Zip Download
 
 ## Summary
@@ -1030,12 +1018,6 @@ Refactored backend client creation API to return the `.zip` configuration file d
 - Some clients still cannot access the internet even though WireGuard handshake succeeds and IP addresses match between database, config, and `wg show`.
 - Suspected potential WireGuard routing/NAT configuration issues on the server.
 - Client creation and ZIP download flow is confirmed working; issue seems network-level rather than frontend/backend.
-
-## Next Steps
-
-- Debug WireGuard interface, NAT, and firewall rules to ensure all clients can access the internet.
-- Continue testing demo and admin clients, paying attention to IP allocation and peer synchronization.
-- Monitor production server logs for any anomalies during client creation or peer syncing.
 
 # Day 25 – Deployment Completion, Real-Time Updates & Socket.IO Improvements
 
@@ -1090,7 +1072,29 @@ Completed deployment and stabilized real-time client updates using Socket.IO wit
 - Status updates for disconnected clients were delayed due to WireGuard handshake timing (~2 minutes).
 - Resolved by decoupling emit logic from cleanup and introducing polling-based state reconciliation.
 
-## Next Steps
+# Day 26 – Socket Path Fix, Cron Cleanup & Sync Optimization
 
-- Perform extended testing across devices and networks to ensure stability.
-- Document deployment and architecture decisions for future reference.
+## Summary
+
+Fixed Socket.IO connection setup, refactored demo client cleanup to a cron-based job, and optimized real-time polling interval for client status updates.
+
+## Development Implementation
+
+- **Socket.IO Fixes**
+  - Removed incorrect `/socket.io` path usage on the frontend.
+  - Standardized connection using `io(API_BASE_URL)` with default Socket.IO behavior.
+  - Verified stable real-time communication after fix.
+
+- **Demo Client Cleanup Refactor**
+  - Migrated cleanup logic from `setInterval` to a cron job.
+  - Scheduled cleanup to run every 60 minutes.
+  - Cleanup still removes expired demo clients and associated WireGuard peers.
+
+- **Real-Time Sync Optimization**
+  - Increased client status polling interval from 10s → 15s.
+  - Kept diff-based Socket.IO emits to avoid unnecessary updates.
+
+## Issues Encountered
+
+- Socket.IO failed silently due to incorrect custom path usage on frontend.
+- Balanced cleanup frequency to reduce unnecessary backend load while keeping demo behavior acceptable.

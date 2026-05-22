@@ -4,7 +4,7 @@ require("dotenv").config({
       ? `${__dirname}/.env.production`
       : `${__dirname}/.env.development`,
 });
-
+const cron = require("node-cron");
 const { db, initDb } = require("./database/db");
 
 const app = require("./app");
@@ -49,14 +49,21 @@ async function startServer() {
     // initial cleanup of expired demo clients on server startup
     await cleanupAndReloadDemoClients();
 
+    // Schedule a cron job to clean up expired demo clients every 5 minutes
+    cron.schedule("*/5 * * * *", async () => {
+      try {
+        const deletedCount = await cleanupAndReloadDemoClients();
+        if (deletedCount > 0) {
+          console.log(`[Cron] ${deletedCount} demo clients removed.`);
+        }
+      } catch (error) {
+        console.error("[CRON] error:", error);
+      }
+    });
+
     // polling every 10 second for clean up demo clients and client status update
     setInterval(async () => {
       try {
-        const deletedCount = await cleanupAndReloadDemoClients();
-
-        if (deletedCount > 0) {
-          console.log(`[Polling] ${deletedCount} demo clients removed.`);
-        }
         await emitIoPerUser();
       } catch (error) {
         console.error("[Polling] error:", error);

@@ -1076,25 +1076,23 @@ Completed deployment and stabilized real-time client updates using Socket.IO wit
 
 ## Summary
 
-Fixed Socket.IO connection setup, refactored demo client cleanup to a cron-based job, and optimized real-time polling interval for client status updates.
+Fixed Socket.IO connection setup, separated demo client cleanup from real-time polling logic, and optimized client status update interval.
 
 ## Development Implementation
 
 - **Socket.IO Fixes**
-  - Removed incorrect `/socket.io` path usage on the frontend.
-  - Standardized connection using `io(API_BASE_URL)` with default Socket.IO behavior.
-  - Verified stable real-time communication after fix.
+  - Removed incorrect `/socket.io` path usage in frontend.
+  - Standardized connection using `io(API_BASE_URL)` for proper Socket.IO handshake and transport handling.
 
 - **Demo Client Cleanup Refactor**
-  - Migrated cleanup logic from `setInterval` to a cron job.
-  - Scheduled cleanup to run every 60 minutes.
+  - Shifted demo client cleanup to a cron-based job to reduce unnecessary server load.
+  - Cleanup runs independently from real-time polling logic (15s interval), improving separation of concerns.
   - Cleanup still removes expired demo clients and associated WireGuard peers.
 
 - **Real-Time Sync Optimization**
-  - Increased client status polling interval from 10s → 15s.
-  - Kept diff-based Socket.IO emits to avoid unnecessary updates.
+  - Updated client status polling interval from 10s → 15s.
+  - Maintained Socket.IO diff-based updates per user.
 
 ## Issues Encountered
 
-- Socket.IO failed silently due to incorrect custom path usage on frontend.
-- Balanced cleanup frequency to reduce unnecessary backend load while keeping demo behavior acceptable.
+- Socket.IO connection initially failed due to incorrect `/socket.io` path being appended on the frontend.

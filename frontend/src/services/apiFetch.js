@@ -15,11 +15,20 @@ export async function apiFetch(endpoint, options = {}) {
   });
 
   if (response.status === 401) {
-    const params = new URLSearchParams();
-    params.set("message", "Session expired. Please log in again.");
+    const data = await response.json().catch(() => ({}));
 
-    window.location.href = `/login?${params.toString()}`;
+    if (/AUTH/.test(data?.code)) {
+      sessionStorage.setItem(
+        "auth_error",
+        data?.code === "TOKEN_INVALID"
+          ? "Session expired. Please log in again."
+          : "Unauthorized access. Please log in.",
+      );
+      window.location.href = "/login";
     return;
+    } else {
+      throw new Error(data?.error || "Authentication failed.");
+    }
   }
 
   const contentType = response.headers.get("Content-Type");

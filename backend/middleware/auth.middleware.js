@@ -4,7 +4,9 @@ const jwt = require("jsonwebtoken");
 function authenticateToken(req, res, next) {
   const token = req.cookies.token; // Get token from cookies
   if (!token) {
-    return res.status(401).json({ error: "Token missing" });
+    return res
+      .status(401)
+      .json({ error: "Token missing", code: "TOKEN_MISSING" });
   }
 
   // Verify the token
@@ -15,7 +17,9 @@ function authenticateToken(req, res, next) {
     (err, user) => {
       if (err) {
         console.log("JWT ERROR:", err.message);
-        return res.status(401).json({ error: "Invalid token" });
+        return res
+          .status(401)
+          .json({ error: "Invalid token", code: "TOKEN_INVALID" });
       }
 
       // console.log("Decoded token: ", user); // debugging purpose

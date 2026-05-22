@@ -26,7 +26,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     // display message passed via navigate() from other pages
-    if (location.state?.message) {
+    /*  if (location.state?.message) {
       setError(location.state.message);
     } else {
       const queryParams = new URLSearchParams(location.search);
@@ -35,7 +35,17 @@ const LoginPage = () => {
         setError(message);
       }
     }
-  }, [location]);
+
+    }, [location]);
+    */
+    const message =
+      location.state?.message || sessionStorage.getItem("auth_error");
+
+    if (message) {
+      setError(message);
+      sessionStorage.removeItem("auth_error");
+    }
+  }, [location.state]);
 
   const handleSubmit = async (event) => {
     // prevents the page reloading on form submission

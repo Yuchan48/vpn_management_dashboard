@@ -6,8 +6,7 @@ import { io } from "socket.io-client";
 // For production
 const API_BASE_URL = "/api";
 
-const socket = io("", {
-  path: `${API_BASE_URL}/socket.io`,
+const socket = io(`${API_BASE_URL}`, {
   autoConnect: false,
   transports: ["websocket"],
   withCredentials: true,

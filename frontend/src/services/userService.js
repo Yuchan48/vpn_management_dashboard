@@ -1,9 +1,4 @@
 import { apiFetch } from "./apiFetch";
-// For development
-// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-// For production
-const API_BASE_URL = "/api";
 
 /* Root Admin function */
 export function createAdmin(newAdminData, currentUser) {

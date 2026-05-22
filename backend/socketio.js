@@ -6,6 +6,7 @@ const { getClientsWithStatus } = require("./services/client.service");
 let io;
 const lastStatePerUser = new Map();
 // Initialize Socket.IO server and set up connection handling
+
 function initSocketIO(server) {
   io = new Server(server, {
     cors: {
@@ -78,7 +79,6 @@ async function emitIoPerUser() {
     const io = getIO();
     // get all connected sockets
     const sockets = await io.fetchSockets();
-
     const userSockets = new Map();
     // group sockets by user ID
     for (const socket of sockets) {
@@ -94,6 +94,7 @@ async function emitIoPerUser() {
       const user = socketsArr[0].user;
       const currentClients = await getClientsWithStatus(user);
       const lastState = lastStatePerUser.get(userId) || [];
+
       if (JSON.stringify(currentClients) !== JSON.stringify(lastState)) {
         socketsArr.forEach((s) => s.emit("clientsUpdated", currentClients));
         lastStatePerUser.set(userId, currentClients);

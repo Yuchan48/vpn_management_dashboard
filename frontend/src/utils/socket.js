@@ -6,8 +6,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // For production
 // const API_BASE_URL = "/api";
 
-const socket = io(`${API_BASE_URL}`, {
-  autoConnect: false,
+const socket = io("/", {
+  path: "/socket.io",
   transports: ["websocket"],
   withCredentials: true,
 });

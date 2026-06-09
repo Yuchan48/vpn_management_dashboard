@@ -15,7 +15,7 @@ import LogoutButton from "../components/buttons/LogoutButton";
 import LoadingScreen from "../components/LoadingScreen";
 
 // import functions
-import { fetchAllUsers, fetchCurrentUser } from "../services/userService";
+import { fetchAllUsers } from "../services/userService";
 import { fetchClients } from "../services/clientService";
 
 const Dashboard = () => {
@@ -25,7 +25,6 @@ const Dashboard = () => {
   const [error, setError] = useState("");
 
   // fetched data
-  const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [clients, setClients] = useState([]);
 
@@ -69,10 +68,15 @@ const Dashboard = () => {
               </h1>
               {user && <CurrentUserInfo user={user} />}
             </div>
-
+            {/* Navigation Buttons */}
             <div className="flex gap-2">
+              <Link
+                to="/setup-guide"
+                className="text-center px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+              >
+                Setup Guide
+              </Link>
               <ChangePasswordButton disabled={user.is_demo === 1} />
-
               <LogoutButton />
             </div>
           </div>

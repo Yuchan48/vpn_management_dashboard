@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
+import { useAuth } from "../context/AuthContext";
+
 // import assets
 import loginBg from "../assets/login_bg.jpg";
 
@@ -12,8 +14,10 @@ import GitHubIcon from "../components/icons/GitHubIcon";
 
 // import functions
 import { login } from "../services/authService";
+import { fetchCurrentUser } from "../services/userService";
 
 const LoginPage = () => {
+  const { setUser } = useAuth();
   // input values
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -67,6 +71,8 @@ const LoginPage = () => {
 
       // Call the login API
       await login(username, password);
+      const currentUser = await fetchCurrentUser();
+      setUser(currentUser);
 
       // Navigate to the dashboard
       navigate("/dashboard");

@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 import ChangePassword from "./pages/ChangePassword";
 import Impressum from "./pages/Impressum";
+import SetupGuide from "./pages/SetupGuide";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -65,6 +66,15 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <ChangePassword />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/setup-guide"
+            element={
+              <ProtectedRoute>
+                <SetupGuide />
               </ProtectedRoute>
             }
           />

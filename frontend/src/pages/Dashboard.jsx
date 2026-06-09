@@ -22,6 +22,7 @@ const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   // loading state and error
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // fetched data
   const [user, setUser] = useState(null);
@@ -32,6 +33,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      setError("");
       setLoading(true);
       try {
         if (user.role === "admin") {
@@ -41,7 +43,7 @@ const Dashboard = () => {
         const clientsData = await fetchClients();
         setClients(clientsData);
       } catch {
-        navigate("/login");
+        setError("Failed to load data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -84,6 +86,13 @@ const Dashboard = () => {
               letters, numbers, or "-" (max 15 chars) to avoid errors.
             </div>
           )}
+
+          {error && (
+            <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
+              {error}
+            </div>
+          )}
+
           <ClientsTable clients={clients} user={user} setClients={setClients} />
 
           {/* Admin Users Card */}

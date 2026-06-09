@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useClientsSocket from "../hooks/useClientsSocket";
+import { useAuth } from "../context/AuthContext";
 
 // import UI components
 // tables and user info
@@ -14,16 +15,16 @@ import LogoutButton from "../components/buttons/LogoutButton";
 import LoadingScreen from "../components/LoadingScreen";
 
 // import functions
-import { fetchAllUsers, fetchCurrentUser } from "../services/userService";
+import { fetchAllUsers } from "../services/userService";
 import { fetchClients } from "../services/clientService";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   // loading state and error
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // fetched data
-  const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [clients, setClients] = useState([]);
 
@@ -31,27 +32,26 @@ const Dashboard = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      setError("");
       setLoading(true);
       try {
-        const currentUser = await fetchCurrentUser();
-        setUser(currentUser);
-        if (currentUser.role === "admin") {
+        if (user.role === "admin") {
           const usersData = await fetchAllUsers();
           setUsers(usersData);
         }
         const clientsData = await fetchClients();
         setClients(clientsData);
       } catch {
-        navigate("/login");
+        setError("Failed to load data. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
     loadData();
-  }, [navigate]);
+  }, [user]);
 
-  if (loading) {
+  if (loading || authLoading) {
     return <LoadingScreen />;
   }
 
@@ -68,10 +68,15 @@ const Dashboard = () => {
               </h1>
               {user && <CurrentUserInfo user={user} />}
             </div>
-
+            {/* Navigation Buttons */}
             <div className="flex gap-2">
+              <Link
+                to="/setup-guide"
+                className="text-center px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+              >
+                Setup Guide
+              </Link>
               <ChangePasswordButton disabled={user.is_demo === 1} />
-
               <LogoutButton />
             </div>
           </div>
@@ -85,6 +90,13 @@ const Dashboard = () => {
               letters, numbers, or "-" (max 15 chars) to avoid errors.
             </div>
           )}
+
+          {error && (
+            <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded">
+              {error}
+            </div>
+          )}
+
           <ClientsTable clients={clients} user={user} setClients={setClients} />
 
           {/* Admin Users Card */}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useClientsSocket from "../hooks/useClientsSocket";
+import { useAuth } from "../context/AuthContext";
 
 // import UI components
 // tables and user info
@@ -18,7 +19,7 @@ import { fetchAllUsers, fetchCurrentUser } from "../services/userService";
 import { fetchClients } from "../services/clientService";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   // loading state and error
   const [loading, setLoading] = useState(true);
 
@@ -33,9 +34,7 @@ const Dashboard = () => {
     const loadData = async () => {
       setLoading(true);
       try {
-        const currentUser = await fetchCurrentUser();
-        setUser(currentUser);
-        if (currentUser.role === "admin") {
+        if (user.role === "admin") {
           const usersData = await fetchAllUsers();
           setUsers(usersData);
         }
@@ -49,9 +48,9 @@ const Dashboard = () => {
     };
 
     loadData();
-  }, [navigate]);
+  }, [user]);
 
-  if (loading) {
+  if (loading || authLoading) {
     return <LoadingScreen />;
   }
 

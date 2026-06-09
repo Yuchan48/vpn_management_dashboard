@@ -10,6 +10,7 @@ const socket = io(API_BASE_URL + "/", {
   path: "/socket.io",
   transports: ["websocket"],
   withCredentials: true,
+  autoConnect: false,
 });
 
 export default socket;

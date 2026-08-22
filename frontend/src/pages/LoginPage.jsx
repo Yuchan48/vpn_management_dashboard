@@ -227,8 +227,6 @@ const LoginPage = () => {
       <div className="pb-6 text-center">
         <a
           href="/impressum"
-          target="_blank"
-          rel="noopener noreferrer"
           className="mb-6 text-sm text-gray-400 hover:text-gray-200
         transition-colors duration-200
       "

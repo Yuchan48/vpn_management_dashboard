@@ -177,8 +177,6 @@ const SetupGuide = () => {
       {/* Impressum */}
       <a
         href="/impressum"
-        target="_blank"
-        rel="noopener noreferrer"
         className="w-full text-center text-sm mb-4 text-gray-600 hover:underline"
       >
         Impressum

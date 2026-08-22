@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import useClientsSocket from "../hooks/useClientsSocket";
 import { useAuth } from "../context/AuthContext";
 
@@ -19,6 +19,8 @@ import { fetchAllUsers } from "../services/userService";
 import { fetchClients } from "../services/clientService";
 
 const Dashboard = () => {
+  const location = useLocation();
+
   const { user, loading: authLoading } = useAuth();
   // loading state and error
   const [loading, setLoading] = useState(true);
@@ -111,12 +113,13 @@ const Dashboard = () => {
         </div>
       </main>
       {/* Impressum */}
-      <a
-        href="/impressum"
+      <Link
+        to="/impressum"
+        state={{ from: location.pathname }}
         className="w-full text-center text-sm mb-4 text-gray-600 hover:underline"
       >
         Impressum
-      </a>
+      </Link>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 // import UI components
 import EyeIcon from "../components/icons/EyeIcon";
@@ -12,6 +12,8 @@ import { logout } from "../services/authService";
 import { validatePassword } from "../utils/inputValidators";
 
 const ChangePassword = () => {
+  const location = useLocation();
+
   // set input values
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -248,14 +250,15 @@ const ChangePassword = () => {
         </div>
       </main>
       {/* Impressum */}
-      <a
-        href="/impressum"
+      <Link
+        to="/impressum"
+        state={{ from: location.pathname }}
         className="mb-6 text-sm text-gray-100 hover:text-gray-300
         transition-colors duration-200
       "
       >
         Impressum
-      </a>
+      </Link>
     </div>
   );
 };

@@ -1,16 +1,19 @@
-import { useNavigate } from "react-router-dom";
-import LeftArrow from "../components/icons/LeftAllow";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import LeftArrow from "../components/icons/LeftArrow";
+
+const path = ["/dashboard", "/setup-guide", "/change-password", "/login"];
 
 const Impressum = () => {
+  const location = useLocation();
+  const from = location.state?.from;
   const navigate = useNavigate();
 
+  const backPath = path.includes(from) ? from : "/login";
+
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/login");
-    }
+    navigate(backPath);
   };
+
   return (
     <div className="min-h-screen w-full bg-white px-6 py-12">
       <button

@@ -1,5 +1,5 @@
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 // import UI components
 import CurrentUserInfo from "../components/CurrentUserInfo";
@@ -7,6 +7,7 @@ import ChangePasswordButton from "../components/buttons/ChangePasswordButton";
 import LogoutButton from "../components/buttons/LogoutButton";
 
 const SetupGuide = () => {
+  const location = useLocation();
   const { user } = useAuth();
 
   return (
@@ -175,12 +176,13 @@ const SetupGuide = () => {
         </div>
       </main>
       {/* Impressum */}
-      <a
-        href="/impressum"
+      <Link
+        to="/impressum"
+        state={{ from: location.pathname }}
         className="w-full text-center text-sm mb-4 text-gray-600 hover:underline"
       >
         Impressum
-      </a>
+      </Link>
     </div>
   );
 };

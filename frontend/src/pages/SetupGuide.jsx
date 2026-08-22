@@ -58,7 +58,7 @@ const SetupGuide = () => {
                   href="https://www.wireguard.com/install/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo-600 hover:underline"
+                  className="text-indigo-600 underline hover:text-indigo-800"
                 >
                   wireguard.com/install
                 </a>
@@ -90,7 +90,7 @@ const SetupGuide = () => {
                   href="https://www.wireguard.com/install/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo-600 hover:underline"
+                  className="text-indigo-600 underline hover:text-indigo-800"
                 >
                   wireguard.com/install
                 </a>
@@ -165,7 +165,7 @@ const SetupGuide = () => {
                 href="https://whatismyipaddress.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-indigo-600 hover:underline"
+                className="text-indigo-600 underline hover:text-indigo-800"
               >
                 whatismyipaddress.com
               </a>{" "}

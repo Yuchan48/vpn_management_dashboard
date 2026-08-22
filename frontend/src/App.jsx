@@ -1,3 +1,5 @@
+import { lazy, Suspense } from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,11 +9,14 @@ import {
 import { Toaster } from "react-hot-toast";
 
 // Importing pages
-import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
-import ChangePassword from "./pages/ChangePassword";
-import Impressum from "./pages/Impressum";
-import SetupGuide from "./pages/SetupGuide";
+
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const ChangePassword = lazy(() => import("./pages/ChangePassword"));
+const Impressum = lazy(() => import("./pages/Impressum"));
+const SetupGuide = lazy(() => import("./pages/SetupGuide"));
+
+import Spinner from "./components/icons/Spinner";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -47,42 +52,57 @@ const App = () => {
         }}
       />
       <Router>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<LoginPage />} />
+        <Suspense
+          fallback={
+            <div
+              className="flex items-center justify-center h-screen w-full"
+              aria-label="Loading"
+            >
+              loading...
+              <Spinner
+                aria-hidden="true"
+                className="h-10 w-10 text-indigo-600"
+              />
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected route. Only accessible if authenticated. */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected route. Only accessible if authenticated. */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/change-password"
-            element={
-              <ProtectedRoute>
-                <ChangePassword />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/change-password"
+              element={
+                <ProtectedRoute>
+                  <ChangePassword />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/setup-guide"
-            element={
-              <ProtectedRoute>
-                <SetupGuide />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/setup-guide"
+              element={
+                <ProtectedRoute>
+                  <SetupGuide />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route path="/impressum" element={<Impressum />} />
+            <Route path="/impressum" element={<Impressum />} />
 
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </Suspense>
       </Router>
     </div>
   );

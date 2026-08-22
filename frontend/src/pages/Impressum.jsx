@@ -1,7 +1,28 @@
+import { useNavigate } from "react-router-dom";
+import LeftArrow from "../components/icons/LeftAllow";
+
 const Impressum = () => {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/login");
+    }
+  };
   return (
     <div className="min-h-screen w-full bg-white px-6 py-12">
-      <div className="mx-auto max-w-3xl text-gray-800">
+      <button
+        type="button"
+        onClick={handleBack}
+        className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-500 mb-6"
+      >
+        <LeftArrow className="h-4 w-4" />
+        Back
+      </button>
+
+      <main className="mx-auto max-w-3xl text-gray-800">
         <h1 className="text-4xl font-bold mb-10">Impressum</h1>
 
         <section className="mb-10">
@@ -52,7 +73,7 @@ const Impressum = () => {
             diesen Seiten unterliegen dem deutschen Urheberrecht.
           </p>
         </section>
-      </div>
+      </main>
     </div>
   );
 };

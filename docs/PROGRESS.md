@@ -1109,7 +1109,7 @@ Used Lighthouse to audit and improve the application's accessibility, SEO, perfo
   - Audited the application using Lighthouse to identify accessibility, SEO, performance, and best-practice issues.
   - Improved semantic HTML, accessible form labels, button accessible names, color contrast, and modal semantics.
   - Added SEO metadata including page titles, meta descriptions, and `robots.txt`.
-  - Verified production performance with Lighthouse, achieving a 98% Performance score.
+  - Implemented lazy loading for pages and modals to reduce the initial JavaScript bundle, and verified production performance with Lighthouse, achieving a 98% Performance score.
 
 ## Issues Encountered
 

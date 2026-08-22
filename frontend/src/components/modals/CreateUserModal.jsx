@@ -89,14 +89,21 @@ const CreateUserModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={"Create User"}>
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col max-w-md items-center space-y-3 w-full"
+      >
         {error && <div className="text-red-600 text-sm">{error}</div>}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
+        <div className="w-full space-y-2">
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-gray-700"
+          >
             Username
           </label>
           <input
+            id="username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -104,12 +111,16 @@ const CreateUserModal = ({
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
+        <div className="w-full space-y-2">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
             Password
           </label>
           <div className="mt-1 relative">
             <input
+              id="password"
               type={show ? "text" : "password"}
               value={password}
               onChange={(e) => {
@@ -121,7 +132,8 @@ const CreateUserModal = ({
             <button
               type="button"
               onClick={() => setShow(!show)}
-              className="absolute inset-y-0 right-2 flex items-center"
+              className="absolute inset-y-0 right-2 flex items-center w-6"
+              aria-label={show ? "Hide password" : "Show password"}
             >
               {show ? (
                 <EyeOffIcon className="h-5 w-5 text-gray-500" />
@@ -133,14 +145,18 @@ const CreateUserModal = ({
         </div>
 
         {isRootAdmin && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="w-full space-y-2">
+            <label
+              htmlFor="role"
+              className="block text-sm font-medium text-gray-700"
+            >
               Role
             </label>
             <select
+              id="role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 p-2"
+              className="rounded-md border w-full border-gray-300 p-2"
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>

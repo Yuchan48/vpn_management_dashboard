@@ -1096,3 +1096,22 @@ Fixed Socket.IO connection setup, separated demo client cleanup from real-time p
 ## Issues Encountered
 
 - Socket.IO connection initially failed due to incorrect `/socket.io` path being appended on the frontend.
+
+# Day 27 – Lighthouse Accessibility, SEO & Performance Improvements
+
+## Summary
+
+Used Lighthouse to audit and improve the application's accessibility, SEO, performance, and best practices.
+
+## Development Implementation
+
+- **Lighthouse Audit**
+  - Audited the application using Lighthouse to identify accessibility, SEO, performance, and best-practice issues.
+  - Improved semantic HTML, accessible form labels, button accessible names, color contrast, and modal semantics.
+  - Added SEO metadata including page titles, meta descriptions, and `robots.txt`.
+  - Verified production performance with Lighthouse, achieving a 98% Performance score.
+
+## Issues Encountered
+
+- Most application content is protected behind authentication and therefore is not intended to be crawled by search engines.
+- As a result, `robots.txt` intentionally restricts crawling of protected routes, which lowers the Lighthouse SEO score despite the technical SEO improvements.

@@ -91,7 +91,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen w-full bg-gray-900 flex flex-col">
-      <div className="flex flex-1 flex-col lg:flex-row">
+      <main className="flex flex-1 flex-col lg:flex-row">
         {/* Hero Section */}
         <div className="relative lg:w-1/2 h-104 lg:h-screen lg:flex-row">
           <img
@@ -221,7 +221,7 @@ const LoginPage = () => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Impressum */}
       <div className="pb-6 text-center">

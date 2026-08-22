@@ -12,7 +12,7 @@ const SetupGuide = () => {
   return (
     <div className="min-h-screen w-full bg-gray-100  flex flex-col">
       {/* Main content */}
-      <div className="flex-1">
+      <main className="flex-1">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 py-6 space-y-6">
           {/* Header Card */}
           <div className="bg-white rounded-lg shadow-md p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
@@ -173,13 +173,13 @@ const SetupGuide = () => {
             </p>
           </div>
         </div>
-      </div>
+      </main>
       {/* Impressum */}
       <a
         href="/impressum"
         target="_blank"
         rel="noopener noreferrer"
-        className="w-full text-center text-sm mb-4 text-gray-500 hover:underline"
+        className="w-full text-center text-sm mb-4 text-gray-600 hover:underline"
       >
         Impressum
       </a>

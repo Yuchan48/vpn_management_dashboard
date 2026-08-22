@@ -74,7 +74,7 @@ const ChangePassword = () => {
 
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col items-center justify-center bg-gray-700 px-5 sm:px-4">
-      <div className="flex flex-1 items-center justify-center">
+      <main className="flex flex-1 items-center justify-center">
         <div className="flex flex-col flex-1 items-center justify-center   bg-gray-300 rounded-lg shadow-lg py-10 w-[320px] max-w-[320px]">
           {/* Title + Error */}
           <div className="w-full text-center mb-6">
@@ -217,7 +217,7 @@ const ChangePassword = () => {
             Back to Dashboard
           </button>
         </div>
-      </div>
+      </main>
       {/* Impressum */}
       <a
         href="/impressum"

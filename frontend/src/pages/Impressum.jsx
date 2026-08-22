@@ -1,6 +1,6 @@
 const Impressum = () => {
   return (
-    <div className="min-h-screen w-full bg-white px-6 py-12">
+    <main className="min-h-screen w-full bg-white px-6 py-12">
       <div className="mx-auto max-w-3xl text-gray-800">
         <h1 className="text-4xl font-bold mb-10">Impressum</h1>
 
@@ -53,7 +53,7 @@ const Impressum = () => {
           </p>
         </section>
       </div>
-    </div>
+    </main>
   );
 };
 

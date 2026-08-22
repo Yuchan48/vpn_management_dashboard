@@ -2,19 +2,29 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 font-bold"
-          >
-            ✕
-          </button>
-        </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+          className="flex w-full max-w-[90vw] flex-col items-center rounded-lg bg-white p-4 shadow-lg sm:max-w-lg md:p-6"
+        >
+          <div className="mb-4 flex w-full items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
 
-        <div>{children}</div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close modal"
+              className="text-gray-600 hover:text-gray-800 font-bold"
+            >
+              <span aria-hidden="true">✕</span>
+            </button>
+          </div>
+
+          <div className="w-full flex justify-center">{children}</div>
+        </div>
       </div>
     </div>
   );

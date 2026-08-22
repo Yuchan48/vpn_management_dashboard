@@ -58,14 +58,21 @@ const CreateClientModal = ({ isOpen, onClose, showModal, isDemo }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Create Client">
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col max-w-md items-center space-y-3 w-full"
+      >
         {error && <div className="text-red-600 text-sm">{error}</div>}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
+        <div className="w-full space-y-2">
+          <label
+            htmlFor="client-name"
+            className="block text-sm font-medium text-gray-700"
+          >
             Client Name
           </label>
           <input
+            id="client-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}

@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 // import assets
-import loginBg from "../assets/login_bg.jpg";
+import loginBg from "../assets/login_bg.webp";
 
 // import UI components
 import EyeIcon from "../components/icons/EyeIcon";
@@ -33,19 +33,6 @@ const LoginPage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // display message passed via navigate() from other pages
-    /*  if (location.state?.message) {
-      setError(location.state.message);
-    } else {
-      const queryParams = new URLSearchParams(location.search);
-      const message = queryParams.get("message");
-      if (message) {
-        setError(message);
-      }
-    }
-
-    }, [location]);
-    */
     const message =
       location.state?.message || sessionStorage.getItem("auth_error");
 
@@ -148,8 +135,11 @@ const LoginPage = () => {
             >
               {/* Username */}
               <div>
-                <label className="block text-sm font-medium">Username</label>
+                <label className="block text-sm font-medium" htmlFor="username">
+                  Username
+                </label>
                 <input
+                  id="username"
                   type="text"
                   required
                   disabled={isLoading}
@@ -165,9 +155,12 @@ const LoginPage = () => {
 
               {/* Password */}
               <div>
-                <label className="block text-sm font-medium">Password</label>
+                <label className="block text-sm font-medium" htmlFor="password">
+                  Password
+                </label>
                 <div className="mt-1 relative">
                   <input
+                    id="password"
                     type={show ? "text" : "password"}
                     required
                     disabled={isLoading}
@@ -182,7 +175,8 @@ const LoginPage = () => {
 
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-2 flex items-center"
+                    aria-label={show ? "Hide password" : "Show password"}
+                    className="absolute inset-y-0 right-2 flex items-center w-6"
                     onClick={() => setShow(!show)}
                   >
                     {show ? (

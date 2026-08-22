@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { toast } from "react-hot-toast";
 
 // import functions
@@ -6,8 +6,9 @@ import { deleteUser } from "../../services/userService";
 
 // import UI components
 import OpenModalButton from "../buttons/OpenModalButton";
-import CreateUserModal from "../modals/CreateUserModal";
+const CreateUserModal = lazy(() => import("../modals/CreateUserModal"));
 import DeleteButton from "../buttons/DeleteButton";
+import Spinner from "../icons/Spinner";
 
 const UsersTable = ({ users, user, setUsers, onUserDeleted }) => {
   const [showModal, setShowModal] = useState(false);
@@ -86,14 +87,21 @@ const UsersTable = ({ users, user, setUsers, onUserDeleted }) => {
           </tbody>
         </table>
       </div>
-      <CreateUserModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        currentUser={user}
-        setUsers={setUsers}
-        showModal={showModal}
-        /* onSuccess={(newUser) => setUsers((prev) => [...prev, newUser])} */
-      />
+      <Suspense
+        fallback={
+          <div className="text-center mt-4">
+            <Spinner aria-hidden="true" className="h-6 w-6 text-indigo-600" />
+          </div>
+        }
+      >
+        <CreateUserModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          currentUser={user}
+          setUsers={setUsers}
+          showModal={showModal}
+        />
+      </Suspense>
     </div>
   );
 };

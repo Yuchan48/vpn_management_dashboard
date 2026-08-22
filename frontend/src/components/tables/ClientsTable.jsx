@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { toast } from "react-hot-toast";
 
 // import UI components
 import OpenModalButton from "../buttons/OpenModalButton";
-import CreateClientModal from "../modals/CreateClientModal";
+const CreateClientModal = lazy(() => import("../modals/CreateClientModal"));
 import DeleteButton from "../buttons/DeleteButton";
 import DownloadButton from "../buttons/DownloadButton";
+import Spinner from "../icons/Spinner";
 
 // import functions
 import { deleteClient, downloadConfFile } from "../../services/clientService";
@@ -178,12 +179,20 @@ const ClientsTable = ({ clients, user }) => {
           ))}
         </div>
       )}
-      <CreateClientModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        showModal={showModal}
-        isDemo={user.is_demo === 1}
-      />
+      <Suspense
+        fallback={
+          <div className="text-center mt-4">
+            <Spinner aria-hidden="true" className="h-6 w-6 text-indigo-600" />
+          </div>
+        }
+      >
+        <CreateClientModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          showModal={showModal}
+          isDemo={user.is_demo === 1}
+        />
+      </Suspense>
     </div>
   );
 };

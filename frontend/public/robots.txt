@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /login
+Allow: /setup-guide
+
+Disallow: /dashboard
+Disallow: /change-password
+Disallow: /impressum

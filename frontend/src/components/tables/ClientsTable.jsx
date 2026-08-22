@@ -105,7 +105,7 @@ const ClientsTable = ({ clients, user }) => {
                 <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
                   {username}
                 </h3>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-gray-600">
                   {userClients.length} client{userClients.length > 1 ? "s" : ""}
                 </span>
               </div>

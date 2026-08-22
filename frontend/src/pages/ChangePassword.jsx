@@ -74,7 +74,7 @@ const ChangePassword = () => {
 
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col items-center justify-center bg-gray-700 px-5 sm:px-4">
-      <div className="flex flex-1 items-center justify-center">
+      <main className="flex flex-1 items-center justify-center">
         <div className="flex flex-col flex-1 items-center justify-center   bg-gray-300 rounded-lg shadow-lg py-10 w-[320px] max-w-[320px]">
           {/* Title + Error */}
           <div className="w-full text-center mb-6">
@@ -94,11 +94,15 @@ const ChangePassword = () => {
           >
             {/* Current Password */}
             <div>
-              <label className="block text-sm font-medium">
+              <label
+                className="block text-sm font-medium"
+                htmlFor="current-password"
+              >
                 Current Password
               </label>
               <div className="mt-1 relative">
                 <input
+                  id="current-password"
                   type={showCurrent ? "text" : "password"}
                   required
                   disabled={isLoading}
@@ -112,7 +116,12 @@ const ChangePassword = () => {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-2 flex items-center"
+                  className="absolute inset-y-0 right-2 flex items-center w-6"
+                  aria-label={
+                    showCurrent
+                      ? "Hide current password"
+                      : "Show current password"
+                  }
                   onClick={() => setShowCurrent(!showCurrent)}
                 >
                   {showCurrent ? (
@@ -126,9 +135,15 @@ const ChangePassword = () => {
 
             {/* New Password */}
             <div>
-              <label className="block text-sm font-medium">New Password</label>
+              <label
+                className="block text-sm font-medium"
+                htmlFor="new-password"
+              >
+                New Password
+              </label>
               <div className="mt-1 relative">
                 <input
+                  id="new-password"
                   type={showNew ? "text" : "password"}
                   required
                   disabled={isLoading}
@@ -142,7 +157,10 @@ const ChangePassword = () => {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-2 flex items-center"
+                  className="absolute inset-y-0 right-2 flex items-center w-6"
+                  aria-label={
+                    showNew ? "Hide new password" : "Show new password"
+                  }
                   onClick={() => setShowNew(!showNew)}
                 >
                   {showNew ? (
@@ -156,11 +174,15 @@ const ChangePassword = () => {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium">
+              <label
+                className="block text-sm font-medium"
+                htmlFor="confirm-password"
+              >
                 Confirm New Password
               </label>
               <div className="mt-1 relative">
                 <input
+                  id="confirm-password"
                   type={showConfirm ? "text" : "password"}
                   required
                   disabled={isLoading}
@@ -174,7 +196,12 @@ const ChangePassword = () => {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-2 flex items-center"
+                  className="absolute inset-y-0 right-2 flex items-center w-6"
+                  aria-label={
+                    showConfirm
+                      ? "Hide confirm password"
+                      : "Show confirm password"
+                  }
                   onClick={() => setShowConfirm(!showConfirm)}
                 >
                   {showConfirm ? (
@@ -191,6 +218,7 @@ const ChangePassword = () => {
               type="submit"
               disabled={isLoading}
               className="w-full flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+              aria-label="Change Password"
             >
               {isLoading ? (
                 <>
@@ -206,6 +234,7 @@ const ChangePassword = () => {
           {/* Back to Dashboard */}
           <button
             type="button"
+            aria-label="Back to Dashboard"
             disabled={isLoading}
             onClick={() => navigate("/dashboard")}
             className={`mt-6 w-full text-center text-sm font-semibold ${
@@ -217,13 +246,11 @@ const ChangePassword = () => {
             Back to Dashboard
           </button>
         </div>
-      </div>
+      </main>
       {/* Impressum */}
       <a
         href="/impressum"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mb-6 text-sm text-gray-400 hover:text-gray-200
+        className="mb-6 text-sm text-gray-100 hover:text-gray-300
         transition-colors duration-200
       "
       >

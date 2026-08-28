@@ -1,0 +1,79 @@
+import dotenv from "dotenv";
+dotenv.config({
+  path:
+    process.env.NODE_ENV === "production"
+      ? `${__dirname}/.env.production`
+      : `${__dirname}/.env.development`,
+});
+
+import cron from "node-cron";
+import { initDb } from "./database/db";
+
+import app from "./app";
+
+// create server from express app and initialize Socket.IO
+import http from "http";
+import { initSocketIO } from "./socketio";
+const server = http.createServer(app);
+initSocketIO(server);
+
+const port = process.env.PORT || 5500;
+
+import { ensureRootAdmin } from "./utils/initAdmin";
+
+import { syncWireGuardPeers } from "./services/wireguardSync.service";
+import { validateEnvVariables } from "./utils/envValidator";
+
+import { cleanupAndReloadDemoClients } from "./utils/cleanupAndReloadDemoClients";
+
+import { emitIoPerUser } from "./socketio";
+
+async function startServer() {
+  try {
+    // Validate environment variables on startup
+    validateEnvVariables();
+
+    // Initialize the database (this will also ensure the root admin user exists)
+    await initDb();
+
+    //Ensure root admin user exists on startup
+    await ensureRootAdmin();
+
+    // Sync WireGuard peers with clients in the database on startup
+    await syncWireGuardPeers();
+
+    // Start the server and sync WireGuard peers on startup
+    server.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+
+    // initial cleanup of expired demo clients on server startup
+    await cleanupAndReloadDemoClients();
+
+    // Schedule a cron job to clean up expired demo clients every hour
+    cron.schedule("0 * * * *", async () => {
+      try {
+        const deletedCount = await cleanupAndReloadDemoClients();
+        if (deletedCount > 0) {
+          console.log(`[Cron] ${deletedCount} demo clients removed.`);
+        }
+      } catch (error) {
+        console.error("[CRON] error:", error);
+      }
+    });
+
+    // polling every 15 second for clean up demo clients and client status update
+    setInterval(async () => {
+      try {
+        await emitIoPerUser();
+      } catch (error) {
+        console.error("[Polling] error:", error);
+      }
+    }, 15 * 1000);
+  } catch (error) {
+    console.error("Error starting server:", error);
+    process.exit(1);
+  }
+}
+
+startServer();

@@ -16,10 +16,16 @@ export function authenticateToken(
       .json({ error: "Token missing", code: "TOKEN_MISSING" });
   }
 
+  const JWT_SECRET = process.env.JWT_SECRET;
+  if (!JWT_SECRET) {
+    console.error("JWT_SECRET is not defined in environment variables");
+    return res.status(500).json({ error: "Internal server error" });
+  }
+
   // Verify the token
   jwt.verify(
     token,
-    process.env.JWT_SECRET,
+    JWT_SECRET,
     { issuer: "personal-vpn-backend" },
     (err, decoded) => {
       if (err) {

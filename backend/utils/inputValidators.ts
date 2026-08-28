@@ -27,6 +27,9 @@ export function validatePassword(password: string | undefined): void {
 }
 
 export function validateClientName(name: string | undefined): void {
+  if (name === undefined) {
+    throw new Error("Client name is required");
+  }
   const regex = /^[a-zA-Z0-9-]{5,15}$/;
   if (!regex.test(name)) {
     throw new Error(

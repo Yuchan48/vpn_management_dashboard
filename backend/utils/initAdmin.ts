@@ -4,10 +4,25 @@ export async function ensureRootAdmin(): Promise<void> {
   try {
     const existingAdmin = await getAllUsers();
     if (!existingAdmin || existingAdmin.length === 0) {
+      const ROOT_ADMIN_USERNAME = process.env.ROOT_ADMIN_USERNAME;
+      const ROOT_ADMIN_PASSWORD = process.env.ROOT_ADMIN_PASSWORD;
+
+      if (!ROOT_ADMIN_USERNAME || !ROOT_ADMIN_PASSWORD) {
+        console.error(
+          "Error: ROOT_ADMIN_USERNAME and ROOT_ADMIN_PASSWORD must be set in environment variables.",
+        );
+        return;
+      }
+
       const createdAdmin = await createRootAdmin(
-        process.env.ROOT_ADMIN_USERNAME,
-        process.env.ROOT_ADMIN_PASSWORD,
+        ROOT_ADMIN_USERNAME,
+        ROOT_ADMIN_PASSWORD,
       );
+
+      if (!createdAdmin) {
+        console.error("Error: Failed to create root admin user.");
+        return;
+      }
 
       // check if the id of the created admin is 1, if not log a warning
       if (createdAdmin.id !== 1) {

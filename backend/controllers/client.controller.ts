@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import type { Client } from "../types/client";
 import type { KeyPair } from "../types/wireguard";
 
@@ -23,34 +23,34 @@ export async function createClient(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
     // Validate that the request body contains a 'name' property, which is required to create a new client.
     if (!req.body || !req.body.name) {
-      return res.status(400).json({ error: "Client name is required" });
+      res.status(400).json({ error: "Client name is required" });
+      return;
     }
 
     try {
       validateClientName(req.body.name);
     } catch (error) {
-      return res.status(error.status || 400).json({ error: error.error });
+      res.status(400).json({ error: (error as Error).message });
+      return;
     }
 
     // Generate wireguard key pair (in memory)
-    let keyPair: KeyPair | undefined;
+    let keyPair: KeyPair;
     try {
       keyPair = generateKeyPair();
     } catch (error) {
       console.error("Error generating WireGuard key pair:", error);
-      return res
-        .status(500)
-        .json({ error: "Failed to generate WireGuard key pair" });
+      res.status(500).json({ error: "Failed to generate WireGuard key pair" });
+      return;
     }
 
     if (!keyPair) {
-      return res
-        .status(500)
-        .json({ error: "Failed to generate WireGuard key pair" });
+      res.status(500).json({ error: "Failed to generate WireGuard key pair" });
+      return;
     }
 
     let { publicKey, privateKey } = keyPair;
@@ -68,11 +68,12 @@ export async function createClient(
       name: req.body.name,
       publicKey,
       ipAddress,
-      userId: req.user.id,
+      userId: req.user!.id,
     });
 
     if (!client) {
-      return res.status(500).json({ error: "Failed to create client" });
+      res.status(500).json({ error: "Failed to create client" });
+      return;
     }
 
     // Add the new client as a peer to the WireGuard interface
@@ -84,8 +85,8 @@ export async function createClient(
       try {
         await deleteClientService({
           clientId: client.id,
-          userRole: req.user.role,
-          userId: req.user.id,
+          userRole: req.user!.role,
+          userId: req.user!.id,
         });
       } catch (deleteError) {
         console.error(
@@ -94,9 +95,10 @@ export async function createClient(
         );
       }
 
-      return res
+      res
         .status(500)
         .json({ error: "Failed to add peer to WireGuard interface" });
+      return;
     }
 
     // emit a Socket.IO event to notify connected clients that a new client has been created.
@@ -119,7 +121,7 @@ export async function getClients(
   next: NextFunction,
 ): Promise<Response | void> {
   try {
-    const clientsWithStatus = await getClientsWithStatusService(req.user);
+    const clientsWithStatus = await getClientsWithStatusService(req.user!);
 
     res.json(clientsWithStatus);
   } catch (error) {
@@ -131,11 +133,11 @@ export async function deleteClient(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
     const client = await getClientByIdService({
       clientId: Number(req.params.id),
-      user: req.user,
+      user: req.user!,
     });
 
     // Remove the client as a peer from the WireGuard interface
@@ -148,8 +150,8 @@ export async function deleteClient(
     // delete the client from the database.
     await deleteClientService({
       clientId: Number(req.params.id),
-      userRole: req.user.role,
-      userId: req.user.id,
+      userRole: req.user!.role,
+      userId: req.user!.id,
     });
 
     // emit updated client list to connected clients via Socket.IO
@@ -170,11 +172,11 @@ export async function downloadClientConfig(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
     const client: Client = await getClientByIdService({
       clientId: Number(req.params.id),
-      user: req.user,
+      user: req.user!,
     });
 
     // generate a new WireGuard key pair for the client.
@@ -183,9 +185,8 @@ export async function downloadClientConfig(
       keyPair = generateKeyPair();
     } catch (err) {
       console.error("WireGuard key generation failed:", err);
-      return res
-        .status(500)
-        .json({ error: "Failed to generate WireGuard keys" });
+      res.status(500).json({ error: "Failed to generate WireGuard keys" });
+      return;
     }
 
     let { publicKey, privateKey } = keyPair;
@@ -197,9 +198,10 @@ export async function downloadClientConfig(
       wireguardService.removePeer(client.public_key); // Remove the old peer configuration
     } catch (wgError) {
       console.error("Error removing old peer from WireGuard:", wgError);
-      return res
+      res
         .status(500)
         .json({ error: "Failed to remove old peer from WireGuard interface" });
+      return;
     }
 
     // Update the client's public key in the database to reflect the new key pair.
@@ -207,9 +209,10 @@ export async function downloadClientConfig(
       await updateClientPublicKeyService(client.id, publicKey);
     } catch (dbError) {
       console.error("Error updating client public key in database:", dbError);
-      return res
+      res
         .status(500)
         .json({ error: "Failed to update client public key in database" });
+      return;
     }
 
     // Add the new peer configuration with the updated public key to the WireGuard interface.
@@ -217,9 +220,10 @@ export async function downloadClientConfig(
       wireguardService.addPeer(publicKey, client.ip_address); // Add the new peer configuration with the updated public key
     } catch (wgError) {
       console.error("Error adding new peer to WireGuard:", wgError);
-      return res
+      res
         .status(500)
         .json({ error: "Failed to add new peer to WireGuard interface" });
+      return;
     }
 
     client.public_key = publicKey; // Update the client object with the new public key for generating the config.

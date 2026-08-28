@@ -37,7 +37,13 @@ export function initSocketIO(server: HttpServer): void {
         return next(new Error("Unauthorized: No token provided"));
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      const JWT_SECRET = process.env.JWT_SECRET;
+      if (!JWT_SECRET) {
+        console.error("JWT_SECRET is not defined in environment variables");
+        return next(new Error("Internal server error"));
+      }
+
+      const decoded = jwt.verify(token, JWT_SECRET, {
         issuer: "personal-vpn-backend",
       });
 

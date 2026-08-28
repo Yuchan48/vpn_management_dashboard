@@ -1,4 +1,5 @@
 import type { JwtPayload } from "jsonwebtoken";
+import type { Request } from "express";
 
 export interface AuthenticatedUser {
   id: number;
@@ -9,4 +10,8 @@ export interface AuthenticatedUser {
 export interface AuthTokenPayload extends JwtPayload {
   sub: string;
   role: string;
+}
+
+export interface AuthenticatedRequest extends Request {
+  user: AuthenticatedUser;
 }

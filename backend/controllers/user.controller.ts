@@ -27,11 +27,12 @@ export async function getCurrentUser(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
-    const user = await getUserByIdService(req.user.id);
+    const user = await getUserByIdService(req.user!.id);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      res.status(404).json({ error: "User not found" });
+      return;
     }
     res.status(200).json(user);
   } catch (error) {
@@ -43,14 +44,13 @@ export async function createUser(
   req: Request<{}, {}, CredentialsBody>,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res
-        .status(400)
-        .json({ error: "Username and password are required" });
+      res.status(400).json({ error: "Username and password are required" });
+      return;
     }
 
     validateUsername(username);
@@ -70,14 +70,13 @@ export async function createAdmin(
   req: Request<{}, {}, CredentialsBody>,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res
-        .status(400)
-        .json({ error: "Username and password are required" });
+      res.status(400).json({ error: "Username and password are required" });
+      return;
     }
 
     validateUsername(username);
@@ -94,7 +93,7 @@ export async function getAllUsers(
   _req: Request,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
     const users = await getAllUsersService();
     res.status(200).json(users);
@@ -107,13 +106,19 @@ export async function deleteUser(
   req: Request<{ id: string }>,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
     const targetUserId = Number(req.params.id);
     if (!Number.isInteger(targetUserId)) {
-      return res.status(400).json({ error: "Invalid user ID" });
+      res.status(400).json({ error: "Invalid user ID" });
+      return;
     }
     const clients = await getClientsByUserId(targetUserId);
+
+    if (!req.user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
 
     await deleteUserService(req.user, targetUserId);
 
@@ -138,21 +143,28 @@ export async function changePassword(
   req: Request<{}, {}, ChangePasswordBody>,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> {
+): Promise<void> {
   try {
+    if (!req.user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
     // check if it is demo user, if so, reject the request with 403 status code.
     if (req.user.is_demo) {
-      return res
+      res
         .status(403)
         .json({ error: "Demo users are not allowed to change password" });
+      return;
     }
 
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
-      return res
+      res
         .status(400)
         .json({ error: "Both current password and new password are required" });
+      return;
     }
 
     validatePassword(newPassword);

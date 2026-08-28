@@ -41,7 +41,7 @@ export async function cleanupOldDemoClients(): Promise<number> {
         await deleteClient({
           clientId: client.id,
           userRole: "admin",
-          userId: null,
+          userId: 0,
         });
       } catch (dbErr) {
         console.error(

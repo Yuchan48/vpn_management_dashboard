@@ -1,18 +1,19 @@
-import { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 
 import { loginUser } from "../services/auth.service";
 
 export async function login(
   req: Request,
   res: Response,
-): Promise<Response | void> {
+  next: NextFunction,
+): Promise<void> {
   try {
     const { username, password } = req.body;
 
     // login validation and token generation
     const { token } = await loginUser(username, password);
 
-    return res
+    res
       .cookie("token", token, {
         httpOnly: true,
         //secure: process.env.NODE_ENV === "production", // HTTPS only in prod
@@ -22,10 +23,9 @@ export async function login(
         maxAge: 1000 * 60 * 60, // 1 hour
       })
       .json({ message: "Login successful" });
+
+    return;
   } catch (error) {
-    console.error("Login error:", error);
-    res
-      .status(error.status || 500)
-      .json({ error: error.error || "Internal server error" });
+    next(error);
   }
 }

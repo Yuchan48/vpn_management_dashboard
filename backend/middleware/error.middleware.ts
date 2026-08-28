@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import type { AppError } from "../types/api";
 
 export default function errorMiddleware(
-  err: AppError,
+  err: unknown,
   _req: Request,
   res: Response,
   _next: NextFunction,
@@ -13,7 +13,7 @@ export default function errorMiddleware(
     "status" in err &&
     "error" in err
   ) {
-    const appError = err as { status: number; error: string };
+    const appError = err as AppError;
 
     console.error("Error:", appError.error);
 
@@ -25,14 +25,14 @@ export default function errorMiddleware(
   if (err instanceof Error) {
     console.error("Error:", err.message);
 
-    return res.status(400).json({
+    return res.status(500).json({
       error: err.message,
     });
   }
 
   console.error(err);
 
-  return res.status(400).json({
+  return res.status(500).json({
     error: "Internal Server Error",
   });
 }

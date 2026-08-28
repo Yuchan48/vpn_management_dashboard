@@ -5,11 +5,13 @@
     "lib": ["ES2022"],
     "rootDir": ".",
     "outDir": "dist",
-    "allowJs": true,
+    "allowJs": false,
     "checkJs": false,
-    "noEmitOnError": false,
-    "strict": false,
+    "noEmitOnError": true,
+    "strict": true,
     "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -19,5 +21,10 @@
     "types": ["node", "jest"]
   },
   "include": ["**/*.ts", "**/*.js", "types/*.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "ecosystem.config.js",
+    "ecosystem.config.example.js"
+  ]
 }

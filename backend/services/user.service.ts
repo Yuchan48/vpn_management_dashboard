@@ -46,7 +46,7 @@ export async function createUser(
   });
 
   // get the next available user id
-  let nextUserId = null;
+  let nextUserId;
   for (let i = 2; i <= 16; i++) {
     if (!userIdRows.some((row) => row.id === i)) {
       nextUserId = i;
@@ -54,7 +54,7 @@ export async function createUser(
     }
   }
 
-  if (nextUserId === null) {
+  if (nextUserId === undefined) {
     throw new Error("No available user ID found. Cannot create user.");
   }
 

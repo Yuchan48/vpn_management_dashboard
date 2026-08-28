@@ -37,15 +37,16 @@ export async function loginUser(
   const expiresIn: SignOptions["expiresIn"] =
     (process.env.JWT_EXPIRES_IN as StringValue) || "1h";
 
+  const JWT_SECRET = process.env.JWT_SECRET;
+  if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined in environment variables");
+  }
+
   // Generate JWT token
-  const token = jwt.sign(
-    { sub: user.id, role: user.role },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: expiresIn,
-      issuer: "personal-vpn-backend",
-    },
-  );
+  const token = jwt.sign({ sub: user.id, role: user.role }, JWT_SECRET, {
+    expiresIn: expiresIn,
+    issuer: "personal-vpn-backend",
+  });
 
   const { password_hash, ...userWithoutPassword } = user;
 

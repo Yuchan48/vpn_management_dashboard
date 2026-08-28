@@ -10,7 +10,7 @@ export function addPeer(publicKey: string, allowedIPs: string): void {
     "wg",
     [
       "set",
-      process.env.WG_INTERFACE,
+      process.env.WG_INTERFACE || "wg0",
       "peer",
       publicKey,
       "allowed-ips",
@@ -27,7 +27,7 @@ export function removePeer(publicKey: string): void {
   // wg set command to remove a peer with the specified public key
   execFileSync(
     "wg",
-    ["set", process.env.WG_INTERFACE, "peer", publicKey, "remove"],
+    ["set", process.env.WG_INTERFACE || "wg0", "peer", publicKey, "remove"],
     {
       encoding: "utf-8",
     },
@@ -44,7 +44,7 @@ export async function getWireGuardPeers(): Promise<WireGuardPeer[]> {
 
   // parse the output and extract peer information
   const lines = output.trim().split("\n");
-  const peers = [];
+  const peers: WireGuardPeer[] = [];
 
   // Split the output into lines. Skip the first line(the interface header)
   for (let i = 1; i < lines.length; i++) {

@@ -39,7 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", authenticateToken, userRoutes);
 
 // Status endpoint for client status checks
-app.get("/status", (req, res) => {
+app.get("/status", (_req, res) => {
   res.json({ status: "Running", timestamp: new Date().toISOString() });
 });
 

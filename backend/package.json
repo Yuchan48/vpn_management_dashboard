@@ -2,10 +2,11 @@
   "name": "personal_vpn",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "NODE_ENV=production node server.js",
-    "dev": "NODE_ENV=development nodemon server.js",
+    "build": "tsc",
+    "start": "NODE_ENV=production node dist/server.ts",
+    "dev": "NODE_ENV=development nodemon --exec tsx server.ts",
     "test": "jest"
   },
   "keywords": [],
@@ -23,11 +24,19 @@
     "jsonwebtoken": "^9.0.3",
     "node-cron": "^4.2.1",
     "socket.io": "^4.8.3",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^6.0.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.3.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.14",
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
   }
 }

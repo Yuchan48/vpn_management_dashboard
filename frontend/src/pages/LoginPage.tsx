@@ -1,0 +1,236 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+
+import { useAuth } from "../context/AuthContext";
+
+// import assets
+import loginBg from "../assets/login_bg.webp";
+
+// import UI components
+import EyeIcon from "../components/icons/EyeIcon";
+import EyeOffIcon from "../components/icons/EyeOffIcon";
+import Spinner from "../components/icons/Spinner";
+import GitHubIcon from "../components/icons/GitHubIcon";
+
+// import functions
+import { login } from "../services/authService";
+import { fetchCurrentUser } from "../services/userService";
+
+const LoginPage = () => {
+  const { setUser } = useAuth();
+  // input values
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  // show/hide password
+  const [show, setShow] = useState<boolean>(false);
+
+  // loading and error states
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const message =
+      location.state?.message || sessionStorage.getItem("auth_error");
+
+    if (message) {
+      setError(message);
+      sessionStorage.removeItem("auth_error");
+    }
+  }, [location.state]);
+
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
+    // prevents the page reloading on form submission
+    event.preventDefault();
+    setError("");
+
+    // validate username and password
+    if (!username.trim() || !password.trim()) {
+      setError("Please enter both username and password.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Call the login API
+      await login(username, password);
+      const currentUser = await fetchCurrentUser();
+      setUser(currentUser);
+
+      // Navigate to the dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemoLogin = () => {
+    setUsername("demo_user");
+    setPassword("demo_password");
+    setError("");
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-gray-900 flex flex-col">
+      <main className="flex flex-1 flex-col lg:flex-row">
+        {/* Hero Section */}
+        <div className="relative lg:w-1/2 h-104 lg:h-screen lg:flex-row">
+          <img
+            src={loginBg}
+            alt="WireGuard VPN"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+
+          <div className="absolute inset-0 bg-black/50" />
+
+          <div className="relative z-10 flex h-full flex-col justify-center px-8 lg:px-16 text-white">
+            <h1 className="text-3xl lg:text-5xl font-bold">
+              WireGuard VPN
+              <br />
+              Management Portal
+            </h1>
+
+            <p className="mt-4 text-base lg:text-lg text-gray-200">
+              Manage VPN users securely from a simple web dashboard.
+              <br />
+              Try the live demo using the Demo Account.
+            </p>
+
+            <a
+              href="https://github.com/Yuchan48/vpn_management_dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex w-fit items-center text-sm font-medium text-indigo-300 hover:text-indigo-200"
+            >
+              <GitHubIcon className="h-5 w-5 mr-2" />
+              <span> View Source on GitHub</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Login Container */}
+        <div className="flex flex-1 items-center justify-center p-6">
+          <div className="w-[340px] rounded-xl bg-gray-100 shadow-xl border border-gray-200 p-8 mt-6">
+            {/* Title + Error */}
+            <div className="w-full text-center mb-6">
+              <h2 className="text-2xl font-bold tracking-tight text-gray-800">
+                Sign in to your account
+              </h2>
+
+              <div className="h-5 mt-2 text-sm text-red-600">
+                {error || "\u00A0"}
+              </div>
+            </div>
+
+            {/* Form */}
+            <form
+              className="space-y-4 text-gray-900 w-[280px] items-center mx-auto"
+              onSubmit={handleSubmit}
+            >
+              {/* Username */}
+              <div>
+                <label className="block text-sm font-medium" htmlFor="username">
+                  Username
+                </label>
+                <input
+                  id="username"
+                  type="text"
+                  required
+                  disabled={isLoading}
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    setError("");
+                  }}
+                  autoComplete="username"
+                  className="mt-1 block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="block text-sm font-medium" htmlFor="password">
+                  Password
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    id="password"
+                    type={show ? "text" : "password"}
+                    required
+                    disabled={isLoading}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setError("");
+                    }}
+                    autoComplete="current-password"
+                    className="block w-full rounded-md border border-gray-500 bg-white px-3 py-2 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+
+                  <button
+                    type="button"
+                    aria-label={show ? "Hide password" : "Show password"}
+                    className="absolute inset-y-0 right-2 flex items-center w-6"
+                    onClick={() => setShow(!show)}
+                  >
+                    {show ? (
+                      <EyeOffIcon className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5 text-gray-500" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center rounded-md bg-indigo-600 mt-6 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <>
+                    <Spinner className="h-5 w-5 mr-2 text-white" />
+                    Processing...
+                  </>
+                ) : (
+                  "Sign in"
+                )}
+              </button>
+            </form>
+
+            {/* Demo Login Button */}
+            <button
+              onClick={handleDemoLogin}
+              disabled={isLoading}
+              className="w-[280px] mt-4  flex items-center justify-center rounded-md border border-indigo-700 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 disabled:bg-gray-200 disabled:cursor-not-allowed"
+            >
+              Use Demo Account
+            </button>
+          </div>
+        </div>
+      </main>
+
+      {/* Impressum */}
+      <div className="pb-6 text-center">
+        <Link
+          to="/impressum"
+          state={{ from: location.pathname }}
+          className="mb-6 text-sm text-gray-400 hover:text-gray-200
+        transition-colors duration-200
+      "
+        >
+          Impressum
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default LoginPage;

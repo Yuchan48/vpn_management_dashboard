@@ -6,14 +6,14 @@ import type { AuthenticatedUser } from "../types/auth";
 import type { AppError } from "../types/api";
 
 // Get current user info by ID
-export async function getUserById(userId: number): Promise<User | undefined> {
+export async function getUserById(userId: number): Promise<User> {
   return new Promise((resolve, reject) => {
     db.get(
       "SELECT id, username, role, created_at, is_demo FROM users WHERE id = ?",
       [userId],
       (err, row) => {
         if (err) return reject({ status: 500, error: err.message } as AppError);
-        resolve(row as User | undefined);
+        resolve(row as User);
       },
     );
   });
@@ -23,7 +23,7 @@ export async function createUser(
   username: string,
   password: string,
   isDemo: number,
-): Promise<User | undefined> {
+): Promise<User> {
   // fetch all existing user ids to determine the next id.
   const userIdRows = await new Promise<{ id: number }[]>((resolve, reject) => {
     db.all(
@@ -100,7 +100,7 @@ export async function createUser(
 export async function createAdmin(
   username: string,
   password: string,
-): Promise<User | undefined> {
+): Promise<User> {
   // fetch all existing user ids to determine the next id.
   const adminIdRows = await new Promise<{ id: number }[]>((resolve, reject) => {
     db.all(
@@ -161,7 +161,7 @@ export async function createAdmin(
 export async function createRootAdmin(
   username: string,
   password: string,
-): Promise<User | undefined> {
+): Promise<User> {
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
   await new Promise<void>((resolve, reject) => {

@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "lib": ["ES2022"],
+    "rootDir": ".",
+    "outDir": "dist",
+    "allowJs": false,
+    "checkJs": false,
+    "noEmitOnError": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "types": ["node", "jest"]
+  },
+  "include": ["**/*.ts", "**/*.js", "types/*.d.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "ecosystem.config.js",
+    "ecosystem.config.example.js"
+  ]
+}

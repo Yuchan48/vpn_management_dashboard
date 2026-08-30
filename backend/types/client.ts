@@ -13,6 +13,13 @@ export interface ClientWithUser extends Client {
   is_demo: number;
 }
 
+export type CreateClientParams = {
+  name: string;
+  publicKey: string;
+  ipAddress: string;
+  userId: number;
+};
+
 export interface ClientStatus {
   clientId: number;
   name: string;

@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "vpn-backend",
-      script: "./server.js",
+      script: "./dist/server.js",
       cwd: "/root/path_to_project_folder/backend",
       env_production: {
         NODE_ENV: "production",

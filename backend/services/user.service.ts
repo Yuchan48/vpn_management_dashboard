@@ -46,7 +46,7 @@ export async function createUser(
   });
 
   // get the next available user id
-  let nextUserId;
+  let nextUserId: number | undefined;
   for (let i = 2; i <= 16; i++) {
     if (!userIdRows.some((row) => row.id === i)) {
       nextUserId = i;

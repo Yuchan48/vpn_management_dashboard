@@ -3,12 +3,12 @@ const DUMMY_PASSWORD_HASH =
 
 import bcrypt from "bcrypt";
 import jwt, { type SignOptions } from "jsonwebtoken";
-import { db } from "../database/db.js";
+import { db } from "../database/db";
 
-import type { User, UserWithPassword } from "../types/user.js";
+import type { User, UserWithPassword } from "../types/user";
 import type { StringValue } from "ms";
 
-type loginUserResponse = {
+type LoginUserResponse = {
   token: string;
   user: User;
 };
@@ -16,7 +16,7 @@ type loginUserResponse = {
 export async function loginUser(
   username: string,
   password: string,
-): Promise<loginUserResponse> {
+): Promise<LoginUserResponse> {
   if (!username || !password) {
     throw { error: "Username and password are required", status: 400 };
   }

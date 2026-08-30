@@ -32,7 +32,7 @@ export function mapClientToStatus(
     name: client.name,
     publicKey: client.public_key,
     allowedIPs: client.ip_address + "/32",
-    endpoint: peer ? peer.endpoint : "not configured",
+    endpoint: peer.endpoint,
     status: isOnline,
     userId: client.user_id,
     username: client.username,

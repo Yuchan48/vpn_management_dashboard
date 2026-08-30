@@ -1,5 +1,5 @@
-import { getAllClients, deleteClient } from "./client.service.js";
-import { removePeer } from "./wireguard.service.js";
+import { getAllClients, deleteClient } from "./client.service";
+import { removePeer } from "./wireguard.service";
 
 import type { ClientWithUser } from "../types/client";
 

@@ -1,17 +1,12 @@
 import { db } from "../database/db";
+import sqlite3 from "sqlite3";
 import { getWireGuardPeers } from "./wireguard.service";
 import { mapClientToStatus } from "../utils/clientStatus";
 
 import { AuthenticatedUser } from "../types/auth";
 import type { Client, ClientWithUser, ClientStatus } from "../types/client";
+import type { CreateClientParams } from "../types/client";
 import type { SqliteError } from "../types/api";
-
-type CreateClientParams = {
-  name: string;
-  publicKey: string;
-  ipAddress: string;
-  userId: number;
-};
 
 // Create a client in the database.
 export async function createClient({
@@ -50,7 +45,7 @@ export async function createClient({
     db.run(
       query,
       [name, publicKey, ipAddress, userId],
-      function (err: SqliteError | null) {
+      function (this: sqlite3.RunResult, err: SqliteError | null) {
         if (err) {
           if (err.code === "SQLITE_CONSTRAINT") {
             return reject({

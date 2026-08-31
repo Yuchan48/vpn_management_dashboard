@@ -19,10 +19,18 @@ export async function apiFetch<T>(
     },
   });
 
+  if (response.status === 204) {
+    return null as T;
+  }
+
   if (response.status === 401) {
     const data: ApiErrorResponse = await response.json().catch(() => ({}));
 
-    if (data.code && /AUTH/.test(data.code)) {
+    if (
+      data.code ||
+      data.code === "TOKEN_INVALID" ||
+      data.code === "TOKEN_MISSING"
+    ) {
       sessionStorage.setItem(
         "auth_error",
         data?.code === "TOKEN_INVALID"

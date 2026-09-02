@@ -1,6 +1,6 @@
-import { mapClientToStatus } from "../../utils/clientStatus";
-import type { ClientWithUser } from "../../types/client";
-import type { WireGuardPeer } from "../../types/wireguard";
+import { mapClientToStatus } from "../../../utils/clientStatus";
+import type { ClientWithUser } from "../../../types/client";
+import type { WireGuardPeer } from "../../../types/wireguard";
 
 describe("mapClientToStatus", () => {
   const client: ClientWithUser = {

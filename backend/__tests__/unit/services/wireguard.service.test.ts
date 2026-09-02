@@ -5,7 +5,7 @@ import {
   removePeer,
   getWireGuardPeers,
   ensureWireguardUp,
-} from "../../services/wireguard.service";
+} from "../../../services/wireguard.service";
 
 jest.mock("child_process", () => ({
   execFileSync: jest.fn(),

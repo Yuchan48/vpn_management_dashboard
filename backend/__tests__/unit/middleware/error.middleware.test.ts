@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 
-import errorMiddleware from "../../middleware/error.middleware";
+import errorMiddleware from "../../../middleware/error.middleware";
 
 describe("errorMiddleware", () => {
   let req: Request;

@@ -1,4 +1,4 @@
-import { extractJwtFromCookie } from "../../utils/auth";
+import { extractJwtFromCookie } from "../../../utils/auth";
 
 describe("extractJwtFromCookie", () => {
   it("returns the JWT token when the token cookie exists", () => {

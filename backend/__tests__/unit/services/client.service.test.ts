@@ -6,16 +6,16 @@ import {
   getClientsByUserId,
   deleteClient,
   updateClientPublicKey,
-} from "../../services/client.service";
+} from "../../../services/client.service";
 
-import { db } from "../../database/db";
-import { getWireGuardPeers } from "../../services/wireguard.service";
-import { mapClientToStatus } from "../../utils/clientStatus";
+import { db } from "../../../database/db";
+import { getWireGuardPeers } from "../../../services/wireguard.service";
+import { mapClientToStatus } from "../../../utils/clientStatus";
 
-import type { Client, ClientWithUser } from "../../types/client";
-import type { AuthenticatedUser } from "../../types/auth";
+import type { Client, ClientWithUser } from "../../../types/client";
+import type { AuthenticatedUser } from "../../../types/auth";
 
-jest.mock("../../database/db", () => ({
+jest.mock("../../../database/db", () => ({
   db: {
     get: jest.fn(),
     all: jest.fn(),
@@ -23,11 +23,11 @@ jest.mock("../../database/db", () => ({
   },
 }));
 
-jest.mock("../../services/wireguard.service", () => ({
+jest.mock("../../../services/wireguard.service", () => ({
   getWireGuardPeers: jest.fn(),
 }));
 
-jest.mock("../../utils/clientStatus", () => ({
+jest.mock("../../../utils/clientStatus", () => ({
   mapClientToStatus: jest.fn(),
 }));
 

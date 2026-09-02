@@ -1,5 +1,5 @@
-import { getNextAvailableIp } from "../../utils/ipAllocator";
-import type { Client } from "../../types/client";
+import { getNextAvailableIp } from "../../../utils/ipAllocator";
+import type { Client } from "../../../types/client";
 
 describe("getNextAvailableIp", () => {
   it("returns the first available IP address when there are no clients", () => {

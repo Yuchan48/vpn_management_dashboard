@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { loginUser } from "../../services/auth.service";
-import { db } from "../../database/db";
+import { loginUser } from "../../../services/auth.service";
+import { db } from "../../../database/db";
 
-import type { UserWithPassword } from "../../types/user";
+import type { UserWithPassword } from "../../../types/user";
 
 jest.mock("bcrypt");
-jest.mock("../../database/db");
+jest.mock("../../../database/db");
 
 jest.mock("jsonwebtoken", () => ({
   __esModule: true,

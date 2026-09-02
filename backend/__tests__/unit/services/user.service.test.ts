@@ -7,15 +7,15 @@ import {
   getAllUsers,
   deleteUser,
   changePassword,
-} from "../../services/user.service";
+} from "../../../services/user.service";
 
-import { db } from "../../database/db";
+import { db } from "../../../database/db";
 
-import type { User } from "../../types/user";
-import type { AuthenticatedUser } from "../../types/auth";
+import type { User } from "../../../types/user";
+import type { AuthenticatedUser } from "../../../types/auth";
 
 jest.mock("bcrypt");
-jest.mock("../../database/db");
+jest.mock("../../../database/db");
 
 const mockedBcrypt = jest.mocked(bcrypt);
 const mockedDb = jest.mocked(db);

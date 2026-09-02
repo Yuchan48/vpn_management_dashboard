@@ -2,7 +2,7 @@ import {
   validateUsername,
   validatePassword,
   validateClientName,
-} from "../../utils/inputValidators";
+} from "../../../utils/inputValidators";
 
 describe("validateUsername", () => {
   it("accepts a valid username", () => {

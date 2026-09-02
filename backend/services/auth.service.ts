@@ -3,9 +3,9 @@ const DUMMY_PASSWORD_HASH =
 
 import bcrypt from "bcrypt";
 import jwt, { type SignOptions } from "jsonwebtoken";
-import { db } from "../database/db.js";
+import { db } from "../database/db";
 
-import type { User, UserWithPassword } from "../types/user.js";
+import type { User, UserWithPassword } from "../types/user";
 import type { StringValue } from "ms";
 
 type loginUserResponse = {

@@ -1,6 +1,6 @@
 import { execFileSync } from "child_process";
 
-import type { KeyPair } from "../types/wireguard.js";
+import type { KeyPair } from "../types/wireguard";
 
 export function generateKeyPair(): KeyPair {
   // wg genkey generates a private key

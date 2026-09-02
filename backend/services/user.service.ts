@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { db } from "../database/db.js";
+import { db } from "../database/db";
 
 import type { User } from "../types/user";
 import type { AuthenticatedUser } from "../types/auth";

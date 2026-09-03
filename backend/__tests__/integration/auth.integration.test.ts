@@ -1,7 +1,24 @@
 import request from "supertest";
 import app from "../../app";
+import { createUser } from "../../services/user.service";
+import { db } from "../../database/db";
 
 describe("Auth API - Integration", () => {
+  beforeAll(async () => {
+    await createUser("testuser", "password123", 0);
+  });
+  afterAll(async () => {
+    await new Promise<void>((resolve, reject) => {
+      db.run("DELETE FROM users WHERE username = ?", ["testuser"], (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  });
+
   it("should login successfully with valid credentials", async () => {
     const response = await request(app).post("/api/auth/login").send({
       username: "testuser",

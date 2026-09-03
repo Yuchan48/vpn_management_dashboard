@@ -1,4 +1,6 @@
 import request from "supertest";
+import { createUser } from "../../services/user.service";
+import { db } from "../../database/db";
 
 jest.mock("../../services/wireguard.service", () => ({
   addPeer: jest.fn(),
@@ -9,6 +11,21 @@ jest.mock("../../services/wireguard.service", () => ({
 import app from "../../app";
 
 describe("Client API - Integration", () => {
+  beforeAll(async () => {
+    await createUser("testuser", "password123", 0);
+  });
+  afterAll(async () => {
+    await new Promise<void>((resolve, reject) => {
+      db.run("DELETE FROM users WHERE username = ?", ["testuser"], (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  });
+
   it("should create and delete a client for an authenticated user", async () => {
     const agent = request.agent(app);
 

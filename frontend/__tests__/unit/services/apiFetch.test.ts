@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { apiFetch } from "../../src/services/apiFetch";
+import { apiFetch } from "../../../src/services/apiFetch";
 
 describe("apiFetch", () => {
   beforeEach(() => {

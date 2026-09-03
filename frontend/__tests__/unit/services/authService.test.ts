@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { login, logout } from "../../src/services/authService";
+import { login, logout } from "../../../src/services/authService";
 
 describe("authService", () => {
   beforeEach(() => {

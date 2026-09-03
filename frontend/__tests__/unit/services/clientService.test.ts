@@ -5,19 +5,19 @@ import {
   createClient,
   deleteClient,
   downloadConfFile,
-} from "../../src/services/clientService";
+} from "../../../src/services/clientService";
 
-import { apiFetch } from "../../src/services/apiFetch";
-import { downloadZip } from "../../src/utils/downloadZip";
+import { apiFetch } from "../../../src/services/apiFetch";
+import { downloadZip } from "../../../src/utils/downloadZip";
 
-import type { ClientStatus } from "../../src/types/client";
-import type { User } from "../../src/types/user";
+import type { ClientStatus } from "../../../src/types/client";
+import type { User } from "../../../src/types/user";
 
-vi.mock("../../src/services/apiFetch", () => ({
+vi.mock("../../../src/services/apiFetch", () => ({
   apiFetch: vi.fn(),
 }));
 
-vi.mock("../../src/utils/downloadZip", () => ({
+vi.mock("../../../src/utils/downloadZip", () => ({
   downloadZip: vi.fn(),
 }));
 

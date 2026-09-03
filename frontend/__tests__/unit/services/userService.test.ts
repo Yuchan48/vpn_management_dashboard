@@ -7,13 +7,13 @@ import {
   fetchAllUsers,
   changePassword,
   fetchCurrentUser,
-} from "../../src/services/userService";
+} from "../../../src/services/userService";
 
-import { apiFetch } from "../../src/services/apiFetch";
+import { apiFetch } from "../../../src/services/apiFetch";
 
-import type { User } from "../../src/types/user";
+import type { User } from "../../../src/types/user";
 
-vi.mock("../../src/services/apiFetch", () => ({
+vi.mock("../../../src/services/apiFetch", () => ({
   apiFetch: vi.fn(),
 }));
 

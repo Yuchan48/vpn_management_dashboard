@@ -1,256 +1,169 @@
-# 🧠 System Architecture Overview
+# System Architecture
 
-This document explains the internal architecture of the WireGuard Management Platform, focusing on system components, data flow, networking design, and real-time communication.
+This document describes the internal architecture, data flow,
+networking, and system-level integration of the WireGuard Management Platform.
 
-It complements the README by describing **how the system works internally**, not what it does.
+## High-Level Architecture
 
----
-
-# 🏗 High-Level Architecture
-
-The system is composed of four main layers:
-
-```
 [ React Frontend ]
-        ↓
+↓
 [ Nginx Reverse Proxy ]
-        ↓
-────────────────────────────
-|   Node.js Backend API   |
-|   Socket.IO Server      |
-|   Auth + Business Logic |
-────────────────────────────
-        ↓
-[ WireGuard VPN Layer ]
-        ↓
+↓
+[ Node.js / Express Backend ]
+├── REST API
+├── Socket.IO
+├── Authentication / RBAC
+└── SQLite
+↓
+[ WireGuard ]
+↓
 [ Linux Networking Stack ]
-```
 
----
+## Request Flow
 
-# 🌐 Request Flow (HTTP API)
+Browser
+↓
+Nginx
+↓
+Express API
+↓
+Services
+├── SQLite
+└── WireGuard
 
-### 1. Client Request Flow
+For example, when creating a VPN client:
 
-```
-Browser (React)
-    ↓
-Nginx (/api)
-    ↓
-Node.js Express Backend
-    ↓
-SQLite Database
-```
+1. Frontend sends `POST /api/clients`.
+2. Backend validates and authorizes the request.
+3. Client data is stored in SQLite.
+4. WireGuard peer configuration is updated.
+5. Backend emits a Socket.IO event.
+6. Connected clients update their UI.
 
-### 2. Example Flow
+## Authentication
 
-- User creates VPN client
-- Frontend sends `POST /api/clients`
-- Nginx proxies request to backend
-- Backend:
-  - generates WireGuard keypair
-  - updates database
-  - updates wg interface
-  - returns response
-- Frontend updates UI
+Authentication uses JWTs stored in HTTP-only cookies.
 
----
+Browser
+↓
+Login
+↓
+Backend
+↓
+JWT cookie
+↓
+Authenticated API requests
+↓
+JWT + RBAC middleware
 
-# ⚡ Real-Time Architecture (Socket.IO)
+The backend is responsible for authentication and authorization;
+the frontend does not store or manage the JWT directly.
 
-The system uses Socket.IO for real-time updates (client creation, status changes).
+## Real-Time Communication
 
-```
-Frontend (Socket.IO Client)
-        ⇄
-Nginx (WebSocket upgrade proxy)
-        ⇄
-Backend Socket.IO Server
-```
+Socket.IO is used for real-time client and status updates.
 
-### Key Design:
+Frontend
+⇄
+Nginx
+⇄
+Socket.IO Server
 
-- Each authenticated user joins a **user-specific socket room**
-- Events are broadcast only to relevant users
-- No global polling is used
+Authenticated users join user-specific rooms, allowing events to
+be delivered only to the relevant users.
 
-### Example Event Flow:
+## WireGuard Integration
 
-```
-Backend → emits "client_created"
-Frontend → updates UI instantly
-```
+WireGuard is integrated as a system-level dependency rather than
+being treated as part of the web application.
 
----
+The backend manages:
 
-# 🔐 Authentication Architecture
+- WireGuard peers
+- Peer configuration
+- VPN client state synchronization
+- Interface updates
+- Network configuration
 
-- JWT-based authentication
-- Stored in HTTP-only cookies
-- Role-based access control (RBAC)
+Example:
 
-```
-Frontend → login
-Backend → issues JWT
-Browser → stores cookie
-Nginx → forwards authenticated requests
-Backend → validates JWT middleware
-```
+User action
+↓
+Backend service
+↓
+SQLite + WireGuard
+↓
+Socket.IO event
+↓
+Frontend update
 
----
+The application therefore depends on the underlying Linux networking
+environment for VPN operation.
 
-# 🔑 WireGuard Integration Layer
+## Networking
 
-WireGuard is treated as a system-level service, not just a library.
+Production networking uses:
 
-### Responsibilities:
+- WireGuard interface: `wg0`
+- UDP port: `51820`
+- IP forwarding
+- NAT/iptables
 
-- Generate private/public key pairs
-- Manage peer configurations
-- Update `wg0` interface dynamically
-- Maintain NAT routing rules
+Packet flow:
 
-### Flow:
-
-```
-User Action (Create Client)
-        ↓
-Backend generates keypair
-        ↓
-Updates SQLite DB
-        ↓
-Executes system-level WireGuard commands
-        ↓
-Updates active VPN peers (wg0)
-```
-
----
-
-# 🌍 Networking Architecture (Linux Layer)
-
-The system relies on Linux networking stack:
-
-- `iptables` / NAT for traffic routing
-- IP forwarding enabled (`sysctl`)
-- WireGuard interface (`wg0`)
-- UDP tunnel on port `51820`
-
-### Packet Flow:
-
-```
-Client Device
-    ↓ (WireGuard Tunnel)
-VPS Public IP (51820 UDP)
-    ↓
-wg0 interface
-    ↓
-NAT (iptables)
-    ↓
+VPN Client
+↓
+UDP 51820
+↓
+WireGuard `wg0`
+↓
+NAT
+↓
 Internet
-```
 
----
+## Production Deployment
 
-# 🔁 Deployment Architecture
+React is built as static assets and served by Nginx.
 
-### Production Stack:
+                    Internet
+                       ↓
+                    Nginx
+                  ↙       ↘
+          Static Frontend   `/api` + Socket.IO
+                              ↓
+                         Node.js / PM2
+                              ↓
+                     SQLite / WireGuard
 
-```
-[ React Build ]
-        ↓ served by
-[ Nginx static files ]
-        ↓
-[ Nginx reverse proxy ]
-        ↓
-[ Node.js (PM2) ]
-        ↓
-[ WireGuard system service ]
-```
+Nginx also handles the HTTPS endpoint and proxies API and
+WebSocket traffic to the backend.
 
-### Process Management:
+## Design Decisions
 
-- PM2 ensures backend uptime
-- auto-restart on failure
-- log monitoring via `pm2 logs`
+### Separation of Concerns
 
----
+- **Frontend:** UI and client-side interaction
+- **Backend:** business logic, authentication, and orchestration
+- **WireGuard:** VPN and system-level networking
 
-# 🔌 Socket + API Separation
+### Backend as Source of Truth
 
-The system separates:
+The backend manages VPN client state and synchronizes it with
+the WireGuard interface. The frontend reflects this state rather
+than managing the VPN directly.
 
-| Layer           | Responsibility                  |
-| --------------- | ------------------------------- |
-| REST API        | CRUD operations, authentication |
-| Socket.IO       | Real-time updates               |
-| WireGuard layer | System networking               |
+### Real-Time Updates
 
-This prevents coupling between UI updates and system state changes.
+Socket.IO is used instead of relying solely on polling for
+state changes, providing immediate UI updates.
 
----
+### System-Level Integration
 
-# 🧩 Key Design Decisions
+Unlike a typical CRUD application, the backend interacts directly
+with the host's WireGuard and networking environment.
 
-## 1. Separation of Concerns
+## Summary
 
-- Frontend = UI only
-- Backend = logic + system orchestration
-- WireGuard = OS-level VPN service
-
----
-
-## 2. Real-Time First Design
-
-Instead of polling:
-
-- Socket.IO pushes updates instantly
-- reduces load and improves UX
-
----
-
-## 3. System-Level Integration
-
-Unlike typical web apps, this system interacts with:
-
-- Linux kernel networking
-- WireGuard interface
-- NAT rules
-- system services
-
----
-
-## 4. Stateless Frontend
-
-Frontend does not manage VPN state:
-
-- backend is single source of truth
-- frontend is reactive UI layer
-
----
-
-# 📊 Scalability Considerations
-
-Current design supports:
-
-- multiple users (RBAC isolation)
-- multiple VPN clients per user
-- stateless backend instances (with shared DB)
-- horizontal scaling possible with Redis adapter for Socket.IO
-
----
-
-# 🧠 Summary
-
-This system combines:
-
-- Full-stack web application
-- Real-time communication system
-- Linux networking + VPN orchestration
-- Production deployment architecture
-
-It demonstrates end-to-end engineering across:
-
-- backend systems
-- networking
-- infrastructure
-- real-time UI design
+The architecture combines a React frontend, Node.js backend,
+real-time communication, SQLite persistence, and system-level
+WireGuard integration behind an Nginx reverse proxy.

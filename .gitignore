@@ -69,10 +69,3 @@ scripts/*.key
 scripts/*.pub
 scripts/*.conf
 scripts/*.log
-
-# ===============================
-# Docker
-# ===============================
-
-docker/*.log
-docker/tmp/

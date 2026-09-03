@@ -1115,3 +1115,24 @@ Used Lighthouse to audit and improve the application's accessibility, SEO, perfo
 
 - Most application content is protected behind authentication and therefore is not intended to be crawled by search engines.
 - As a result, `robots.txt` intentionally restricts crawling of protected routes, which lowers the Lighthouse SEO score despite the technical SEO improvements.
+
+# Day 28 – Unit & Integration Testing
+
+## Summary
+
+Implemented unit and integration tests for both the backend and frontend to improve reliability and catch regressions.
+
+## Development Implementation
+
+- **Backend Testing**
+  - Added unit tests for authentication, authorization, validation, services, middleware, and utilities.
+  - Added integration tests for authentication and client API workflows using Jest and Supertest.
+
+- **Frontend Testing**
+  - Added unit tests for services, utilities, hooks, and components.
+  - Added integration tests for login and dashboard workflows using Vitest and React Testing Library.
+
+## Issues Encountered
+
+- Mocked external WireGuard operations during backend integration tests to keep tests independent of the local WireGuard environment.
+- Configured Vitest and Testing Library to support DOM assertions and frontend integration testing.

@@ -7,6 +7,7 @@ This guide explains how to deploy the WireGuard Management Platform on Ubuntu Li
 - PM2
 - Nginx
 - Certbot HTTPS
+- Sentry for production error monitoring
 
 ---
 
@@ -78,7 +79,7 @@ cd vpn_management_dashboard
 
 ---
 
-# 4. Configure Environment Variables
+# 4 Configure Environment Variables
 
 Create backend environment file:
 
@@ -89,6 +90,15 @@ cp .env.example .env
 ```
 
 Update `.env` with your production values.
+
+## Configure External Services
+
+Create accounts and obtain credentials for the services used by the application:
+
+- **Google OAuth** — Create OAuth credentials for Google login.
+- **Sentry** — Create frontend and backend projects for production error monitoring.
+
+Add the required credentials and DSNs to the corresponding `.env` files using the provided `.env.example` files.
 
 ---
 

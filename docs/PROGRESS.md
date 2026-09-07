@@ -1136,3 +1136,14 @@ Implemented unit and integration tests for both the backend and frontend to impr
 
 - Mocked external WireGuard operations during backend integration tests to keep tests independent of the local WireGuard environment.
 - Configured Vitest and Testing Library to support DOM assertions and frontend integration testing.
+
+# Day 29 – Observability
+
+## Summary
+
+Added Sentry error monitoring to the frontend and backend for production observability.
+
+## Development Implementation
+
+- Integrated Sentry with React/Vite and Express.
+- Configured data scrubbing to minimize sensitive data collection.

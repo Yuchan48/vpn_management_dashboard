@@ -57,6 +57,7 @@ Download a `.conf` file from the dashboard and import it into the official WireG
 | **Database**       | SQLite                          |
 | **Testing**        | Vitest, Jest, Supertest         |
 | **Infrastructure** | Linux, Nginx, PM2               |
+| **Observability**  | Sentry                          |
 | **Security**       | JWT, HTTP-only cookies, RBAC    |
 
 ---
@@ -77,6 +78,13 @@ Download a `.conf` file from the dashboard and import it into the official WireG
 - Configuration downloads generate new key pairs
 - Input validation and protected API routes
 - HTTPS in production
+
+---
+
+## 📊 Observability
+
+- Sentry for production error monitoring across the React frontend and Express backend
+- Data scrubbing configured to minimize sensitive data collection
 
 ---
 

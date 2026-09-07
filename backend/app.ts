@@ -11,6 +11,9 @@ import express from "express";
 
 import cors from "cors";
 import cookieParser from "cookie-parser";
+
+import * as Sentry from "@sentry/node";
+
 const app = express();
 
 import errorHandler from "./middleware/error.middleware";
@@ -42,6 +45,9 @@ app.use("/api/users", authenticateToken, userRoutes);
 app.get("/status", (_req, res) => {
   res.json({ status: "Running", timestamp: new Date().toISOString() });
 });
+
+// Send unhandled errors to Sentry
+Sentry.setupExpressErrorHandler(app);
 
 // Error handling middleware. This should be after all routes to catch any errors that occur in the route handlers.
 app.use(errorHandler);

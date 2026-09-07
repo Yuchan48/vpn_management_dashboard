@@ -9,6 +9,15 @@ dotenv.config({
 import cron from "node-cron";
 import { initDb } from "./database/db";
 
+import * as Sentry from "@sentry/node";
+
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: "production",
+  });
+}
+
 import app from "./app";
 
 // create server from express app and initialize Socket.IO

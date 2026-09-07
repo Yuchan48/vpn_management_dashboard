@@ -18,6 +18,7 @@ module.exports = {
         JWT_EXPIRES_IN: "1h",
         DEMO_CLEANUP_INTERVAL: 1800000,
         WG_INTERFACE: "wg0",
+        SENTRY_DSN: "your_sentry_dsn",
       },
     },
   ],

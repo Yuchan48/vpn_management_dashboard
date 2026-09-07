@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp database/schema.sql dist/database/schema.sql",
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "NODE_ENV=development nodemon --exec tsx server.ts",
     "test": "jest"

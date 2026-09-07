@@ -26,21 +26,16 @@ export async function apiFetch<T>(
   if (response.status === 401) {
     const data: ApiErrorResponse = await response.json().catch(() => ({}));
 
-    if (
-      data.code ||
-      data.code === "TOKEN_INVALID" ||
-      data.code === "TOKEN_MISSING"
-    ) {
+    if (data.code === "TOKEN_INVALID") {
       sessionStorage.setItem(
         "auth_error",
-        data?.code === "TOKEN_INVALID"
-          ? "Session expired. Please log in again."
-          : "Unauthorized access. Please log in.",
+        "Session expired. Please log in again.",
       );
-      window.location.href = "/login";
-      throw new Error("Authentication required");
-    } else {
-      throw new Error(data?.error || "Authentication failed.");
+    } else if (data.code === "TOKEN_MISSING") {
+      sessionStorage.setItem(
+        "auth_error",
+        "Unauthorized access. Please log in.",
+      );
     }
   }
 

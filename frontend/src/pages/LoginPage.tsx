@@ -218,16 +218,22 @@ const LoginPage = () => {
       </main>
 
       {/* Impressum */}
-      <div className="pb-6 text-center">
+      <div className="flex items-center justify-center py-3 text-center w-full bg-gray-800 gap-10">
         <Link
           to="/impressum"
           state={{ from: location.pathname }}
-          className="mb-6 text-sm text-gray-400 hover:text-gray-200
-        transition-colors duration-200
-      "
+          className="text-sm text-gray-400 hover:text-gray-200 transition-colors duration-200"
         >
           Impressum
         </Link>
+        <a
+          href="https://github.com/Yuchan48/vpn_management_dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-gray-400 hover:text-gray-200 transition-colors duration-200"
+        >
+          GitHub Repository
+        </a>
       </div>
     </div>
   );

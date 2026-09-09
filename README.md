@@ -73,6 +73,8 @@ Download a `.conf` file from the dashboard and import it into the official WireG
 ## 🔐 Security
 
 - JWT authentication with HTTP-only cookies
+- Parameterized queries for SQL injection prevention
+- Rate limiting and brute-force protection
 - Role-based access control and user-level data isolation
 - Private keys are not stored in the database
 - Configuration downloads generate new key pairs
